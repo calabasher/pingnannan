@@ -1,0 +1,156 @@
+<template>
+	<view class="pdl15 pdr15 font-14">
+		<view class="flex-space-between">
+			<view class="flex-align-center">
+				<view class="mgr10">不限</view>
+				<van-icon name="arrow-down" />
+			</view>
+			<van-search
+			  :value="value"
+			  placeholder="请输入搜索关键词"
+			  use-action-slot
+			  @search="onSearch"
+			>
+			  <view slot="action" @search="onSearch">搜索</view>
+			</van-search>
+		</view>
+		<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
+			<swiper-item v-for="(item, index) in bannerList" :key="index">
+				<image :src="item.url"></image>
+			</swiper-item>
+		</swiper>
+		<!-- 菜单分类 -->
+		<view class="flex-wrap white-bg pdt10">
+		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index">
+			<navigator url="navigate/navigate?title=navigate"  >
+			  <view>
+				<img :src="item.img"  class="van-avatar-large" />
+			  </view>
+			  <view>
+				{{item.name}}
+			  </view>
+			</navigator>
+		  </view>
+		</view>
+		<!-- 帖子列表 -->
+		<view class="mgt15" v-for="(item, index) in postList" :key="item.id">
+			<postCard :postObj="item"></postCard>
+		</view>
+		<!-- 底部空隙 -->
+		<view class="bottom-space flex-center">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
+	</view>
+</template>
+
+<script>
+	// import Bmob from '@/utils/bmob.js'
+	import postCard from '@/components/postCard';
+	export default {
+		components: {
+			postCard
+		},
+		data() {
+			return {
+				value: '',	// 搜索内容
+				pageSetting: {
+					pageIndex: 1,	// 页码
+					pageSize: 10,	// 每页页数
+					totalPage: 1,	// 总页数
+					totalSize: 0,	// 总条数数
+				},
+				bannerList: [],	// 菜单分类列表
+				postClassList: [],	// 帖子分类
+				postList: [],	// 帖子列表
+			}
+		},
+		computed: {
+		},
+		async onLoad() {
+			this.getBannerList();
+			this.getPostClassList();
+			this.getPostList();
+		},
+		onReady(){
+		},
+		// 分享
+		onShareAppMessage() {
+			return {
+				title: '微撩',
+				path: '/pages/index/index'
+			}
+		},
+		// 到底
+		onReachBottom(){
+			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
+				//设置列表数据
+				this.getPostList()
+			}
+		},
+		methods: {
+			// 详情、结果
+			navToDetails(){
+				uni.navigateTo({
+					url: '/pages/index/result?skillContent=' + this.skillContent
+				})
+			},
+			// 获取广告图片
+			getBannerList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('banner');
+				query.limit(5);
+				// 查询所有数据
+				query.find().then(res => {
+				  uni.hideLoading();
+				  that.bannerList = res;
+				});
+			},
+			// 获取帖子分类
+			getPostClassList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('postClass');
+				query.limit(5);
+				// 查询所有数据
+				query.find().then(res => {
+				  uni.hideLoading();
+				  that.postClassList = res;
+				});
+			},
+			// 获取帖子列表
+			getPostList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('postList');
+				query.limit(10);	// 每页条数
+				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询
+				query.include("author", "_user");
+				query.count().then(res => {
+					if(res.count === 0){
+						that.postList = []
+					}else{
+						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
+						query.find().then(res => {
+							uni.hideLoading();
+							that.pageSetting.pageIndex += 1;
+							that.postList = that.postList.concat(res);
+						});
+					}
+				});
+			},
+		}
+	}
+</script>
+
+<style lang='scss'>
+  .classify-item{
+	width: 25%;
+	text-align: center;
+	line-height: 30px;
+  }
+</style>

@@ -1,0 +1,6 @@
+.classify-item {
+  width: 25%;
+  text-align: center;
+  line-height: 30px;
+}
+
