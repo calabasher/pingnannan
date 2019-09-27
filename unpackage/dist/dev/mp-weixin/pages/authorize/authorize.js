@@ -172,8 +172,9 @@ var _default = { components: {}, data: function data() {return {};}, // 监听�
             //更新登陆状态
             uni.setStorage({
               key: 'userInfo',
-              data: infoRes,
+              data: res,
               success: function success() {
+                console.log('保存成功');
                 uni.reLaunch({
                   url: '/pages/index/index' });
 

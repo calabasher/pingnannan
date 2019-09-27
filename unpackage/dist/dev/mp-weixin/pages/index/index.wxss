@@ -3,4 +3,7 @@
   text-align: center;
   line-height: 30px;
 }
+.banner-img {
+  width: 345px;
+}
 

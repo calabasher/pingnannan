@@ -1,6 +1,3 @@
-.content-box {
-  line-height: 30px;
-}
 .img-zone {
   display: -webkit-box;
   display: -webkit-flex;

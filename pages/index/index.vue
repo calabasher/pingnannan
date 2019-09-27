@@ -1,6 +1,6 @@
 <template>
-	<view class="pdl15 pdr15 font-14">
-		<view class="flex-space-between">
+	<view class="font-14">
+		<view class="pdl15 pdr15 flex-space-between">
 			<view class="flex-align-center">
 				<view class="mgr10">不限</view>
 				<van-icon name="arrow-down" />
@@ -14,13 +14,13 @@
 			  <view slot="action" @search="onSearch">搜索</view>
 			</van-search>
 		</view>
-		<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
+		<swiper class="pdl15 pdr15 swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
 			<swiper-item v-for="(item, index) in bannerList" :key="index">
-				<image :src="item.url"></image>
+				<image :src="item.url" class="banner-img img-common"></image>
 			</swiper-item>
 		</swiper>
 		<!-- 菜单分类 -->
-		<view class="flex-wrap white-bg pdt10">
+		<view class="pdl15 pdr15 flex-wrap pdt10 pdb5">
 		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index">
 			<navigator url="navigate/navigate?title=navigate"  >
 			  <view>
@@ -32,12 +32,15 @@
 			</navigator>
 		  </view>
 		</view>
+		<view class="wx-bg space-10"></view>
 		<!-- 帖子列表 -->
-		<view class="mgt15" v-for="(item, index) in postList" :key="item.id">
-			<postCard :postObj="item"></postCard>
+		<view class="wx-bg">
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+				<postCard :postObj="item"></postCard>
+			</view>
 		</view>
 		<!-- 底部空隙 -->
-		<view class="bottom-space flex-center">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
+		<view class="bottom-space flex-center dy-font-color">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
 	</view>
 </template>
 
@@ -128,7 +131,8 @@
 				});
 				var query = that.Bmob.Query('postList');
 				query.limit(10);	// 每页条数
-				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询
+				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
+				query.order("-updatedAt");
 				query.include("author", "_user");
 				query.count().then(res => {
 					if(res.count === 0){
@@ -152,5 +156,8 @@
 	width: 25%;
 	text-align: center;
 	line-height: 30px;
+  }
+  .banner-img{
+	  width: 345px;
   }
 </style>

@@ -81,12 +81,14 @@
 				let that = this;
 				var query = that.Bmob.Query('postList');
 				
-				var currentUser = that.Bmob.User.current();
-				var objectId = currentUser.id;
-				var isme = that.Bmob.User();
-				isme.id = objectId;     //当前用户的objectId
+				// var currentUser = that.Bmob.User.current();
+				// var objectId = currentUser.id;
+				// var isme = new that.Bmob.User();
+				// //获取用户当前信息
+				// let current = that.Bmob.User.current()
+				// isme.id = current.objectId;     //当前用户的objectId
 					
-				query.set("author", isme)
+				// // query.set("author", isme)
 				query.set("contents", that.contents)
 				query.set("images", that.imageList)
 				query.save().then(res => {
@@ -97,7 +99,9 @@
 						cancelText: '继续发帖',
 						success: function (res) {
 							if (res.confirm) {
-								
+								uni.reLaunch({
+								    url: '/pages/index/index'
+								});
 							} else if (res.cancel) {
 								
 							}

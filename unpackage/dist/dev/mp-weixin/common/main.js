@@ -118,7 +118,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
 
   onLaunch: function onLaunch() {var _this = this;
     var userInfo = uni.getStorageSync('userInfo') || '';
-    if (userInfo.id) {
+    if (userInfo.objectId) {
       //更新登陆状态
       uni.getStorage({
         key: 'userInfo',

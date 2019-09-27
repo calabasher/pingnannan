@@ -1614,7 +1614,6 @@ radio-group label, checkbox-group label{
 page {
   color: #333;
   font-size: 16px;
-  background: #f8f8f8;
   min-height: 100vh;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -2099,6 +2098,9 @@ page {
 .wx-bg {
   background-color: #F6F6F6;
 }
+.gray-bg {
+  background-color: #CCC;
+}
 .dy-font-color {
   color: #969799;
 }
@@ -2131,6 +2133,12 @@ page {
 }
 .opacity-50 {
   opacity: 0.5;
+}
+.space-10 {
+  height: 10px;
+}
+.space-15 {
+  height: 15px;
 }
 .text-ellipse {
   width: 100%;

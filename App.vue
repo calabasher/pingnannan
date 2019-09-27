@@ -11,7 +11,7 @@
 		},
 		onLaunch: function() {
 			let userInfo = uni.getStorageSync('userInfo') || '';
-			if(userInfo.id){
+			if(userInfo.objectId){
 				//更新登陆状态
 				uni.getStorage({
 					key: 'userInfo',
@@ -55,7 +55,6 @@
 page {
   color: #333;
   font-size: 16px;
-  background: #f8f8f8;
   min-height: 100vh;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
@@ -462,6 +461,9 @@ page {
 .wx-bg{
   background-color: #F6F6F6;
 }
+.gray-bg{
+  background-color: #CCC;
+}
 .dy-font-color{
   color: #969799;
 }
@@ -494,6 +496,12 @@ page {
 }
 .opacity-50{
 	opacity: 0.5;
+}
+.space-10{
+  height: 10px;
+}
+.space-15{
+  height: 15px;
 }
 .text-ellipse{
 	width: 100%;

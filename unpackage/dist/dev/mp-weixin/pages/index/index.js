@@ -168,6 +168,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 {
   components: {
     postCard: postCard },
@@ -252,7 +255,8 @@ __webpack_require__.r(__webpack_exports__);
 
       var query = that.Bmob.Query('postList');
       query.limit(10); // 每页条数
-      query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询
+      query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询// 对score字段降序排列
+      query.order("-updatedAt");
       query.include("author", "_user");
       query.count().then(function (res) {
         if (res.count === 0) {

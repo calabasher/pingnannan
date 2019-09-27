@@ -1,7 +1,7 @@
 <template>
   <!-- 列表单个 -->
-  <van-panel class="font-14">
-    <view slot="header" class="flex-space-between">
+  <view class="font-14">
+    <view class="flex-space-between">
       <view class="flex" @click.stop="toUserZone">
         <img class="van-avatar" :src="postObj.author.userPic">
         <view class="mgl10">
@@ -12,11 +12,11 @@
       <!-- 右边位置 -->
       <view class="flex-center">
         <view>
-          <van-button @click.stop="addFollow(postObj)" type="default" size="small" class="addFollow">拨打电话</van-button>
+          <van-button icon="plus" @click.stop="addFollow(postObj)" type="default" size="small" class="addFollow">+关注</van-button>
         </view>
       </view>
     </view>
-    <view class="mgt5 content-box" v-html="postObj.contents">
+    <view class="pd5" v-html="postObj.contents">
       {{postObj.contents}}
     </view>
     <!-- 图片区域 -->
@@ -26,16 +26,16 @@
       </view>
     </view>
     <!-- 底部，评论，点赞，转发区域 -->
-    <view slot="footer" class="flex-space-around">
+    <view class="flex-space-around">
       <!-- 喜欢收藏 -->
       <view @click.stop="addMyLike(postObj)" class="footer-item">
         <i class="fa fa-heart-o" :class="{ 'red-color': postObj.isLike }" aria-hidden="true"></i>
-        {{postObj.likers}}
+        <text>{{postObj.likers}}</text>
       </view>
       <!-- 评论 -->
       <view @click.stop="openCommentsPop(postObj)" class="footer-item">
         <i class="fa fa-commenting-o" aria-hidden="true"></i>
-        {{postObj.commentsNum}}
+        <text>{{postObj.commentsNum}}</text>
       </view>
       <!-- 转发分享 -->
       <view @click.stop="sharePost(postObj)" class="footer-item">
@@ -43,7 +43,7 @@
         <text>{{postObj.forwardNum}}</text>
       </view>
     </view>
-  </van-panel>
+  </view>
 </template>
 
 <script>
@@ -162,9 +162,6 @@ export default {
 </script>
 
 <style lang='scss'>
-  .content-box{
-    line-height: 30px;
-  }
   .img-zone{
     display: flex;
     flex-wrap: wrap;

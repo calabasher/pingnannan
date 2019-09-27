@@ -48,8 +48,9 @@
 						  //更新登陆状态
 						  uni.setStorage({
 							  key: 'userInfo',
-							  data: infoRes,
+							  data: res,
 							  success: function () {
+								  console.log('保存成功')
 								  uni.reLaunch({
 									  url: '/pages/index/index'
 								  });
