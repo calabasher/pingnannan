@@ -20,6 +20,16 @@
 					"bounce": "none"
 				}
 			}
+		},{
+			"path": "pages/authorize/authorize",
+			"style" : {
+				"navigationBarTitleText" : "微信授权",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

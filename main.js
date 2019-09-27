@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import App from './App'
-
+import store from './store'
 import bmob from '@/utils/bmob.js' // 接口数据
+
+Vue.prototype.$store = store;
 Vue.prototype.Bmob = bmob
 
 Vue.config.productionTip = false

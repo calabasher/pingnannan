@@ -1,14 +1,49 @@
 <script>
+	/**
+	 * vuex管理登陆状态，具体可以参考官方登陆模板示例
+	 */
+	import {
+		mapMutations
+	} from 'vuex';
 	export default {
-		onLaunch: function () {
-			console.log('App Launch')
+		methods: {
+			...mapMutations(['login'])
 		},
-		onShow: function () {
+		onLaunch: function() {
+			let userInfo = uni.getStorageSync('userInfo') || '';
+			if(userInfo.id){
+				//更新登陆状态
+				uni.getStorage({
+					key: 'userInfo',
+					success: (res) => {
+						this.login(res.data);
+					}
+				});
+			}else{
+				uni.reLaunch({
+				    url: '/pages/authorize/authorize'
+				});
+				// uni.login({
+				//   provider: 'weixin',
+				//   success: function (loginRes) {
+				//     console.log('loginRes:' + loginRes.authResult);
+				//     // 获取用户信息
+				//     uni.getUserInfo({
+				//       provider: 'weixin',
+				//       success: function (infoRes) {
+				//         console.log('用户昵称为：' + infoRes.userInfo.nickName);
+				//       }
+				//     });
+				//   }
+				// });
+			}
+		},
+		onShow: function() {
 			console.log('App Show')
 		},
-		onHide: function () {
+		onHide: function() {
 			console.log('App Hide')
-		}
+		},
 	}
 </script>
 
