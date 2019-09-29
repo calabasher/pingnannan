@@ -201,19 +201,21 @@ var sizeType = [
   onHide: function onHide() {
   },
   methods: {
+    // 用户发帖--内容和图片, 将该帖子关联该用户
     publish: function publish() {
       var that = this;
+
+      var currentUser = that.Bmob.User.current(); // 当前用户
+      var objectId = currentUser.objectId; // 当前用户Id
+
+      // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+      var pointer = that.Bmob.Pointer('_User');
+      var poiID = pointer.set(objectId);
       var query = that.Bmob.Query('postList');
 
-      // var currentUser = that.Bmob.User.current();
-      // var objectId = currentUser.id;
-      // var isme = new that.Bmob.User();
-      // //获取用户当前信息
-      // let current = that.Bmob.User.current()
-      // isme.id = current.objectId;     //当前用户的objectId
-
-      // // query.set("author", isme)
+      query.set('author', poiID);
       query.set("contents", that.contents);
+      query.set("view", 0);
       query.set("images", that.imageList);
       query.save().then(function (res) {
         uni.showModal({
@@ -244,7 +246,8 @@ var sizeType = [
     countChange: function countChange(e) {
       this.countIndex = e.target.value;
     },
-    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var _this = this;var isContinue;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:if (!(
+    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var _this = this;var that, isContinue;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+                that = this;if (!(
 
 
 
@@ -255,10 +258,10 @@ var sizeType = [
 
 
 
-                this.imageList.length === 9)) {_context.next = 7;break;}_context.next = 3;return (
-                  this.isFullImg());case 3:isContinue = _context.sent;
+                this.imageList.length === 9)) {_context.next = 8;break;}_context.next = 4;return (
+                  this.isFullImg());case 4:isContinue = _context.sent;
                 console.log("是否继续?", isContinue);if (
-                isContinue) {_context.next = 7;break;}return _context.abrupt("return");case 7:
+                isContinue) {_context.next = 8;break;}return _context.abrupt("return");case 8:
 
 
 
@@ -269,6 +272,15 @@ var sizeType = [
                   this.count[this.countIndex],
                   success: function success(res) {
                     _this.imageList = _this.imageList.concat(res.tempFilePaths);
+                    var file;var _iteratorNormalCompletion = true;var _didIteratorError = false;var _iteratorError = undefined;try {
+                      for (var _iterator = res.tempFilePaths[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {var item = _step.value;
+                        console.log('itemn', item);
+                        file = that.Bmob.File('abc.jpg', item);
+                      }} catch (err) {_didIteratorError = true;_iteratorError = err;} finally {try {if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}} finally {if (_didIteratorError) {throw _iteratorError;}}}
+                    file.save().then(function (res) {
+                      console.log(res.length);
+                      console.log(res);
+                    });
                   },
                   fail: function fail(err) {
 
@@ -276,7 +288,7 @@ var sizeType = [
 
 
 
-                  } });case 8:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
+                  } });case 9:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
 
 
     isFullImg: function isFullImg() {var _this2 = this;

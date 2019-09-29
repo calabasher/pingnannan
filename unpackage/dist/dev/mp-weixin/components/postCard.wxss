@@ -25,17 +25,11 @@
   width: 100%;
   height: 100%;
 }
-.addFollow {
-  background-color: #eee;
+.share-btn::after {
+  border: none;
+  background: none;
 }
-.tag-ellipsis {
-  max-width: 100px;
-}
-.footer-space {
-  height: 10px;
-}
-.footer-item {
-  width: 33%;
-  text-align: center;
+.share-btn {
+  background-color: #fff;
 }
 

@@ -358,6 +358,9 @@ page {
 .width-40{
   width: 40%;
 }
+.width-33{
+  width: 33.3333%;
+}
 .height-100{
   height: 100%;
 }

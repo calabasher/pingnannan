@@ -166,21 +166,27 @@ var _vuex = __webpack_require__(/*! vuex */ 12); //
 var _default = { components: {}, data: function data() {return {};}, // 监听页面卸载
   onUnload: function onUnload() {}, onLoad: function onLoad() {}, onHide: function onHide() {}, methods: { // 获取微信用户信息
     getWxUserInfo: function getWxUserInfo() {var that = this;uni.getUserInfo({ provider: 'weixin', success: function success(infoRes) {
-          console.log('infoRes:' + infoRes);
-          // that.Bmob.User.upInfo(infoRes)
           that.Bmob.User.auth().then(function (res) {
-            //更新登陆状态
-            uni.setStorage({
-              key: 'userInfo',
-              data: res,
-              success: function success() {
-                console.log('保存成功');
-                uni.reLaunch({
-                  url: '/pages/index/index' });
+            var query = that.Bmob.Query('_User');
+            query.get(res.objectId).then(function (res) {
+              res.set('nickName', infoRes.userInfo.nickName);
+              res.set('avatarUrl', infoRes.userInfo.avatarUrl);
+              res.set('gender', infoRes.userInfo.gender);
+              res.save();
+              //更新登陆状态
+              uni.setStorage({
+                key: 'userInfo',
+                data: res,
+                success: function success() {
+                  console.log('保存成功');
+                  uni.reLaunch({
+                    url: '/pages/index/index' });
 
-              } });
+                } });
 
-            console.log('一键登陆成功');
+            }).catch(function (err) {
+              console.log(err);
+            });
           }).catch(function (err) {
             console.log(err);
           });

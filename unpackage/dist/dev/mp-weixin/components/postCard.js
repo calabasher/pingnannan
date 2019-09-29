@@ -152,7 +152,6 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 //
 //
 //
-//
 var _default =
 {
   // 父子通信
@@ -217,16 +216,23 @@ var _default =
     // 加关注
     addFollow: function addFollow(item) {
       var that = this;
-      if (that.isLogin) {
-        if (item.isFollow === 1) {
-          item.isFollow = 0;
-          that.$toast('关注成功！');
-        }
-      } else {
-        that.$router.push({ //核心语句
-          path: '/login' //跳转的路径
-        });
-      }
+      var query = that.Bmob.Query('postList');
+      query.get(item.objectId).then(function (res) {
+        res.increment('view');
+        res.save();
+      }).catch(function (err) {
+        console.log(err);
+      });
+      // if(that.isLogin){
+      //   if (item.isFollow === 1) {
+      //     item.isFollow = 0;
+      //     that.$toast('关注成功！');
+      //   }
+      // }else {
+      //   that.$router.push({  //核心语句
+      //     path:'/login'   //跳转的路径
+      //   })
+      // }
     },
     // 帮顶
     addPraise: function addPraise(item) {

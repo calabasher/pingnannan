@@ -2,8 +2,8 @@
   <!-- 列表单个 -->
   <view class="font-14">
     <view class="flex-space-between">
-      <view class="flex" @click.stop="toUserZone">
-        <img class="van-avatar" :src="postObj.author.userPic">
+      <view class="flex-align-center" @click.stop="toUserZone">
+        <img class="van-avatar" :src="postObj.author.avatarUrl">
         <view class="mgl10">
           <view>{{postObj.author.nickName}}</view>
           <view class="dy-font-color font-12 mgt5">{{postObj.createdAt}}</view>
@@ -12,7 +12,7 @@
       <!-- 右边位置 -->
       <view class="flex-center">
         <view>
-          <van-button icon="plus" @click.stop="addFollow(postObj)" type="default" size="small" class="addFollow">+关注</van-button>
+          <van-button icon="plus" @click.stop="addFollow(postObj)" type="default" size="small">+关注</van-button>
         </view>
       </view>
     </view>
@@ -28,19 +28,18 @@
     <!-- 底部，评论，点赞，转发区域 -->
     <view class="flex-space-around">
       <!-- 喜欢收藏 -->
-      <view @click.stop="addMyLike(postObj)" class="footer-item">
-        <i class="fa fa-heart-o" :class="{ 'red-color': postObj.isLike }" aria-hidden="true"></i>
-        <text>{{postObj.likers}}</text>
+      <view @click.stop="addMyLike(postObj)" class="flex-center width-33 tcenter" style="vertical-align: middle;">
+		  <view><van-icon size="20px" name="like-o" /></view>
+          <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
       </view>
       <!-- 评论 -->
-      <view @click.stop="openCommentsPop(postObj)" class="footer-item">
-        <i class="fa fa-commenting-o" aria-hidden="true"></i>
-        <text>{{postObj.commentsNum}}</text>
+      <view @click.stop="openCommentsPop(postObj)" class="flex-center width-33 tcenter">
+        <view><van-icon size="20px" name="comment-o" /></view>
+        <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
       </view>
       <!-- 转发分享 -->
-      <view @click.stop="sharePost(postObj)" class="footer-item">
-        <i class="fa fa-share" aria-hidden="true"></i>
-        <text>{{postObj.forwardNum}}</text>
+      <view @click.stop="sharePost(postObj)" class="flex-center width-33 tcenter item-share">
+        <button open-type="share" class="width-100 share-btn"><van-icon size="20px" name="share" /></button>
       </view>
     </view>
   </view>
@@ -110,16 +109,23 @@ export default {
     // 加关注
     addFollow: function (item) {
       let that = this;
-      if(that.isLogin){
-        if (item.isFollow === 1) {
-          item.isFollow = 0;
-          that.$toast('关注成功！');
-        }
-      }else {
-        that.$router.push({  //核心语句
-          path:'/login'   //跳转的路径
-        })
-      }
+	  const query = that.Bmob.Query('postList')
+	  query.get(item.objectId).then(res => {
+	      res.increment('view')
+	      res.save()
+	  }).catch(err => {
+	      console.log(err)
+	  })
+      // if(that.isLogin){
+      //   if (item.isFollow === 1) {
+      //     item.isFollow = 0;
+      //     that.$toast('关注成功！');
+      //   }
+      // }else {
+      //   that.$router.push({  //核心语句
+      //     path:'/login'   //跳转的路径
+      //   })
+      // }
     },
     // 帮顶
     addPraise: function (item) {
@@ -182,17 +188,12 @@ export default {
     width: 100%;
     height: 100%;
   }
-  .addFollow{
-    background-color: #eee;
+  .share-btn::after{
+	  border: none;
+	  background: none;
   }
-  .tag-ellipsis{
-    max-width: 100px;
+  .share-btn {
+	background-color: #fff;
   }
-  .footer-space{
-    height: 10px;
-  }
-  .footer-item{
-    width: 33%;
-    text-align: center;
-  }
+
 </style>

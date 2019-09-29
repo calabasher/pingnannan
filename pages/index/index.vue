@@ -40,7 +40,7 @@
 			</view>
 		</view>
 		<!-- 底部空隙 -->
-		<view class="bottom-space flex-center dy-font-color">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
+		<view class="bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
 	</view>
 </template>
 

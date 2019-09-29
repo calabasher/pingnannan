@@ -77,19 +77,21 @@
 		onHide(){
 		},
 		methods: {
+			// 用户发帖--内容和图片, 将该帖子关联该用户
 			publish(){
 				let that = this;
+				
+				var currentUser = that.Bmob.User.current(); // 当前用户
+				var objectId = currentUser.objectId; // 当前用户Id
+				
+				// Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+				const pointer = that.Bmob.Pointer('_User')
+				const poiID = pointer.set(objectId)
 				var query = that.Bmob.Query('postList');
 				
-				// var currentUser = that.Bmob.User.current();
-				// var objectId = currentUser.id;
-				// var isme = new that.Bmob.User();
-				// //获取用户当前信息
-				// let current = that.Bmob.User.current()
-				// isme.id = current.objectId;     //当前用户的objectId
-					
-				// // query.set("author", isme)
+				query.set('author',poiID)
 				query.set("contents", that.contents)
+				query.set("view", 0)
 				query.set("images", that.imageList)
 				query.save().then(res => {
 					uni.showModal({
@@ -121,6 +123,7 @@
 			    this.countIndex = e.target.value;
 			},
 			chooseImage: async function() {
+				let that = this;
 			    // #ifdef APP-PLUS
 			    // TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理
 			    if (this.sourceTypeIndex !== 2) {
@@ -145,6 +148,15 @@
 			            this.count[this.countIndex],
 			        success: (res) => {
 			            this.imageList = this.imageList.concat(res.tempFilePaths);
+						var file;
+						for (let item of res.tempFilePaths) {
+						  console.log('itemn',item)
+						  file = that.Bmob.File('abc.jpg', item);
+						}
+						file.save().then(res => {
+						  console.log(res.length);
+						  console.log(res);
+						})
 			        },
 			        fail: (err) => {
 			            // #ifdef APP-PLUS

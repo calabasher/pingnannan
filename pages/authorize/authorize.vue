@@ -42,11 +42,15 @@
 				uni.getUserInfo({
 				  provider: 'weixin',
 				  success: function (infoRes) {
-					  console.log('infoRes:'+infoRes)
-					  // that.Bmob.User.upInfo(infoRes)
 					  that.Bmob.User.auth().then(res => {
-						  //更新登陆状态
-						  uni.setStorage({
+						const query = that.Bmob.Query('_User');
+						query.get(res.objectId).then(res => {
+							res.set('nickName',infoRes.userInfo.nickName)
+							res.set('avatarUrl',infoRes.userInfo.avatarUrl)
+							res.set('gender',infoRes.userInfo.gender)
+							res.save()
+							//更新登陆状态
+							uni.setStorage({
 							  key: 'userInfo',
 							  data: res,
 							  success: function () {
@@ -55,8 +59,10 @@
 									  url: '/pages/index/index'
 								  });
 							  }
-						  });
-						  console.log('一键登陆成功')
+							});
+						  }).catch(err => {
+						    console.log(err)
+						  })
 					  }).catch(err => {
 						console.log(err)
 					  });
