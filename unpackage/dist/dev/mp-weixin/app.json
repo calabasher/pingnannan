@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/write/write",
-    "pages/authorize/authorize"
+    "pages/authorize/authorize",
+    "pages/user/myzone"
   ],
   "subPackages": [],
   "window": {
@@ -28,6 +29,12 @@
         "pagePath": "pages/write/write",
         "iconPath": "static/tabbar/write.png",
         "selectedIconPath": "static/tabbar/write-active.png",
+        "text": "发布"
+      },
+      {
+        "pagePath": "pages/user/myzone",
+        "iconPath": "static/tabbar/wode.png",
+        "selectedIconPath": "static/tabbar/wode-active.png",
         "text": "发布"
       }
     ]
@@ -83,5 +90,5 @@
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
     "van-picker": "/wxcomponents/vant/picker/index"
   },
-  "sitemapLocation": "sitemap16.json"
+  "sitemapLocation": "sitemap84.json"
 }

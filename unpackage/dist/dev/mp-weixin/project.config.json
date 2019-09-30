@@ -35,8 +35,8 @@
 			"list": [
 				{
 					"id": -1,
-					"name": "pages/write/write",
-					"pathName": "pages/write/write",
+					"name": "pages/user/myzone",
+					"pathName": "pages/user/myzone",
 					"scene": null
 				}
 			]

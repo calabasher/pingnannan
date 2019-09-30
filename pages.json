@@ -30,6 +30,16 @@
 					"bounce": "none"
 				}
 			}
+		},{
+			"path": "pages/user/myzone",
+			"style" : {
+				"navigationBarTitleText" : "",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {
@@ -104,6 +114,11 @@
 				"pagePath": "pages/write/write",
 				"iconPath": "static/tabbar/write.png",
 				"selectedIconPath": "static/tabbar/write-active.png",
+				"text": "发布"
+			},{
+				"pagePath": "pages/user/myzone",
+				"iconPath": "static/tabbar/wode.png",
+				"selectedIconPath": "static/tabbar/wode-active.png",
 				"text": "发布"
 			}
 		]

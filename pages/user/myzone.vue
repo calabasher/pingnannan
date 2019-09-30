@@ -1,0 +1,156 @@
+<template>
+	<view class="wx-bg">
+		<!-- 顶部 用户信息 -->
+		<view class="white-bg flex-space-between pdl15 pdr15">
+			<view class="flex-align-center">
+				<image :src="info.avatarUrl" class="van-avatar-large"></image>
+				<view class="mgl10">
+					<view class="flex-align-center">
+						<text>{{info.nickName}}</text>
+						<image :src="info.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
+					</view>
+					<view class="">{{ info.autograph ? info.autograph : '暂无签名' }}</view>
+				</view>
+			</view>
+			<view class="font-20">
+				<van-icon name="setting-o" />
+			</view>
+		</view>
+		<!-- 获赞 粉丝 关注 -->
+		<view class="flex-space-around pdt15 white-bg">
+			<view class="tcenter">
+				<view class="font-16">2</view>
+				<view class="font-12 dy-font-color">获赞</view>
+			</view>
+			<view class="tcenter">
+				<view class="font-16">2</view>
+				<view class="font-12 dy-font-color">关注</view>
+			</view>
+			<view class="tcenter">
+				<view class="font-16">2</view>
+				<view class="font-12 dy-font-color">粉丝</view>
+			</view>
+		</view>
+		<view class="white-bg space"></view>
+		<van-tabs sticky swipeable class="mgt15">
+		  <van-tab title="作品">
+			<!-- 帖子列表 -->
+			<view class="wx-bg">
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+					<postCard :postObj="item"></postCard>
+				</view>
+			</view>
+		  </van-tab>
+		  <van-tab title="作品">
+			<!-- 帖子列表 -->
+			<view class="wx-bg">
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+					<postCard :postObj="item"></postCard>
+				</view>
+			</view>
+		  </van-tab>
+		</van-tabs>
+	</view>
+</template>
+
+<script>
+	import { mapState } from 'vuex'; 
+	import postCard from '@/components/postCard';
+	export default {
+		components: {
+			postCard
+		},
+		data() {
+			return {
+				info: {
+					nickName: '用户昵称',	// 用户昵称
+					avatarUrl: '/static/logo/logo.png',	// 头像
+					gender: 1,	// 性别 1-男
+					autograph: '签名',	// 签名
+				},
+				pageSetting: {
+					pageIndex: 1,	// 页码
+					pageSize: 10,	// 每页页数
+					totalPage: 1,	// 总页数
+					totalSize: 0,	// 总条数数
+				},
+				postList: [],	// 帖子列表
+			}
+		},
+		computed: {
+			...mapState(['hasLogin','userInfo'])
+		},
+		async onLoad() {
+		},
+		onReady(){
+			this.getUserInfo();
+			this.getPostList();
+		},
+		// 分享
+		onShareAppMessage() {
+			return {
+				title: '事事通',
+				path: '/pages/index/index'
+			}
+		},
+		// 到底
+		onReachBottom(){
+			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
+				//设置列表数据
+				this.getPostList()
+			}
+		},
+		methods: {
+			// 获取用户信息
+			getUserInfo () {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				const query = that.Bmob.Query('_User');
+				query.get(that.userInfo.objectId).then(res => {
+					uni.hideLoading();
+					that.info = res;
+				    console.log(res)
+				}).catch(err => {
+				  console.log(err)
+				})
+			},
+			// 获取帖子列表
+			getPostList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('postList');
+				query.limit(10);	// 每页条数
+				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
+				query.order("-updatedAt");
+				query.include("author", "_user");
+				query.count().then(res => {
+					if(res.count === 0){
+						that.postList = []
+					}else{
+						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
+						query.find().then(res => {
+							uni.hideLoading();
+							that.pageSetting.pageIndex += 1;
+							that.postList = that.postList.concat(res);
+						});
+					}
+				});
+			},
+		}
+	}
+</script>
+
+<style lang='scss'>
+	.space{
+		height: 15px;
+	}
+	.van-avatar-small{
+		background-color: #fff;
+		width: 18px;
+		height: 18px;
+	}
+</style>

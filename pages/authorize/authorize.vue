@@ -36,9 +36,13 @@
 		onHide(){
 		},
 		methods: {
+			...mapMutations(['login']),
 			// 获取微信用户信息
 			getWxUserInfo(){
 				let that = this;
+				uni.showLoading({
+					title: '授权登录中'
+				});
 				uni.getUserInfo({
 				  provider: 'weixin',
 				  success: function (infoRes) {
@@ -48,12 +52,17 @@
 							res.set('nickName',infoRes.userInfo.nickName)
 							res.set('avatarUrl',infoRes.userInfo.avatarUrl)
 							res.set('gender',infoRes.userInfo.gender)
+							res.set('autograph', '')
 							res.save()
+							that.login(res);	// 存储登录信息
 							//更新登陆状态
 							uni.setStorage({
 							  key: 'userInfo',
 							  data: res,
 							  success: function () {
+								  uni.showLoading({
+								  	title: '授权成功'
+								  });
 								  console.log('保存成功')
 								  uni.reLaunch({
 									  url: '/pages/index/index'

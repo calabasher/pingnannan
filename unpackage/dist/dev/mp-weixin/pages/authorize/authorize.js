@@ -143,41 +143,50 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _vuex = __webpack_require__(/*! vuex */ 12); //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-var _default = { components: {}, data: function data() {return {};}, // 监听页面卸载
-  onUnload: function onUnload() {}, onLoad: function onLoad() {}, onHide: function onHide() {}, methods: { // 获取微信用户信息
-    getWxUserInfo: function getWxUserInfo() {var that = this;uni.getUserInfo({ provider: 'weixin', success: function success(infoRes) {
+var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
+{
+  components: {},
+
+  data: function data() {
+    return {};
+
+
+  },
+  // 监听页面卸载
+  onUnload: function onUnload() {
+  },
+  onLoad: function onLoad() {
+  },
+  onHide: function onHide() {
+  },
+  methods: _objectSpread({},
+  (0, _vuex.mapMutations)(['login']), {
+    // 获取微信用户信息
+    getWxUserInfo: function getWxUserInfo() {
+      var that = this;
+      uni.showLoading({
+        title: '授权登录中' });
+
+      uni.getUserInfo({
+        provider: 'weixin',
+        success: function success(infoRes) {
           that.Bmob.User.auth().then(function (res) {
             var query = that.Bmob.Query('_User');
             query.get(res.objectId).then(function (res) {
               res.set('nickName', infoRes.userInfo.nickName);
               res.set('avatarUrl', infoRes.userInfo.avatarUrl);
               res.set('gender', infoRes.userInfo.gender);
+              res.set('autograph', '');
               res.save();
+              that.login(res); // 存储登录信息
               //更新登陆状态
               uni.setStorage({
                 key: 'userInfo',
                 data: res,
                 success: function success() {
+                  uni.showLoading({
+                    title: '授权成功' });
+
                   console.log('保存成功');
                   uni.reLaunch({
                     url: '/pages/index/index' });
@@ -192,7 +201,7 @@ var _default = { components: {}, data: function data() {return {};}, // 监听�
           });
         } });
 
-    } } };exports.default = _default;
+    } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
