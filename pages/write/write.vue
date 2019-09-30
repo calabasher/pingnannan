@@ -29,7 +29,7 @@
 		    </view>
 		</view>
 		<view class="tui-cmt-btn">
-			<van-button type="primary" size="large" @click="publish">发表</van-button>
+			<van-button type="info" size="large" @click="publish">发表</van-button>
 		</view>
 	</view>
 </template>
@@ -79,11 +79,12 @@
 		methods: {
 			// 用户发帖--内容和图片, 将该帖子关联该用户
 			publish(){
+				uni.showLoading({
+					title: '加载中'
+				});
 				let that = this;
-				
 				var currentUser = that.Bmob.User.current(); // 当前用户
 				var objectId = currentUser.objectId; // 当前用户Id
-				
 				// Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
 				const pointer = that.Bmob.Pointer('_User')
 				const poiID = pointer.set(objectId)
@@ -94,6 +95,7 @@
 				query.set("view", 0)
 				query.set("images", that.imageList)
 				query.save().then(res => {
+					uni.hideLoading();
 					uni.showModal({
 						title: '发表成功',
 						content: '是否立即前往查看',

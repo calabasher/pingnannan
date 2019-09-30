@@ -214,9 +214,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     // 详情、结果
-    navToDetails: function navToDetails() {
+    navToDetails: function navToDetails(id) {
       uni.navigateTo({
-        url: '/pages/index/result?skillContent=' + this.skillContent });
+        url: '/pages/post/postDetail?postId=' + id });
 
     },
     // 获取广告图片

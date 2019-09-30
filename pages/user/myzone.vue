@@ -1,7 +1,7 @@
 <template>
 	<view class="wx-bg">
 		<!-- 顶部 用户信息 -->
-		<view class="white-bg flex-space-between pdl15 pdr15">
+		<view class="white-bg flex-space-between pdl15 pdr15 pdt10">
 			<view class="flex-align-center">
 				<image :src="info.avatarUrl" class="van-avatar-large"></image>
 				<view class="mgl10">
@@ -36,7 +36,7 @@
 		  <van-tab title="作品">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
 					<postCard :postObj="item"></postCard>
 				</view>
 			</view>
@@ -44,7 +44,7 @@
 		  <van-tab title="作品">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
 					<postCard :postObj="item"></postCard>
 				</view>
 			</view>
@@ -101,6 +101,12 @@
 			}
 		},
 		methods: {
+			// 详情、结果
+			navToDetails(id){
+				uni.navigateTo({
+					url: '/pages/post/postDetail?postId=' + id
+				})
+			},
 			// 获取用户信息
 			getUserInfo () {
 				let that = this;

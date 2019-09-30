@@ -8400,7 +8400,7 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "usingComponents": { "post-card": "/components/postCard" } }, "pages/write/write": { "navigationBarTitleText": "发布", "usingComponents": {} }, "pages/authorize/authorize": { "navigationBarTitleText": "微信授权", "usingComponents": {} }, "pages/user/myzone": { "navigationBarTitleText": "" } }, "globalStyle": { "navigationBarTitleText": "Vant For Uni-app", "navigationBarBackgroundColor": "#f8f8f8", "navigationBarTextStyle": "black", "backgroundTextStyle": "dark", "backgroundColor": "#f8f8f8" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "usingComponents": { "post-card": "/components/postCard" } }, "pages/write/write": { "navigationBarTitleText": "发布", "usingComponents": {} }, "pages/authorize/authorize": { "navigationBarTitleText": "微信授权", "usingComponents": {} }, "pages/user/myzone": { "navigationBarTitleText": "主页", "usingComponents": { "post-card": "/components/postCard" } }, "pages/post/postDetail": { "navigationBarTitleText": "帖子详情", "usingComponents": { "post-card": "/components/postCard" } } }, "globalStyle": { "navigationBarTitleText": "Vant For Uni-app", "navigationBarBackgroundColor": "#f8f8f8", "navigationBarTextStyle": "black", "backgroundTextStyle": "dark", "backgroundColor": "#f8f8f8" } };exports.default = _default;
 
 /***/ }),
 /* 8 */

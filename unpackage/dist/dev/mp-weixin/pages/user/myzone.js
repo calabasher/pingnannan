@@ -225,6 +225,12 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
     }
   },
   methods: {
+    // 详情、结果
+    navToDetails: function navToDetails(id) {
+      uni.navigateTo({
+        url: '/pages/post/postDetail?postId=' + id });
+
+    },
     // 获取用户信息
     getUserInfo: function getUserInfo() {
       var that = this;

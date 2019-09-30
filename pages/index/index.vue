@@ -24,7 +24,7 @@
 		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index">
 			<navigator url="navigate/navigate?title=navigate"  >
 			  <view>
-				<img :src="item.img"  class="van-avatar-large" />
+				<img :src="item.imgUrl"  class="van-avatar-large" />
 			  </view>
 			  <view>
 				{{item.name}}
@@ -35,7 +35,7 @@
 		<view class="wx-bg space-10"></view>
 		<!-- 帖子列表 -->
 		<view class="wx-bg">
-			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.id">
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
 				<postCard :postObj="item"></postCard>
 			</view>
 		</view>
@@ -90,9 +90,9 @@
 		},
 		methods: {
 			// 详情、结果
-			navToDetails(){
+			navToDetails(id){
 				uni.navigateTo({
-					url: '/pages/index/result?skillContent=' + this.skillContent
+					url: '/pages/post/postDetail?postId=' + id
 				})
 			},
 			// 获取广告图片

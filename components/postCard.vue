@@ -26,7 +26,7 @@
       </view>
     </view>
     <!-- 底部，评论，点赞，转发区域 -->
-    <view class="flex-space-around">
+    <view class="flex-space-around" v-if="showPostOpt">
       <!-- 喜欢收藏 -->
       <view @click.stop="addMyLike(postObj)" class="flex-center width-33 tcenter" style="vertical-align: middle;">
 		  <view><van-icon size="20px" name="like-o" /></view>
@@ -51,7 +51,13 @@ export default {
   props: {
     postObj: {
       type: Object,
-      default: {}
+      default: function(){
+      	return {};
+      }
+    },
+	showPostOpt: {
+      type: Boolean,
+      default: true,
     },
   },
   components : {
@@ -187,13 +193,6 @@ export default {
     background-repeat: no-repeat;
     width: 100%;
     height: 100%;
-  }
-  .share-btn::after{
-	  border: none;
-	  background: none;
-  }
-  .share-btn {
-	background-color: #fff;
   }
 
 </style>

@@ -203,11 +203,12 @@ var sizeType = [
   methods: {
     // 用户发帖--内容和图片, 将该帖子关联该用户
     publish: function publish() {
-      var that = this;
+      uni.showLoading({
+        title: '加载中' });
 
+      var that = this;
       var currentUser = that.Bmob.User.current(); // 当前用户
       var objectId = currentUser.objectId; // 当前用户Id
-
       // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
       var pointer = that.Bmob.Pointer('_User');
       var poiID = pointer.set(objectId);
@@ -218,6 +219,7 @@ var sizeType = [
       query.set("view", 0);
       query.set("images", that.imageList);
       query.save().then(function (res) {
+        uni.hideLoading();
         uni.showModal({
           title: '发表成功',
           content: '是否立即前往查看',

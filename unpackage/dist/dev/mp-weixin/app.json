@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/post/postDetail",
     "pages/write/write",
     "pages/authorize/authorize",
     "pages/user/myzone"
@@ -35,7 +36,7 @@
         "pagePath": "pages/user/myzone",
         "iconPath": "static/tabbar/wode.png",
         "selectedIconPath": "static/tabbar/wode-active.png",
-        "text": "发布"
+        "text": "主页"
       }
     ]
   },
@@ -89,6 +90,5 @@
     "van-collapse": "/wxcomponents/vant/collapse/index",
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
     "van-picker": "/wxcomponents/vant/picker/index"
-  },
-  "sitemapLocation": "sitemap84.json"
+  }
 }

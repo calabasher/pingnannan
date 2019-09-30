@@ -1,0 +1,8 @@
+.comment-border {
+  border-left: 2px solid red;
+}
+.input-cmt-zone {
+  position: fixed;
+  bottom: 0;
+}
+

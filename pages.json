@@ -11,6 +11,16 @@
 				}
 			}
 		},{
+			"path": "pages/post/postDetail",
+			"style" : {
+				"navigationBarTitleText" : "帖子详情",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"bounce": "none"
+				}
+			}
+		},{
 			"path": "pages/write/write",
 			"style" : {
 				"navigationBarTitleText" : "发布",
@@ -33,7 +43,7 @@
 		},{
 			"path": "pages/user/myzone",
 			"style" : {
-				"navigationBarTitleText" : "",
+				"navigationBarTitleText" : "主页",
 				"app-plus": {
 					"titleNView": false,
 					"navigationBarTextStyle": "white",
@@ -119,7 +129,7 @@
 				"pagePath": "pages/user/myzone",
 				"iconPath": "static/tabbar/wode.png",
 				"selectedIconPath": "static/tabbar/wode-active.png",
-				"text": "发布"
+				"text": "主页"
 			}
 		]
 	},

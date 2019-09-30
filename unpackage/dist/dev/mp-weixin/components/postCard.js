@@ -152,13 +152,19 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 //
 //
 //
-var _default =
+var _default2 =
 {
   // 父子通信
   props: {
     postObj: {
       type: Object,
-      default: {} } },
+      default: function _default() {
+        return {};
+      } },
+
+    showPostOpt: {
+      type: Boolean,
+      default: true } },
 
 
   components: {},
@@ -269,7 +275,7 @@ var _default =
     // 前往顶赞用户列表
     toTopPraiseUserList: function toTopPraiseUserList(item) {
       this.$router.push({ name: 'topPraiseUserList', params: { postId: item.postId } });
-    } } };exports.default = _default;
+    } } };exports.default = _default2;
 
 /***/ }),
 

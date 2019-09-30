@@ -361,6 +361,9 @@ page {
 .width-33{
   width: 33.3333%;
 }
+.width-20{
+  width: 20%;
+}
 .height-100{
   height: 100%;
 }
@@ -512,4 +515,15 @@ page {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
+/* 特殊样式 -- 开始 */
+.share-btn::after{
+  border: none;
+  background: none;
+}
+.share-btn {
+	background-color: #fff;
+	line-height: 2;
+}
+/* 特殊样式-- 结束 */
 </style>
