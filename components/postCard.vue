@@ -28,12 +28,12 @@
     <!-- 底部，评论，点赞，转发区域 -->
     <view class="flex-space-around" v-if="showPostOpt">
       <!-- 喜欢收藏 -->
-      <view @click.stop="addMyLike(postObj)" class="flex-center width-33 tcenter" style="vertical-align: middle;">
-		  <view><van-icon size="20px" name="like-o" /></view>
-          <view class="font-14 pdb5 mgl5">{{postObj.likes}}</view>
+      <view class="flex-center width-33 tcenter" style="vertical-align: middle;">
+		  <view><van-icon size="20px" name="eye-o" /></view>
+          <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
       </view>
       <!-- 评论 -->
-      <view @click.stop="openCommentsPop(postObj)" class="flex-center width-33 tcenter">
+      <view class="flex-center width-33 tcenter">
         <view><van-icon size="20px" name="comment-o" /></view>
         <view class="font-14 pdb5 mgl5">{{postObj.comments}}</view>
       </view>
@@ -82,36 +82,6 @@ export default {
       let itemIsTop = true;
       this.$emit('on-share-post', sharePopShow, itemIsTop)
     },
-    // 点击评论
-    openCommentsPop (item) {
-      this.$emit('on-open-comments-popup', item)
-    },
-    // 加入喜欢
-    addMyLike: function (item) {
-      let that = this;
-      if(that.isLogin){
-        if (item.isLike) {
-          item.isLike = false;
-          item.likers -= 1;
-        }else{
-          item.isLike = true;
-          item.likers += 1;
-          that.$toast('成功收藏！');
-        }
-      }else {
-        that.$dialog.confirm({
-          title: '未登录',
-          message: '登录后可收藏至您的喜欢',
-          confirmButtonText: '立即登录'
-        }).then(() => {
-          that.$router.push({  //核心语句
-            path:'/login'   //跳转的路径
-          })
-        }).catch(() => {
-          // on cancel
-        });
-      }
-    },
     // 加关注
     addFollow: function (item) {
       let that = this;
@@ -132,20 +102,6 @@ export default {
       //     path:'/login'   //跳转的路径
       //   })
       // }
-    },
-    // 帮顶
-    addPraise: function (item) {
-      let that = this;
-      if(that.isLogin){
-        if (item.isPraised === 1) {
-          item.isPraised = 0;
-          that.$toast('帮顶成功，将会有更多的人看到哦！');
-        }
-      }else {
-        that.$router.push({  //核心语句
-          path:'/login'   //跳转的路径
-        })
-      }
     },
     // 图片预览
     preImg(index) {

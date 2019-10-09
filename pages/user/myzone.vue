@@ -67,7 +67,7 @@
 					nickName: '未登录',	// 用户昵称
 					avatarUrl: '/static/logo/no-login.png',	// 头像
 					gender: 1,	// 性别 1-男
-					autograph: '签名',	// 签名
+					autograph: '暂无签名',	// 签名
 					follows: 0,	// 关注数
 					fans: 0,	// 粉丝数
 					praise: 0,	// 赞数

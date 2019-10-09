@@ -53,6 +53,9 @@
 							res.set('avatarUrl',infoRes.userInfo.avatarUrl)
 							res.set('gender',infoRes.userInfo.gender)
 							res.set('autograph', '')
+							res.set('praise', 0)
+							res.set('follows', 0)
+							res.set('fans', 0)
 							res.save()
 							that.login(res);	// 存储登录信息
 							//更新登陆状态

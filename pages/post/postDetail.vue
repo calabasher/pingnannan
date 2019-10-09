@@ -27,7 +27,7 @@
 							<view class="dy-font-color">{{ item.updatedAt }}</view>
 						</view>
 					</view>
-					<view class="font-14 dy-font-color">回复TA</view>
+					<view class="font-14 dy-font-color" @click="reply(item)">回复TA</view>
 				</view>
 				<view class="mgt10">{{item.content}}</view>
 			</view>
@@ -61,6 +61,7 @@
 			this.postId = option.postId ? option.postId : '8604d6bb67';
 			this.getPost();
 			this.getComments();
+			this.updatePost('view')
 		},
 		onReady(){
 		},
@@ -110,6 +111,9 @@
 					uni.hideLoading();
 				});
 			},
+			reply(item){
+				this.commentValue = '@' +  item.own.nickName + ' '
+			},
 			// 发表评论
 			sendComments () {
 				uni.showLoading({
@@ -138,18 +142,18 @@
 						icon: 'success'
 					})
 					that.commentValue = '';
-					that.updatePost();
+					that.updatePost('comments');
 					that.getComments();
 				}).catch(err => {
 				  console.log(err)
 				})
 			},
 			// 更新帖子表的评论数
-			updatePost() {
+			updatePost(param) {
 				let that = this;
 				var query = that.Bmob.Query('postList');		
 				query.get(that.postId).then(res => {
-				  res.increment('comments')	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+				  res.increment(param)	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
 				  res.save()
 				}).catch(err => {
 				  console.log(err)

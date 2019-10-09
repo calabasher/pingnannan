@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="tui-cells pd15 mgt10">
-			<textarea class="tui-textarea" v-model="contents" name="desc" placeholder="发表你的评论..." maxlength="500" placeholder-class="tui-phcolor-color"
+			<textarea class="tui-textarea" v-model="contents" name="desc" placeholder="分享新鲜事儿..." maxlength="500" placeholder-class="tui-phcolor-color"
 			 auto-focus />
 			<view class="tui-textarea-counter">0/500</view>
 		</view>
@@ -29,7 +29,7 @@
 		    </view>
 		</view>
 		<view class="tui-cmt-btn">
-			<van-button type="info" size="large" @click="publish">发表</van-button>
+			<van-button type="info" size="large" @click="publish" :disabled=" contents ? false: true ">发表</van-button>
 		</view>
 	</view>
 </template>
@@ -73,6 +73,13 @@
 			this.countIndex = 8;
 		},
 		onLoad(){
+			uni.getLocation({
+			    type: 'wgs84',
+			    success: function (res) {
+			        console.log('当前位置的经度：' + res.longitude);
+			        console.log('当前位置的纬度：' + res.latitude);
+			    }
+			});
 		},
 		onHide(){
 		},

@@ -11,6 +11,16 @@
 				}
 			}
 		},{
+			"path": "pages/post/postList",
+			"style" : {
+				"navigationBarTitleText" : "",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"bounce": "none"
+				}
+			}
+		},{
 			"path": "pages/post/postDetail",
 			"style" : {
 				"navigationBarTitleText" : "帖子详情",
@@ -153,5 +163,10 @@
 				"query": "" //启动参数，在页面的onLoad函数里面得到
 			}
 		]
+	},
+	"permission": {
+		"scope.userLocation": {
+			"desc": "你的位置信息将用于小程序位置接口的效果展示"
+		}
 	}
 }

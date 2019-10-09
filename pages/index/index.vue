@@ -21,21 +21,17 @@
 		</swiper>
 		<!-- 菜单分类 -->
 		<view class="pdl15 pdr15 flex-wrap pdt10 pdb5">
-		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index">
+		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index" @click="navTo('/pages/post/postList?title=' + item.name + '&classId=' + item.objectId)">
 			<navigator url="navigate/navigate?title=navigate"  >
-			  <view>
-				<img :src="item.imgUrl"  class="van-avatar-large" />
-			  </view>
-			  <view>
-				{{item.name}}
-			  </view>
+			  <view><img :src="item.imgUrl"  class="van-avatar-large" /></view>
+			  <view>{{item.name}}</view>
 			</navigator>
 		  </view>
 		</view>
 		<view class="wx-bg space-10"></view>
 		<!-- 帖子列表 -->
 		<view class="wx-bg">
-			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
 				<postCard :postObj="item"></postCard>
 			</view>
 		</view>
@@ -90,10 +86,8 @@
 		},
 		methods: {
 			// 详情、结果
-			navToDetails(id){
-				uni.navigateTo({
-					url: '/pages/post/postDetail?postId=' + id
-				})
+			navTo(url){
+				uni.navigateTo({ url: url })
 			},
 			// 获取广告图片
 			getBannerList() {
@@ -133,10 +127,11 @@
 				query.limit(10);	// 每页条数
 				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
 				query.order("-updatedAt");
-				query.include("author", "_user");
+				query.include("author,belongsClass", "_User,postClass");
 				query.count().then(res => {
 					if(res.count === 0){
 						that.postList = []
+						uni.hideLoading();
 					}else{
 						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
 						query.find().then(res => {

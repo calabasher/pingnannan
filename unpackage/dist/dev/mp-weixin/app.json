@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/post/postList",
     "pages/post/postDetail",
     "pages/write/write",
     "pages/authorize/authorize",
@@ -40,6 +41,11 @@
         "text": "主页"
       }
     ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
   },
   "usingComponents": {
     "demo-block": "/wxcomponents/vant/demo-block/index",
@@ -91,5 +97,6 @@
     "van-collapse": "/wxcomponents/vant/collapse/index",
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
     "van-picker": "/wxcomponents/vant/picker/index"
-  }
+  },
+  "sitemapLocation": "sitemap72.json"
 }
