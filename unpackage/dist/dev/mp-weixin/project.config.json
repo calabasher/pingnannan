@@ -10,7 +10,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
 	"appid": "wx5f4624dd4e7adca2",
-	"projectname": "Vantui%20Weapp%20For%20Uni-app",
+	"projectname": "Vantui Weapp For Uni-app",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {
@@ -42,8 +42,8 @@
 				},
 				{
 					"id": -1,
-					"name": "pages/post/postDetail",
-					"pathName": "pages/post/postDetail",
+					"name": "pages/user/myfans",
+					"pathName": "pages/user/myfans",
 					"scene": null
 				}
 			]

@@ -19,15 +19,15 @@
 		<!-- 获赞 粉丝 关注 -->
 		<view class="flex-space-around pdt15 white-bg">
 			<view class="tcenter">
-				<view class="font-16">2</view>
+				<view class="font-16">{{info.praise}}</view>
 				<view class="font-12 dy-font-color">获赞</view>
 			</view>
-			<view class="tcenter">
-				<view class="font-16">2</view>
+			<view class="tcenter" @click="navTo('/pages/user/myfans')">
+				<view class="font-16">{{info.follows}}</view>
 				<view class="font-12 dy-font-color">关注</view>
 			</view>
-			<view class="tcenter">
-				<view class="font-16">2</view>
+			<view class="tcenter" @click="navTo('/pages/user/myfans')">
+				<view class="font-16">{{info.fans}}</view>
 				<view class="font-12 dy-font-color">粉丝</view>
 			</view>
 		</view>
@@ -41,7 +41,7 @@
 				</view>
 			</view>
 		  </van-tab>
-		  <van-tab title="作品">
+		  <van-tab title="喜欢">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
 				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
@@ -63,10 +63,14 @@
 		data() {
 			return {
 				info: {
+					objectId: '',	// 用户Id
 					nickName: '用户昵称',	// 用户昵称
 					avatarUrl: '/static/logo/logo.png',	// 头像
 					gender: 1,	// 性别 1-男
 					autograph: '签名',	// 签名
+					follows: 0,	// 关注数
+					fans: 0,	// 粉丝数
+					praise: 0,	// 赞数
 				},
 				pageSetting: {
 					pageIndex: 1,	// 页码
@@ -81,6 +85,13 @@
 			...mapState(['hasLogin','userInfo'])
 		},
 		async onLoad() {
+			let that = this;
+			uni.getStorage({
+			    key: 'userInfo',
+			    success: function (res) {
+					that.info.objectId = res.data.objectId;
+			    }
+			});
 		},
 		onReady(){
 			this.getUserInfo();
@@ -101,6 +112,12 @@
 			}
 		},
 		methods: {
+			// 跳转
+			navTo(url){
+				uni.navigateTo({
+					url: url + '?objectId=' + this.info.objectId
+				})
+			},
 			// 详情、结果
 			navToDetails(id){
 				uni.navigateTo({
@@ -115,9 +132,9 @@
 				});
 				const query = that.Bmob.Query('_User');
 				query.get(that.userInfo.objectId).then(res => {
-					uni.hideLoading();
 					that.info = res;
 				    console.log(res)
+					uni.hideLoading();
 				}).catch(err => {
 				  console.log(err)
 				})
@@ -131,17 +148,18 @@
 				var query = that.Bmob.Query('postList');
 				query.limit(10);	// 每页条数
 				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
-				query.order("-updatedAt");
+				query.order("-createdAt");
 				query.include("author", "_user");
+				query.equalTo("author", "==", that.info.objectId);
 				query.count().then(res => {
 					if(res.count === 0){
 						that.postList = []
 					}else{
 						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
 						query.find().then(res => {
-							uni.hideLoading();
 							that.pageSetting.pageIndex += 1;
 							that.postList = that.postList.concat(res);
+							uni.hideLoading();
 						});
 					}
 				});

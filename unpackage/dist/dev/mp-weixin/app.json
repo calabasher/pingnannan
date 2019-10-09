@@ -4,7 +4,8 @@
     "pages/post/postDetail",
     "pages/write/write",
     "pages/authorize/authorize",
-    "pages/user/myzone"
+    "pages/user/myzone",
+    "pages/user/myfans"
   ],
   "subPackages": [],
   "window": {

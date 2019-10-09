@@ -50,6 +50,17 @@
 					"bounce": "none"
 				}
 			}
+		},{
+			"path": "pages/user/myfans",
+			"style" : {
+				"navigationBarTitleText" : "我的粉丝",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"backgroundColor": "#F6F6F6",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

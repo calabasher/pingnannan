@@ -22,7 +22,7 @@
     <!-- 图片区域 -->
     <view class="img-zone">
       <view v-for="(imgItem, imgIndex) in postObj.images" :key="imgIndex" v-if="images.length !== 0" class="img-cell">
-        <img :src="imgItem" @click.stop="postImgList(postObj.images, imgIndex)" class="img-item"/>
+        <img :src="imgItem" @click.stop="preImg(imgIndex)" class="img-item"/>
       </view>
     </view>
     <!-- 底部，评论，点赞，转发区域 -->
@@ -30,12 +30,12 @@
       <!-- 喜欢收藏 -->
       <view @click.stop="addMyLike(postObj)" class="flex-center width-33 tcenter" style="vertical-align: middle;">
 		  <view><van-icon size="20px" name="like-o" /></view>
-          <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
+          <view class="font-14 pdb5 mgl5">{{postObj.likes}}</view>
       </view>
       <!-- 评论 -->
       <view @click.stop="openCommentsPop(postObj)" class="flex-center width-33 tcenter">
         <view><van-icon size="20px" name="comment-o" /></view>
-        <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
+        <view class="font-14 pdb5 mgl5">{{postObj.comments}}</view>
       </view>
       <!-- 转发分享 -->
       <view @click.stop="sharePost(postObj)" class="flex-center width-33 tcenter item-share">
@@ -148,14 +148,11 @@ export default {
       }
     },
     // 图片预览
-    postImgList (list, imgIndex) {
-      ImagePreview({
-        images: list,
-        startPosition: imgIndex,
-        onClose() {
-          // do something
-        }
-      });
+    preImg(index) {
+    	uni.previewImage({
+    		current: this.postObj.images[index],
+    		urls: this.postObj.images
+    	})
     },
     // 前往用户主页
     toUserZone () {
