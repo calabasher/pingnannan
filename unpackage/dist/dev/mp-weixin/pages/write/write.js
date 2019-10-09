@@ -217,6 +217,8 @@ var sizeType = [
       query.set('author', poiID);
       query.set("contents", that.contents);
       query.set("view", 0);
+      query.set("likes", 0);
+      query.set("comments", 0);
       query.set("images", that.imageList);
       query.save().then(function (res) {
         uni.hideLoading();

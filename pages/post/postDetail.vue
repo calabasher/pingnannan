@@ -14,7 +14,11 @@
 			</view>
 		</view>
 		<view class="white-bg">
-			<view class="pd15 border-bottom" v-for="item in commentsList" :key="item.objectId">
+			<view class="tcenter" v-if="commentsList.length === 0" >
+				<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
+				<text class="pdt20 dy-font-color">暂无评论，快来发表你的评论吧</text>
+			</view>
+			<view class="pd15 border-bottom" v-else v-for="item in commentsList" :key="item.objectId">
 				<view class=" flex-space-between">
 					<view class="flex-align-center">
 						<image :src="item.own.avatarUrl" class="van-avatar-large"></image>
@@ -28,14 +32,10 @@
 				<view class="mgt10">{{item.content}}</view>
 			</view>
 		</view>
-		<view class="bottom-space"></view>
+		<view class="bottom-space white-bg"></view>
 		<view class="width-100 pdt5 pdb5 pdl10 pdr10 flex-space-between border-top white-bg input-cmt-zone">
-		  <van-field
-			:value="commentValue"
-			class="width-80"
-			placeholder="期待您的评论"
-		  />
-		  <van-button type="info" size="small" class="width-20" :disabled=" commentValue ? false : true">发送</van-button>
+		  <input type="text" class="width-80 mgt10 mgb10" placeholder="期待您的评论" v-model="commentValue" />
+		  <van-button type="info" size="small" class="width-20" :disabled=" commentValue ? false : true" @click="sendComments">发送</van-button>
 		</view>
 	</view>
 </template>
@@ -105,10 +105,56 @@
 				query.equalTo("attrPost","==", that.postId);
 				query.include("own", "_user");
 				query.find().then(res => {
-					uni.hideLoading();
+					that.commentsList = []
 				    that.commentsList = res;
+					uni.hideLoading();
 				});
-			}
+			},
+			// 发表评论
+			sendComments () {
+				uni.showLoading({
+					title: '加载中'
+				});
+				let that = this;
+				var currentUser = that.Bmob.User.current(); // 当前用户
+				var objectId = currentUser.objectId; // 当前用户Id
+				
+				// Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+				const pointerUser = that.Bmob.Pointer('_User')
+				const pUserID = pointerUser.set(objectId)
+				
+				const pointerPost = that.Bmob.Pointer('postList')
+				const pPostID = pointerPost.set(that.postId)
+				
+				var query = that.Bmob.Query('comment');
+				
+				query.set('own',pUserID)	// 绑定的用户id
+				query.set('attrPost',pPostID)	// 绑定的帖子id
+				query.set("content", that.commentValue)
+				query.save().then(res => {
+					uni.hideLoading();
+					uni.showToast({
+						title: '评论成功',
+						icon: 'success'
+					})
+					that.commentValue = '';
+					that.updatePost();
+					that.getComments();
+				}).catch(err => {
+				  console.log(err)
+				})
+			},
+			// 更新帖子表的评论数
+			updatePost() {
+				let that = this;
+				var query = that.Bmob.Query('postList');		
+				query.get(that.postId).then(res => {
+				  res.increment('comments')	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+				  res.save()
+				}).catch(err => {
+				  console.log(err)
+				})
+			},
 		}
 	}
 </script>
@@ -120,5 +166,9 @@
 	.input-cmt-zone{
 		position: fixed;
 		bottom: 0;
+	}
+	.no-data{
+		width: 155px;
+		height: 128px;
 	}
 </style>

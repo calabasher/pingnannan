@@ -16,11 +16,11 @@
         </view>
       </view>
     </view>
-    <view class="pd5" v-html="postObj.contents">
-      {{postObj.contents}}
+    <view class="pd5">
+       <text>{{postObj.contents}}</text>
     </view>
     <!-- 图片区域 -->
-    <view class="img-zone">
+    <view class="img-zone" v-if="images.length !== 0">
       <view v-for="(imgItem, imgIndex) in postObj.images" :key="imgIndex" v-if="images.length !== 0" class="img-cell">
         <img :src="imgItem" @click.stop="preImg(imgIndex)" class="img-item"/>
       </view>

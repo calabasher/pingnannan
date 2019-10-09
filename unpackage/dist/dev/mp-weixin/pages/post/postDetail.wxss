@@ -5,4 +5,8 @@
   position: fixed;
   bottom: 0;
 }
+.no-data {
+  width: 155px;
+  height: 128px;
+}
 

@@ -31,7 +31,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 3,
 			"list": [
 				{
 					"id": -1,
@@ -44,6 +44,20 @@
 					"id": -1,
 					"name": "pages/user/myfans",
 					"pathName": "pages/user/myfans",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/post/postDetail",
+					"pathName": "pages/post/postDetail",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/write/write",
+					"pathName": "pages/write/write",
 					"scene": null
 				}
 			]

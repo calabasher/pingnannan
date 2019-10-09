@@ -188,8 +188,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
     return {
       info: {
         objectId: '', // 用户Id
-        nickName: '用户昵称', // 用户昵称
-        avatarUrl: '/static/logo/logo.png', // 头像
+        nickName: '未登录', // 用户昵称
+        avatarUrl: '/static/logo/no-login.png', // 头像
         gender: 1, // 性别 1-男
         autograph: '签名', // 签名
         follows: 0, // 关注数

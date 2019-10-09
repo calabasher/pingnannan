@@ -32,7 +32,7 @@
 			</view>
 		</view>
 		<view class="white-bg space"></view>
-		<van-tabs sticky swipeable class="mgt15">
+		<van-tabs sticky swipeable class="mgt15 van-tabs-self">
 		  <van-tab title="作品">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
@@ -64,8 +64,8 @@
 			return {
 				info: {
 					objectId: '',	// 用户Id
-					nickName: '用户昵称',	// 用户昵称
-					avatarUrl: '/static/logo/logo.png',	// 头像
+					nickName: '未登录',	// 用户昵称
+					avatarUrl: '/static/logo/no-login.png',	// 头像
 					gender: 1,	// 性别 1-男
 					autograph: '签名',	// 签名
 					follows: 0,	// 关注数
@@ -176,5 +176,8 @@
 		background-color: #fff;
 		width: 18px;
 		height: 18px;
+	}
+	.van-tabs-self .van-tab {
+		padding-top: 5px;
 	}
 </style>

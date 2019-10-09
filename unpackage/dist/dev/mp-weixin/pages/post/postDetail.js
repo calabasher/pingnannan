@@ -229,8 +229,54 @@ __webpack_require__.r(__webpack_exports__);
       query.equalTo("attrPost", "==", that.postId);
       query.include("own", "_user");
       query.find().then(function (res) {
-        uni.hideLoading();
+        that.commentsList = [];
         that.commentsList = res;
+        uni.hideLoading();
+      });
+    },
+    // 发表评论
+    sendComments: function sendComments() {
+      uni.showLoading({
+        title: '加载中' });
+
+      var that = this;
+      var currentUser = that.Bmob.User.current(); // 当前用户
+      var objectId = currentUser.objectId; // 当前用户Id
+
+      // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+      var pointerUser = that.Bmob.Pointer('_User');
+      var pUserID = pointerUser.set(objectId);
+
+      var pointerPost = that.Bmob.Pointer('postList');
+      var pPostID = pointerPost.set(that.postId);
+
+      var query = that.Bmob.Query('comment');
+
+      query.set('own', pUserID); // 绑定的用户id
+      query.set('attrPost', pPostID); // 绑定的帖子id
+      query.set("content", that.commentValue);
+      query.save().then(function (res) {
+        uni.hideLoading();
+        uni.showToast({
+          title: '评论成功',
+          icon: 'success' });
+
+        that.commentValue = '';
+        that.updatePost();
+        that.getComments();
+      }).catch(function (err) {
+        console.log(err);
+      });
+    },
+    // 更新帖子表的评论数
+    updatePost: function updatePost() {
+      var that = this;
+      var query = that.Bmob.Query('postList');
+      query.get(that.postId).then(function (res) {
+        res.increment('comments'); // 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+        res.save();
+      }).catch(function (err) {
+        console.log(err);
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
