@@ -525,5 +525,9 @@ page {
 	background-color: #fff;
 	line-height: 2;
 }
+.no-data{
+	width: 155px;
+	height: 128px;
+}
 /* 特殊样式-- 结束 */
 </style>

@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "post-card": "/components/postCard"
   }

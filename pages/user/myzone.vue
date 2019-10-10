@@ -32,21 +32,31 @@
 			</view>
 		</view>
 		<view class="white-bg space"></view>
-		<van-tabs sticky swipeable class="mgt15 van-tabs-self">
+		<van-tabs sticky swipeable class="mgt15 van-tabs-self" :active="tabIndex" @change="onChangeTab">
 		  <van-tab title="作品">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
-					<postCard :postObj="item"></postCard>
+				<view class="tcenter" v-if="postList.length === 0" >
+					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
+					<text class="pdt20 dy-font-color">暂无作品哟，感觉去发帖吧</text>
 				</view>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navToDetails(item.objectId)" v-else>
+					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(item,index)"></postCard>
+				</view>
+				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
 			</view>
 		  </van-tab>
 		  <van-tab title="喜欢">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navToDetails(item.objectId)">
-					<postCard :postObj="item"></postCard>
+				<view class="tcenter" v-if="favoriteList.length === 0" >
+					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
+					<text class="pdt20 dy-font-color">暂无喜欢哟，去首页看看吧</text>
 				</view>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navToDetails(item.postId.objectId)" v-else>
+					<postCard :postObj="item.postId"></postCard>
+				</view>
+				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSettingFav.pageIndex > pageSettingFav.totalPage ? '已经到底了' : '' }}</view>
 			</view>
 		  </van-tab>
 		</van-tabs>
@@ -62,6 +72,7 @@
 		},
 		data() {
 			return {
+				tabIndex: 0,	// 高亮tab
 				info: {
 					objectId: '',	// 用户Id
 					nickName: '未登录',	// 用户昵称
@@ -78,7 +89,14 @@
 					totalPage: 1,	// 总页数
 					totalSize: 0,	// 总条数数
 				},
+				pageSettingFav: {
+					pageIndex: 1,	// 页码
+					pageSize: 10,	// 每页页数
+					totalPage: 1,	// 总页数
+					totalSize: 0,	// 总条数数
+				},
 				postList: [],	// 帖子列表
+				favoriteList: [],	// 收藏的帖子
 			}
 		},
 		computed: {
@@ -95,7 +113,8 @@
 		},
 		onReady(){
 			this.getUserInfo();
-			this.getPostList();
+			this.getPostList();		// 获取帖子列表 -- 自己作品
+			this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
 		},
 		// 分享
 		onShareAppMessage() {
@@ -104,11 +123,29 @@
 				path: '/pages/index/index'
 			}
 		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			// this.onLoad();
+		},
+		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
+		onUnload() {
+		},
+		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
+		onHide(){
+			
+		},
 		// 到底
 		onReachBottom(){
-			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
-				//设置列表数据
-				this.getPostList()
+			if(this.tabIndex === 0){
+				if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
+					//设置列表数据
+					this.getPostList()
+				}
+			}else{
+				if (this.pageSettingFav.pageIndex <= this.pageSettingFav.totalPage) {
+					//设置列表数据
+					this.getFavoriteList()
+				}
 			}
 		},
 		methods: {
@@ -123,6 +160,10 @@
 				uni.navigateTo({
 					url: '/pages/post/postDetail?postId=' + id
 				})
+			},
+			// 切换tab
+			onChangeTab(e){
+				this.tabIndex = e.detail.index
 			},
 			// 获取用户信息
 			getUserInfo () {
@@ -139,7 +180,7 @@
 				  console.log(err)
 				})
 			},
-			// 获取帖子列表
+			// 获取帖子列表 -- 自己作品
 			getPostList() {
 				let that = this;
 				uni.showLoading({
@@ -163,6 +204,51 @@
 						});
 					}
 				});
+			},
+			// 获取帖子列表 -- 收藏喜欢
+			getFavoriteList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('favorite');
+				query.limit(10);	// 每页条数
+				query.skip(10 * (that.pageSettingFav.pageIndex - 1));	// 分页查询// 对score字段降序排列
+				query.order("-createdAt");
+				query.include("author,postId", "_User,postList");
+				query.equalTo("userId", "==", that.info.objectId);
+				query.count().then(res => {
+					if(res.count === 0){
+						that.favoriteList = []
+					}else{
+						that.pageSettingFav.totalPage = parseInt(res.count/that.pageSettingFav.pageSize) + 1
+						query.find().then(res => {
+							that.pageSettingFav.pageIndex += 1;
+							if(res.length > 0){
+								res.forEach( (v, i) => {
+									v.postId.author = v.author
+								})
+							}
+							that.favoriteList = that.favoriteList.concat(res);
+							uni.hideLoading();
+						});
+					}
+				});
+			},
+			// 删除帖子
+			deletePost: function (item, index) {
+			  let that = this;
+			  uni.showLoading();
+			  const query = that.Bmob.Query('postList')
+			  const favorite = that.Bmob.Query('favorite')
+			  favorite.destroy(item.objectId).then(res => {
+			    uni.hideLoading();
+			  	that.postList.splice(index, 1)
+			  })
+			  query.destroy(item.objectId).then(res => {
+			    uni.hideLoading();
+				that.postList.splice(index, 1)
+			  })
 			},
 		}
 	}

@@ -105,4 +105,9 @@
 </script>
 
 <style lang='scss'>
+	.van-avatar-small{
+		background-color: #fff;
+		width: 18px;
+		height: 18px;
+	}
 </style>

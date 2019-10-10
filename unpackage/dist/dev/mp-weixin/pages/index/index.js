@@ -209,6 +209,7 @@ __webpack_require__.r(__webpack_exports__);
 
   onReady: function onReady() {
   },
+
   // 分享
   onShareAppMessage: function onShareAppMessage() {
     return {

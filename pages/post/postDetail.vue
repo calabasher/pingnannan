@@ -4,7 +4,7 @@
 			<postCard :postObj="postInfo" :showPostOpt="false"></postCard>
 		</view>
 		<view class="flex-space-around font-24 white-bg mgb10">
-			<view class="font-24 width-50 tcenter"><van-icon name="like-o" /></view>
+			<view class="font-24 width-50 tcenter" @click="addFavorite"><van-icon :name=" isFavorite ? 'like' : 'like-o' " :color=" isFavorite ? 'red' : '' " /></view>
 			<button open-type="share" class="width-50 share-btn"><van-icon size="24px" name="share" /></button>
 		</view>
 		<view class="mgt10 white-bg pdt10">
@@ -49,16 +49,29 @@
 		},
 		data() {
 			return {
+				info: {
+					objectId: '',	// 用户Id
+				},
 				commentValue: '',	// 评论内容
 				postId: '',	// 帖子id
 				postInfo: {},	// 帖子信息
+				postAuthor: '',	// 发帖用户id
 				commentsList: [],	// 评论列表
+				isFavorite: false,	// 是否收藏
 			}
 		},
 		computed: {
 		},
 		async onLoad(option) {
+			let that = this;
 			this.postId = option.postId ? option.postId : '8604d6bb67';
+			uni.getStorage({
+			    key: 'userInfo',
+			    success: function (res) {
+					that.info.objectId = res.data.objectId;
+					that.getPostFavoriteStatus();
+			    }
+			});
 			this.getPost();
 			this.getComments();
 			this.updatePost('view')
@@ -80,7 +93,24 @@
 			// }
 		},
 		methods: {
-			// 获取帖子列表
+			// 获取帖子状态
+			getPostFavoriteStatus(){
+				let that = this;
+				const query = that.Bmob.Query('favorite');
+				query.equalTo("userId","==", that.info.objectId);
+				query.equalTo("postIdStr","==", that.postId);
+				query.find().then(res => {
+					if(res.length === 0){
+						that.isFavorite = false;
+					}else{
+						that.isFavorite = true;
+					}
+					uni.hideLoading();
+				}).catch(err => {
+				  
+				})
+			},
+			// 获取帖子
 			getPost() {
 				let that = this;
 				uni.showLoading({
@@ -91,7 +121,7 @@
 				query.get(that.postId).then(res => {
 					uni.hideLoading();
 					that.postInfo = res;
-				    console.log(res)
+					that.postAuthor = res.author.objectId;
 				}).catch(err => {
 				  console.log(err)
 				})
@@ -111,6 +141,7 @@
 					uni.hideLoading();
 				});
 			},
+			// 回复某人
 			reply(item){
 				this.commentValue = '@' +  item.own.nickName + ' '
 			},
@@ -159,6 +190,48 @@
 				  console.log(err)
 				})
 			},
+			// 帖子添加收藏与取消收藏
+			addFavorite(){
+				uni.showLoading({
+					title: '加载中'
+				});
+				let that = this;
+				
+				// 先查询是否收藏
+				const query = that.Bmob.Query('favorite');
+				query.equalTo("userId","==", that.info.objectId);
+				query.equalTo("postIdStr","==", that.postId);
+				
+				const favorite = that.Bmob.Pointer('favorite')
+				const fid = favorite.set(that.postId)
+				// query.equalTo("postId","==", fid);
+				
+				query.find().then(res => {
+					if(res.length === 0){
+						// 添加收藏  实际插入记录 
+						query.set('userId',that.info.objectId)	// 绑定的用户id
+						query.set('postId',fid)	// 绑定的用户id poster类型
+						query.set('postIdStr',that.postId)	// 绑定的用户id string类型
+						
+						const authorInfo = that.Bmob.Pointer('_User')
+						const postAuthor = authorInfo.set(that.postAuthor)
+						query.set('author',postAuthor)	// 绑定的发帖用户id poster类型
+						
+						query.save().then(res1 => {
+							that.isFavorite = true;
+							uni.hideLoading();
+						})
+					}else{
+						// 取消收藏  实际删除记录
+						query.destroy(res[0].objectId).then(res2 => {
+						  that.isFavorite = false;
+						  uni.hideLoading();
+						})
+					}
+				}).catch(err => {
+				  
+				})
+			}
 		}
 	}
 </script>
@@ -170,9 +243,5 @@
 	.input-cmt-zone{
 		position: fixed;
 		bottom: 0;
-	}
-	.no-data{
-		width: 155px;
-		height: 128px;
 	}
 </style>

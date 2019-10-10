@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "主页",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "post-card": "/components/postCard"
   }

@@ -31,12 +31,26 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 2,
 			"list": [
 				{
 					"id": -1,
 					"name": "pages/write/write",
 					"pathName": "pages/write/write",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/post/postDetail",
+					"pathName": "pages/post/postDetail",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/user/myzone",
+					"pathName": "pages/user/myzone",
 					"scene": null
 				}
 			]

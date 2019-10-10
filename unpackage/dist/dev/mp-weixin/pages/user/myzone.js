@@ -178,6 +178,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var postCard = function postCard() {return __webpack_require__.e(/*! import() | components/postCard */ "components/postCard").then(__webpack_require__.bind(null, /*! @/components/postCard */ 75));};var _default =
 
 {
@@ -186,6 +196,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
 
   data: function data() {
     return {
+      tabIndex: 0, // 高亮tab
       info: {
         objectId: '', // 用户Id
         nickName: '未登录', // 用户昵称
@@ -202,7 +213,14 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
         totalPage: 1, // 总页数
         totalSize: 0 // 总条数数
       },
-      postList: [] // 帖子列表
+      pageSettingFav: {
+        pageIndex: 1, // 页码
+        pageSize: 10, // 每页页数
+        totalPage: 1, // 总页数
+        totalSize: 0 // 总条数数
+      },
+      postList: [], // 帖子列表
+      favoriteList: [] // 收藏的帖子
     };
   },
   computed: _objectSpread({},
@@ -219,7 +237,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
 
   onReady: function onReady() {
     this.getUserInfo();
-    this.getPostList();
+    this.getPostList(); // 获取帖子列表 -- 自己作品
+    this.getFavoriteList(); // 获取帖子列表 -- 收藏喜欢
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -228,11 +247,29 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       path: '/pages/index/index' };
 
   },
+  // 下拉刷新
+  onPullDownRefresh: function onPullDownRefresh() {
+    // this.onLoad();
+  },
+  // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
+  onUnload: function onUnload() {
+  },
+  // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
+  onHide: function onHide() {
+
+  },
   // 到底
   onReachBottom: function onReachBottom() {
-    if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
-      //设置列表数据
-      this.getPostList();
+    if (this.tabIndex === 0) {
+      if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
+        //设置列表数据
+        this.getPostList();
+      }
+    } else {
+      if (this.pageSettingFav.pageIndex <= this.pageSettingFav.totalPage) {
+        //设置列表数据
+        this.getFavoriteList();
+      }
     }
   },
   methods: {
@@ -247,6 +284,10 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       uni.navigateTo({
         url: '/pages/post/postDetail?postId=' + id });
 
+    },
+    // 切换tab
+    onChangeTab: function onChangeTab(e) {
+      this.tabIndex = e.detail.index;
     },
     // 获取用户信息
     getUserInfo: function getUserInfo() {
@@ -263,7 +304,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
         console.log(err);
       });
     },
-    // 获取帖子列表
+    // 获取帖子列表 -- 自己作品
     getPostList: function getPostList() {
       var that = this;
       uni.showLoading({
@@ -286,6 +327,51 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
             uni.hideLoading();
           });
         }
+      });
+    },
+    // 获取帖子列表 -- 收藏喜欢
+    getFavoriteList: function getFavoriteList() {
+      var that = this;
+      uni.showLoading({
+        title: '加载中' });
+
+      var query = that.Bmob.Query('favorite');
+      query.limit(10); // 每页条数
+      query.skip(10 * (that.pageSettingFav.pageIndex - 1)); // 分页查询// 对score字段降序排列
+      query.order("-createdAt");
+      query.include("author,postId", "_User,postList");
+      query.equalTo("userId", "==", that.info.objectId);
+      query.count().then(function (res) {
+        if (res.count === 0) {
+          that.favoriteList = [];
+        } else {
+          that.pageSettingFav.totalPage = parseInt(res.count / that.pageSettingFav.pageSize) + 1;
+          query.find().then(function (res) {
+            that.pageSettingFav.pageIndex += 1;
+            if (res.length > 0) {
+              res.forEach(function (v, i) {
+                v.postId.author = v.author;
+              });
+            }
+            that.favoriteList = that.favoriteList.concat(res);
+            uni.hideLoading();
+          });
+        }
+      });
+    },
+    // 删除帖子
+    deletePost: function deletePost(item, index) {
+      var that = this;
+      uni.showLoading();
+      var query = that.Bmob.Query('postList');
+      var favorite = that.Bmob.Query('favorite');
+      favorite.destroy(item.objectId).then(function (res) {
+        uni.hideLoading();
+        that.postList.splice(index, 1);
+      });
+      query.destroy(item.objectId).then(function (res) {
+        uni.hideLoading();
+        that.postList.splice(index, 1);
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

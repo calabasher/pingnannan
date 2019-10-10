@@ -76,7 +76,7 @@
 				postClassId: '',	// 帖子分类的id， 默认为空
 			}
 		},
-		// 监听页面卸载
+		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
 		onUnload() {
 		    this.imageList = [],
 			this.sourceTypeIndex = 2,
@@ -95,6 +95,7 @@
 			    }
 			});
 		},
+		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
 		onHide(){
 		},
 		methods: {

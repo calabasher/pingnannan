@@ -173,19 +173,32 @@ __webpack_require__.r(__webpack_exports__);
 
   data: function data() {
     return {
+      info: {
+        objectId: '' // 用户Id
+      },
       commentValue: '', // 评论内容
       postId: '', // 帖子id
       postInfo: {}, // 帖子信息
-      commentsList: [] // 评论列表
+      postAuthor: '', // 发帖用户id
+      commentsList: [], // 评论列表
+      isFavorite: false // 是否收藏
     };
   },
   computed: {},
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              that = this;
               this.postId = option.postId ? option.postId : '8604d6bb67';
+              uni.getStorage({
+                key: 'userInfo',
+                success: function success(res) {
+                  that.info.objectId = res.data.objectId;
+                  that.getPostFavoriteStatus();
+                } });
+
               this.getPost();
               this.getComments();
-              this.updatePost('view');case 4:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              this.updatePost('view');case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },
@@ -204,7 +217,24 @@ __webpack_require__.r(__webpack_exports__);
     // }
   },
   methods: {
-    // 获取帖子列表
+    // 获取帖子状态
+    getPostFavoriteStatus: function getPostFavoriteStatus() {
+      var that = this;
+      var query = that.Bmob.Query('favorite');
+      query.equalTo("userId", "==", that.info.objectId);
+      query.equalTo("postIdStr", "==", that.postId);
+      query.find().then(function (res) {
+        if (res.length === 0) {
+          that.isFavorite = false;
+        } else {
+          that.isFavorite = true;
+        }
+        uni.hideLoading();
+      }).catch(function (err) {
+
+      });
+    },
+    // 获取帖子
     getPost: function getPost() {
       var that = this;
       uni.showLoading({
@@ -215,7 +245,7 @@ __webpack_require__.r(__webpack_exports__);
       query.get(that.postId).then(function (res) {
         uni.hideLoading();
         that.postInfo = res;
-        console.log(res);
+        that.postAuthor = res.author.objectId;
       }).catch(function (err) {
         console.log(err);
       });
@@ -235,6 +265,7 @@ __webpack_require__.r(__webpack_exports__);
         uni.hideLoading();
       });
     },
+    // 回复某人
     reply: function reply(item) {
       this.commentValue = '@' + item.own.nickName + ' ';
     },
@@ -281,6 +312,48 @@ __webpack_require__.r(__webpack_exports__);
         res.save();
       }).catch(function (err) {
         console.log(err);
+      });
+    },
+    // 帖子添加收藏与取消收藏
+    addFavorite: function addFavorite() {
+      uni.showLoading({
+        title: '加载中' });
+
+      var that = this;
+
+      // 先查询是否收藏
+      var query = that.Bmob.Query('favorite');
+      query.equalTo("userId", "==", that.info.objectId);
+      query.equalTo("postIdStr", "==", that.postId);
+
+      var favorite = that.Bmob.Pointer('favorite');
+      var fid = favorite.set(that.postId);
+      // query.equalTo("postId","==", fid);
+
+      query.find().then(function (res) {
+        if (res.length === 0) {
+          // 添加收藏  实际插入记录 
+          query.set('userId', that.info.objectId); // 绑定的用户id
+          query.set('postId', fid); // 绑定的用户id poster类型
+          query.set('postIdStr', that.postId); // 绑定的用户id string类型
+
+          var authorInfo = that.Bmob.Pointer('_User');
+          var postAuthor = authorInfo.set(that.postAuthor);
+          query.set('author', postAuthor); // 绑定的发帖用户id poster类型
+
+          query.save().then(function (res1) {
+            that.isFavorite = true;
+            uni.hideLoading();
+          });
+        } else {
+          // 取消收藏  实际删除记录
+          query.destroy(res[0].objectId).then(function (res2) {
+            that.isFavorite = false;
+            uni.hideLoading();
+          });
+        }
+      }).catch(function (err) {
+
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

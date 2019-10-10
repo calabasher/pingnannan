@@ -85,6 +85,7 @@
 		},
 		onReady(){
 		},
+		
 		// 分享
 		onShareAppMessage() {
 			return {

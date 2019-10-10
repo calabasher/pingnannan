@@ -11,9 +11,12 @@
       </view>
       <!-- 右边位置 -->
       <view class="flex-center">
-        <view>
+        <view v-if=" postType === 0 ">
           <van-button icon="plus" @click.stop="addFollow(postObj)" type="default" size="small">+关注</van-button>
         </view>
+		<view class="" v-else-if=" postType === 1 " @click.stop="deletePost(postObj)">
+		  <van-icon name="ellipsis" />
+		</view>
       </view>
     </view>
     <view class="pd5">
@@ -55,6 +58,10 @@ export default {
       	return {};
       }
     },
+	postType:{
+		type: Number,
+		default: 0,	// 0 -- 默认  1 -- 自己作品
+	},
 	showPostOpt: {
       type: Boolean,
       default: true,
@@ -64,7 +71,6 @@ export default {
   },
   data () {
     return {
-
     };
   },
   mounted () {
@@ -92,16 +98,21 @@ export default {
 	  }).catch(err => {
 	      console.log(err)
 	  })
-      // if(that.isLogin){
-      //   if (item.isFollow === 1) {
-      //     item.isFollow = 0;
-      //     that.$toast('关注成功！');
-      //   }
-      // }else {
-      //   that.$router.push({  //核心语句
-      //     path:'/login'   //跳转的路径
-      //   })
-      // }
+    },
+	// 删除帖子
+	deletePost: function (item) {
+		let that = this;
+		uni.showModal({
+		    title: '提示',
+		    content: '删除后，所有相关的信息都将被删除，是否删除？',
+		    success: function (res) {
+		        if (res.confirm) {
+		            that.$emit('on-delete-post')
+		        } else if (res.cancel) {
+		            console.log('用户点击取消');
+		        }
+		    }
+		});
     },
     // 图片预览
     preImg(index) {
@@ -117,10 +128,6 @@ export default {
     // 前往帖子分类
     toPostClassify (item) {
       this.$router.push({ name: 'postClassify', params: { containerid: item.containerid }})
-    },
-    // 前往顶赞用户列表
-    toTopPraiseUserList (item) {
-      this.$router.push({ name: 'topPraiseUserList', params: { postId: item.postId }})
     },
   }
 };
@@ -147,5 +154,4 @@ export default {
     width: 100%;
     height: 100%;
   }
-
 </style>

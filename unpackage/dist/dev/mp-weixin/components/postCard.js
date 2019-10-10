@@ -152,6 +152,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 var _default2 =
 {
   // 父子通信
@@ -162,6 +165,10 @@ var _default2 =
         return {};
       } },
 
+    postType: {
+      type: Number,
+      default: 0 // 0 -- 默认  1 -- 自己作品
+    },
     showPostOpt: {
       type: Boolean,
       default: true } },
@@ -171,7 +178,6 @@ var _default2 =
 
   data: function data() {
     return {};
-
 
   },
   mounted: function mounted() {
@@ -199,16 +205,21 @@ var _default2 =
       }).catch(function (err) {
         console.log(err);
       });
-      // if(that.isLogin){
-      //   if (item.isFollow === 1) {
-      //     item.isFollow = 0;
-      //     that.$toast('关注成功！');
-      //   }
-      // }else {
-      //   that.$router.push({  //核心语句
-      //     path:'/login'   //跳转的路径
-      //   })
-      // }
+    },
+    // 删除帖子
+    deletePost: function deletePost(item) {
+      var that = this;
+      uni.showModal({
+        title: '提示',
+        content: '删除后，所有相关的信息都将被删除，是否删除？',
+        success: function success(res) {
+          if (res.confirm) {
+            that.$emit('on-delete-post');
+          } else if (res.cancel) {
+            console.log('用户点击取消');
+          }
+        } });
+
     },
     // 图片预览
     preImg: function preImg(index) {
@@ -224,10 +235,6 @@ var _default2 =
     // 前往帖子分类
     toPostClassify: function toPostClassify(item) {
       this.$router.push({ name: 'postClassify', params: { containerid: item.containerid } });
-    },
-    // 前往顶赞用户列表
-    toTopPraiseUserList: function toTopPraiseUserList(item) {
-      this.$router.push({ name: 'topPraiseUserList', params: { postId: item.postId } });
     } } };exports.default = _default2;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
