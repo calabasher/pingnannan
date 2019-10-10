@@ -225,7 +225,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       var query = that.Bmob.Query('userList');
       query.limit(10); // 每页条数
       query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询// 对score字段降序排列
-      query.equalTo("userIdStr", "==", that.myObjectId);
+      query.equalTo("userIdStr", "==", that.userObjectId);
       query.include("beFollowedUserId", "_User");
       query.count().then(function (res) {
         if (res.count === 0) {
@@ -241,26 +241,69 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
         }
       });
     },
-    // 取消关注
-    noFollow: function noFollow(item, index) {
+    // 加关注
+    addFollow: function addFollow(item) {
       uni.showLoading({
         title: '加载中' });
 
       var that = this;
-      var query = that.Bmob.Query('userList');
-      // 取消关注  实际删除记录
-      query.destroy(item.objectId).then(function (res2) {
-        var userQuery = that.Bmob.Query('_User');
-        userQuery.get(that.myObjectId).then(function (res) {
-          res.increment('follows', -1);
-          res.save();
-          uni.showToast({
-            title: '已取消' });
 
-          that.userList.splice(index, 1);
-        }).catch(function (err) {
-          console.log(err);
-        });
+      // 先查询是否关注
+      var query = that.Bmob.Query('userList');
+      query.equalTo("userId", "==", that.myObjectId);
+
+      var userDB = that.Bmob.Pointer('_User');
+      var myId = userDB.set(that.myObjectId);
+      var otherId = userDB.set(item.beFollowedUserId.objectId);
+
+      query.find().then(function (res) {
+        if (res.length === 0) {
+          // 添加关注  实际插入记录 
+          query.set('userIdStr', that.myObjectId); // 绑定的用户id
+          query.set('beFollowedUserIdStr', item.beFollowedUserId.objectId); // 绑定的用户id string类型
+          query.set('userId', myId); // 绑定的用户id poster类型
+          query.set('beFollowedUserId', otherId); // 绑定的用户id string类型
+
+          query.save().then(function (res1) {
+            uni.showToast({
+              title: '成功关注' });
+
+            uni.hideLoading();
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', 'add', true);
+            }, 1000);
+          });
+        } else {
+          // 取消关注  实际删除记录
+          query.destroy(res[0].objectId).then(function (res2) {
+            uni.showToast({
+              title: '取消关注' });
+
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', false);
+              uni.hideLoading();
+            }, 1000);
+          });
+        }
+      }).catch(function (err) {
+
+      });
+    },
+    // 更新用户表的关注数
+    updatePost: function updatePost(userId, param, isAdd) {
+      var that = this;
+      uni.showLoading({ title: '加载中' });
+      var query = that.Bmob.Query('_User');
+      query.get(userId).then(function (res) {
+        if (isAdd) {
+          res.increment(param); // 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+        } else {
+          res.increment(param, -1);
+        }
+        res.save();
+        uni.hideLoading();
+      }).catch(function (err) {
+        console.log(err);
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

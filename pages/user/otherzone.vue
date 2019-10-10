@@ -3,7 +3,6 @@
 </template>
 
 <script>
-	import { mapState } from 'vuex'; 
 	import zone from '@/components/pages-cp/zone';
 	export default {
 		components: {
@@ -24,23 +23,24 @@
 			}
 		},
 		computed: {
-			...mapState(['hasLogin','userInfo'])
 		},
-		async onLoad() {
-			let that = this;
-			uni.getStorage({
-			    key: 'userInfo',
-			    success: function (res) {
-					that.info.objectId = res.data.objectId;
-					that.getUserInfo();
-			    }
-			});
+		async onLoad(option) {
+			if(option.userId && option.userId !== 'undefined'){
+				this.getUserInfo(option.userId)
+			}else{
+				uni.showModal({
+				    title: '糟糕！',
+				    content: '用户找不到了',
+					showCancel: false,
+				    success: function (res) {
+				        if (res.confirm) {
+				            uni.navigateBack()
+				        } 
+				    }
+				});
+			}
 		},
 		onReady(){
-			
-		},
-		onShow(){
-			
 		},
 		// 分享
 		onShareAppMessage() {
@@ -60,27 +60,21 @@
 		onHide(){
 			
 		},
-		onShow(){
-			
-		},
-		// 到底
-		onReachBottom(){
-		},
 		methods: {
 			// 获取用户信息
-			getUserInfo () {
+			getUserInfo(userId){
 				let that = this;
 				uni.showLoading({
 					title: '加载中'
 				});
-				const query = that.Bmob.Query('_User');
-				query.get(that.userInfo.objectId).then(res => {
-					that.info = res;
-					uni.hideLoading();
-				}).catch(err => {
-				  console.log(err)
+				var query = that.Bmob.Query('_User');
+				query.get(userId).then(res => {
+				    that.info = res;
+					uni.setNavigationBarTitle({
+					    title: res.nickName
+					});
 				})
-			},
+			}
 		}
 	}
 </script>

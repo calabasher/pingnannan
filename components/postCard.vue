@@ -2,7 +2,7 @@
   <!-- 列表单个 -->
   <view class="font-14">
     <view class="flex-space-between">
-      <view class="flex-align-center" @click.stop="toUserZone">
+      <view class="flex-align-center" @click.stop="toZone(postObj)">
         <img class="van-avatar" :src="postObj.author.avatarUrl">
         <view class="mgl10">
           <view>{{postObj.author.nickName}}</view>
@@ -12,7 +12,7 @@
       <!-- 右边位置 -->
       <view class="flex-center">
         <view v-if=" myObjectId !== postObj.author.objectId " @click.stop="addFollow(postObj)">
-          <van-button icon="plus" type="default" size="small">+关注</van-button>
+          <van-button icon="plus" type="default" size="small">关注</van-button>
         </view>
 		<view class="" v-else @click.stop="deletePost(postObj)">
 		  <van-icon name="ellipsis" />
@@ -89,6 +89,15 @@ export default {
     },
   },
   methods: {
+	toZone(){
+		if(this.myObjectId !== this.postObj.author.objectId){
+			this.navTo('/pages/user/otherzone?userId=' + this.postObj.author.objectId)
+		}
+	},
+	// 跳转
+	navTo(url){
+		uni.navigateTo({ url: url })
+	},
     // 点击分享
     sharePost (item) {
       let sharePopShow = true;
@@ -182,14 +191,6 @@ export default {
 		  console.log(err)
 		})
 	},
-    // 前往用户主页
-    toUserZone () {
-      this.$router.push({ name: 'userzone', params: '' })
-    },
-    // 前往帖子分类
-    toPostClassify (item) {
-      this.$router.push({ name: 'postClassify', params: { containerid: item.containerid }})
-    },
   }
 };
 </script>

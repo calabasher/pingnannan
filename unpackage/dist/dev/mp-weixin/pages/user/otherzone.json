@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "主页",
+  "navigationBarTitleText": "",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "zone": "/components/pages-cp/zone"

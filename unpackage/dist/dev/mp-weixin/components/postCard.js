@@ -196,6 +196,15 @@ var _default2 =
     } },
 
   methods: {
+    toZone: function toZone() {
+      if (this.myObjectId !== this.postObj.author.objectId) {
+        this.navTo('/pages/user/otherzone?userId=' + this.postObj.author.objectId);
+      }
+    },
+    // 跳转
+    navTo: function navTo(url) {
+      uni.navigateTo({ url: url });
+    },
     // 点击分享
     sharePost: function sharePost(item) {
       var sharePopShow = true;
@@ -288,14 +297,6 @@ var _default2 =
       }).catch(function (err) {
         console.log(err);
       });
-    },
-    // 前往用户主页
-    toUserZone: function toUserZone() {
-      this.$router.push({ name: 'userzone', params: '' });
-    },
-    // 前往帖子分类
-    toPostClassify: function toPostClassify(item) {
-      this.$router.push({ name: 'postClassify', params: { containerid: item.containerid } });
     } } };exports.default = _default2;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

@@ -6,6 +6,7 @@
     "pages/write/write",
     "pages/authorize/authorize",
     "pages/user/myzone",
+    "pages/user/otherzone",
     "pages/user/myfans",
     "pages/user/myfollows"
   ],

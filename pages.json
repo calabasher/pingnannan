@@ -64,9 +64,20 @@
 				}
 			}
 		},{
+			"path": "pages/user/otherzone",
+			"style" : {
+				"navigationBarTitleText" : "",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"bounce": "none"
+				}
+			}
+		},{
 			"path": "pages/user/myfans",
 			"style" : {
-				"navigationBarTitleText" : "我的粉丝",
+				"navigationBarTitleText" : "粉丝列表",
 				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": false,
@@ -78,7 +89,7 @@
 		},{
 			"path": "pages/user/myfollows",
 			"style" : {
-				"navigationBarTitleText" : "我的关注",
+				"navigationBarTitleText" : "关注列表",
 				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": false,

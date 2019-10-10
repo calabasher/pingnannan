@@ -1,0 +1,12 @@
+.space {
+  height: 15px;
+}
+.van-avatar-small {
+  background-color: #fff;
+  width: 18px;
+  height: 18px;
+}
+.van-tabs-self .van-tab {
+  padding-top: 5px;
+}
+
