@@ -2,8 +2,11 @@
 	<view class="font-14">
 		<view class="pdl15 pdr15 flex-space-between">
 			<view class="flex-align-center">
-				<view class="mgr10">不限</view>
-				<van-icon name="arrow-down" />
+				<picker @change="bindPickerChange" :value="pickIndex" :range="pickList" range-key="name">
+					<view class="flex-align-center">
+						<view class="uni-input">{{pickList[pickIndex].name}}</view><van-icon name="arrow-down" />
+					</view>
+				</picker>
 			</view>
 			<van-search
 			  :value="value"
@@ -59,14 +62,26 @@
 				bannerList: [],	// 菜单分类列表
 				postClassList: [],	// 帖子分类
 				postList: [],	// 帖子列表
+				pickIndex: 0,
+				pickList: [{name: '不限'}],
+				localId: '',	// 地址的id， 默认为空
 			}
 		},
 		computed: {
 		},
 		async onLoad() {
+			let that = this;
+			//	获取地址
+			uni.getStorage({
+			    key: 'localId',
+			    success: function (res) {
+					that.localId = res.data ? res.data : '';
+					that.getPostList();
+			    }
+			});
+			this.getLocalList();
 			this.getBannerList();
 			this.getPostClassList();
-			this.getPostList();
 		},
 		onReady(){
 		},
@@ -88,6 +103,24 @@
 			// 详情、结果
 			navTo(url){
 				uni.navigateTo({ url: url })
+			},
+			// 获取地址列表
+			getLocalList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('local');
+				// 查询所有数据
+				query.find().then(res => {
+				  uni.hideLoading();
+				  that.pickList = that.pickList.concat(res);
+				  that.pickList.forEach( (v, i) => {
+					  if(v.objectId === that.localId){
+						that.pickIndex = i
+					  }
+				  })
+				});
 			},
 			// 获取广告图片
 			getBannerList() {
@@ -128,6 +161,11 @@
 				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
 				query.order("-updatedAt");
 				query.include("author,belongsClass", "_User,postClass");
+				// 如果选择了地址，则关联地址
+				if(that.localId){
+					query.equalTo("belongsLocal", "==", that.localId);
+				}
+				
 				query.count().then(res => {
 					if(res.count === 0){
 						that.postList = []
@@ -141,6 +179,23 @@
 						});
 					}
 				});
+			},
+			// 切换pick地址选择
+			bindPickerChange: function(e) {
+				let that = this;
+				this.pickIndex = e.target.value
+				this.localId = this.pickList[parseInt(this.pickIndex)].objectId ? this.pickList[parseInt(this.pickIndex)].objectId : ''
+				//更新地址
+				uni.setStorage({
+				  key: 'localId',
+				  data: that.localId,
+				  success: function () {
+					  console.log('更新地址成功')
+				  }
+				});
+				that.postList = [];
+				that.pageSetting.pageIndex = 1;
+				that.getPostList()
 			},
 		}
 	}

@@ -167,6 +167,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 {
   components: {
     postCard: postCard },
@@ -182,15 +185,27 @@ __webpack_require__.r(__webpack_exports__);
       },
       bannerList: [], // 菜单分类列表
       postClassList: [], // 帖子分类
-      postList: [] // 帖子列表
+      postList: [], // 帖子列表
+      pickIndex: 0,
+      pickList: [{ name: '不限' }],
+      localId: '' // 地址的id， 默认为空
     };
   },
   computed: {},
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              that = this;
+              //	获取地址
+              uni.getStorage({
+                key: 'localId',
+                success: function success(res) {
+                  that.localId = res.data ? res.data : '';
+                  that.getPostList();
+                } });
+
+              this.getLocalList();
               this.getBannerList();
-              this.getPostClassList();
-              this.getPostList();case 3:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              this.getPostClassList();case 5:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },
@@ -212,6 +227,24 @@ __webpack_require__.r(__webpack_exports__);
     // 详情、结果
     navTo: function navTo(url) {
       uni.navigateTo({ url: url });
+    },
+    // 获取地址列表
+    getLocalList: function getLocalList() {
+      var that = this;
+      uni.showLoading({
+        title: '加载中' });
+
+      var query = that.Bmob.Query('local');
+      // 查询所有数据
+      query.find().then(function (res) {
+        uni.hideLoading();
+        that.pickList = that.pickList.concat(res);
+        that.pickList.forEach(function (v, i) {
+          if (v.objectId === that.localId) {
+            that.pickIndex = i;
+          }
+        });
+      });
     },
     // 获取广告图片
     getBannerList: function getBannerList() {
@@ -252,6 +285,11 @@ __webpack_require__.r(__webpack_exports__);
       query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询// 对score字段降序排列
       query.order("-updatedAt");
       query.include("author,belongsClass", "_User,postClass");
+      // 如果选择了地址，则关联地址
+      if (that.localId) {
+        query.equalTo("belongsLocal", "==", that.localId);
+      }
+
       query.count().then(function (res) {
         if (res.count === 0) {
           that.postList = [];
@@ -265,6 +303,23 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       });
+    },
+    // 切换pick地址选择
+    bindPickerChange: function bindPickerChange(e) {
+      var that = this;
+      this.pickIndex = e.target.value;
+      this.localId = this.pickList[parseInt(this.pickIndex)].objectId ? this.pickList[parseInt(this.pickIndex)].objectId : '';
+      //更新地址
+      uni.setStorage({
+        key: 'localId',
+        data: that.localId,
+        success: function success() {
+          console.log('更新地址成功');
+        } });
+
+      that.postList = [];
+      that.pageSetting.pageIndex = 1;
+      that.getPostList();
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

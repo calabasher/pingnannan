@@ -158,6 +158,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -184,8 +194,11 @@ var sizeType = [
       sizeTypeIndex: 2,
       sizeType: ['压缩', '原图', '压缩或原图'],
       countIndex: 8,
-      count: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
-
+      count: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      pickIndex: 0,
+      pickList: [{ name: '不限' }],
+      postClassId: '' // 帖子分类的id， 默认为空
+    };
   },
   // 监听页面卸载
   onUnload: function onUnload() {
@@ -197,6 +210,7 @@ var sizeType = [
     this.countIndex = 8;
   },
   onLoad: function onLoad() {
+    this.getPostClassList();
     uni.getLocation({
       type: 'wgs84',
       success: function success(res) {
@@ -208,8 +222,35 @@ var sizeType = [
   onHide: function onHide() {
   },
   methods: {
+    // 获取分类列表
+    getPostClassList: function getPostClassList() {
+      var that = this;
+      uni.showLoading({
+        title: '加载中' });
+
+      var query = that.Bmob.Query('postClass');
+      // 查询所有数据
+      query.find().then(function (res) {
+        uni.hideLoading();
+        that.pickList = that.pickList.concat(res);
+      });
+    },
     // 用户发帖--内容和图片, 将该帖子关联该用户
     publish: function publish() {
+      if (this.contents.length < 15) {
+        uni.showToast({
+          title: '内容长度不低于15个字符',
+          icon: 'none' });
+
+        return;
+      }
+      if (this.contents.length > 150) {
+        uni.showToast({
+          title: '内容长度不得超过150个字符',
+          icon: 'none' });
+
+        return;
+      }
       uni.showLoading({
         title: '加载中' });
 
@@ -227,6 +268,14 @@ var sizeType = [
       query.set("likes", 0);
       query.set("comments", 0);
       query.set("images", that.imageList);
+
+      // 关联分类表
+      if (that.postClassId) {
+        var pointerPostClass = that.Bmob.Pointer('postClass');
+        var pPostClassID = pointerPostClass.set(that.postClassId);
+        query.set('belongsClass', pPostClassID); // 绑定的帖子分类id
+      }
+
       query.save().then(function (res) {
         uni.hideLoading();
         uni.showModal({
@@ -347,7 +396,29 @@ var sizeType = [
 
                 }return _context2.abrupt("return",
 
-                status);case 13:case "end":return _context2.stop();}}}, _callee2, this);}));function checkPermission(_x) {return _checkPermission.apply(this, arguments);}return checkPermission;}() } };exports.default = _default;
+                status);case 13:case "end":return _context2.stop();}}}, _callee2, this);}));function checkPermission(_x) {return _checkPermission.apply(this, arguments);}return checkPermission;}(),
+
+    // 选择分类提示
+    selectTips: function selectTips() {
+      uni.showToast({
+        title: '选择分类可以更好地被别人发现，当然，你也可以不选',
+        icon: 'none' });
+
+    },
+    // 切换pick分类选择
+    bindPickerChange: function bindPickerChange(e) {
+      this.pickIndex = e.target.value;
+      this.postClassId = this.pickList[parseInt(this.pickIndex)].objectId ? this.pickList[parseInt(this.pickIndex)].objectId : '';
+    } }
+
+  // watch: {
+  // 	columnsNum(value) {
+  // 	    this.set({
+  // 	        displayColumns: this.data.columns.slice(0, +value)
+  // 	    });
+  // 	}
+  // }
+};exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
