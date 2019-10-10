@@ -76,7 +76,6 @@
 			    key: 'localId',
 			    success: function (res) {
 					that.localId = res.data ? res.data : '';
-					that.getPostList();
 			    }
 			});
 			this.getLocalList();
@@ -85,7 +84,9 @@
 		},
 		onReady(){
 		},
-		
+		onShow(){
+			this.getPostList();
+		},
 		// 分享
 		onShareAppMessage() {
 			return {

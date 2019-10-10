@@ -200,7 +200,6 @@ __webpack_require__.r(__webpack_exports__);
                 key: 'localId',
                 success: function success(res) {
                   that.localId = res.data ? res.data : '';
-                  that.getPostList();
                 } });
 
               this.getLocalList();
@@ -209,7 +208,9 @@ __webpack_require__.r(__webpack_exports__);
 
   onReady: function onReady() {
   },
-
+  onShow: function onShow() {
+    this.getPostList();
+  },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
     return {
