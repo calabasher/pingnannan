@@ -75,7 +75,7 @@
 			uni.getStorage({
 			    key: 'localId',
 			    success: function (res) {
-					that.localId = res.data ? res.data : '';
+					that.localId = res.data ? res.data : ''; 
 			    }
 			});
 			this.getLocalList();
