@@ -75,6 +75,18 @@
 					"bounce": "none"
 				}
 			}
+		},{
+			"path": "pages/user/myfollows",
+			"style" : {
+				"navigationBarTitleText" : "我的关注",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"backgroundColor": "#F6F6F6",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

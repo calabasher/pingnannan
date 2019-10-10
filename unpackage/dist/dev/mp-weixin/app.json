@@ -6,7 +6,8 @@
     "pages/write/write",
     "pages/authorize/authorize",
     "pages/user/myzone",
-    "pages/user/myfans"
+    "pages/user/myfans",
+    "pages/user/myfollows"
   ],
   "subPackages": [],
   "window": {
@@ -97,6 +98,5 @@
     "van-collapse": "/wxcomponents/vant/collapse/index",
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
     "van-picker": "/wxcomponents/vant/picker/index"
-  },
-  "sitemapLocation": "sitemap97.json"
+  }
 }

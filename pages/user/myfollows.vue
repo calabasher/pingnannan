@@ -1,0 +1,141 @@
+<template>
+	<view class="wx-bg">
+		<view class="white-bg tcenter" v-if="userList.length === 0" >
+			<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
+			<text class="pdt20 dy-font-color">暂无关注，去首页看看吧</text>
+		</view>
+		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="navTo(item)">
+			<view class="flex-align-center">
+				<view class="">
+					<image class="van-avatar" :src="item.beFollowedUserId.avatarUrl"></image>
+				</view>
+				<view class="mgl10">
+					<view class="flex-align-center">
+						<view class="">{{item.beFollowedUserId.nickName}}</view>
+						<image :src="item.beFollowedUserId.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
+					</view>
+					<view class="">{{ item.beFollowedUserId.autograph ? item.beFollowedUserId.autograph : '暂无签名' }}</view>
+				</view>
+			</view>
+			<view class="" @click.stop="noFollow(item, index)">
+				<van-button icon="plus" type="default" size="small">取消关注</van-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import { mapState } from 'vuex'; 
+	import postCard from '@/components/postCard';
+	export default {
+		components: {
+			postCard
+		},
+		data() {
+			return {
+				myObjectId: '',	// 我的id
+				userObjectId: '',	// 用户Id
+				userList: [],	// 用户列表
+				pageSetting: {
+					pageIndex: 1,	// 页码
+					pageSize: 10,	// 每页页数
+					totalPage: 1,	// 总页数
+					totalSize: 0,	// 总条数数
+				},
+			}
+		},
+		computed: {
+			...mapState(['hasLogin','userInfo'])
+		},
+		async onLoad(option) {
+			let that = this;
+			that.userObjectId = option.objectId ? option.objectId : '17320dda35' ;
+			uni.getStorage({
+			    key: 'userInfo',
+			    success: function (res) {
+					that.myObjectId = res.data.objectId;
+			    }
+			});
+		},
+		onReady(){
+			this.getUserList();
+		},
+		// 分享
+		onShareAppMessage() {
+			return {
+				title: '事事通',
+				path: '/pages/index/index'
+			}
+		},
+		// 到底
+		onReachBottom(){
+			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
+				//设置列表数据
+				this.getUserList()
+			}
+		},
+		methods: {
+			// 详情、结果
+			navTo(id){
+				uni.navigateTo({
+					url: '/pages/post/postDetail?postId=' + id
+				})
+			},
+			// 获取用户列表
+			getUserList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('userList');
+				query.limit(10);	// 每页条数
+				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
+				query.equalTo("userIdStr", "==", that.myObjectId);
+				query.include("beFollowedUserId", "_User");
+				query.count().then(res => {
+					if(res.count === 0){
+						that.userList = []
+						uni.hideLoading();
+					}else{
+						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
+						query.find().then(res => {
+							that.pageSetting.pageIndex += 1;
+							that.userList = that.userList.concat(res);
+							uni.hideLoading();
+						});
+					}
+				});
+			},
+			// 取消关注
+			noFollow: function (item, index) {
+			  uni.showLoading({
+			  	title: '加载中'
+			  });
+			  let that = this;
+			  var query = that.Bmob.Query('userList');
+			  // 取消关注  实际删除记录
+			  query.destroy(item.objectId).then(res2 => {
+				var userQuery = that.Bmob.Query('_User');
+			  	userQuery.get(that.myObjectId).then(res => {
+			  		res.increment('follows', -1)
+			  	    res.save()
+			  		uni.showToast({
+			  			title: '已取消'
+			  		})
+			  		that.userList.splice(index, 1)
+			  	}).catch(err => {
+			  	  console.log(err)
+			  	})
+			  })
+			},
+		}
+	}
+</script>
+
+<style lang='scss'>
+	.van-avatar-small{
+		background-color: #fff;
+		width: 18px;
+		height: 18px;
+	}
+</style>

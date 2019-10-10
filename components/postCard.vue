@@ -165,7 +165,7 @@ export default {
     		urls: this.postObj.images
     	})
     },
-	// 更新用户表的关注数和粉丝数
+	// 更新用户表的关注数
 	updatePost(userId, param, isAdd) {
 		let that = this;
 		uni.showLoading({ title: '加载中' });

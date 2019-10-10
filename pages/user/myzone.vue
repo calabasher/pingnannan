@@ -22,7 +22,7 @@
 				<view class="font-16">{{info.praise}}</view>
 				<view class="font-12 dy-font-color">获赞</view>
 			</view>
-			<view class="tcenter" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
+			<view class="tcenter" @click="navTo('/pages/user/myfollows?objectId=' + info.objectId)">
 				<view class="font-16">{{info.follows}}</view>
 				<view class="font-12 dy-font-color">关注</view>
 			</view>
