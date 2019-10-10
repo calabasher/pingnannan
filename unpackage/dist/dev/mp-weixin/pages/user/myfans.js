@@ -196,7 +196,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   },
   methods: {
     // 详情、结果
-    navToDetails: function navToDetails(id) {
+    navTo: function navTo(id) {
       uni.navigateTo({
         url: '/pages/post/postDetail?postId=' + id });
 
@@ -207,19 +207,20 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       uni.showLoading({
         title: '加载中' });
 
-      var query = that.Bmob.Query('_User');
+      var query = that.Bmob.Query('userList');
       query.limit(10); // 每页条数
       query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询// 对score字段降序排列
-      query.equalTo("objectId", "!=", that.myObjectId);
+      query.equalTo("userIdStr", "==", that.myObjectId);
       query.count().then(function (res) {
         if (res.count === 0) {
           that.userList = [];
+          uni.hideLoading();
         } else {
           that.pageSetting.totalPage = parseInt(res.count / that.pageSetting.pageSize) + 1;
           query.find().then(function (res) {
-            uni.hideLoading();
             that.pageSetting.pageIndex += 1;
             that.userList = that.userList.concat(res);
+            uni.hideLoading();
           });
         }
       });

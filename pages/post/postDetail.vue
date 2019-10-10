@@ -18,7 +18,7 @@
 				<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 				<text class="pdt20 dy-font-color">暂无评论，快来发表你的评论吧</text>
 			</view>
-			<view class="pd15 border-bottom" v-else v-for="item in commentsList" :key="item.objectId">
+			<view class="pd15 border-bottom" v-else v-for="(item,index) in commentsList" :key="item.objectId">
 				<view class=" flex-space-between">
 					<view class="flex-align-center">
 						<image :src="item.own.avatarUrl" class="van-avatar-large"></image>
@@ -27,7 +27,10 @@
 							<view class="dy-font-color">{{ item.updatedAt }}</view>
 						</view>
 					</view>
-					<view class="font-14 dy-font-color" @click="reply(item)">回复TA</view>
+					<view class="flex font-12 dy-font-color">
+						<view>{{index + 1}}楼</view>
+						<view class="mgl5" @click="reply(item)">回复ta</view>
+					</view>
 				</view>
 				<view class="mgt10">{{item.content}}</view>
 			</view>
@@ -64,17 +67,30 @@
 		},
 		async onLoad(option) {
 			let that = this;
-			this.postId = option.postId ? option.postId : '8604d6bb67';
-			uni.getStorage({
-			    key: 'userInfo',
-			    success: function (res) {
-					that.info.objectId = res.data.objectId;
-					that.getPostFavoriteStatus();
-			    }
-			});
-			this.getPost();
-			this.getComments();
-			this.updatePost('view')
+			if(option.postId === "undefined"){
+				uni.showModal({
+				    title: '糟糕！',
+				    content: '帖子找不到了',
+					showCancel: false,
+				    success: function (res) {
+				        if (res.confirm) {
+				            uni.navigateBack()
+				        } 
+				    }
+				});
+			}else{
+				this.postId = option.postId ? option.postId : '8604d6bb67';
+				uni.getStorage({
+					key: 'userInfo',
+					success: function (res) {
+						that.info.objectId = res.data.objectId;
+						that.getPostFavoriteStatus();
+					}
+				});
+				this.getPost();
+				this.getComments();
+				this.updatePost('view')
+			}
 		},
 		onReady(){
 		},
@@ -165,16 +181,20 @@
 				
 				query.set('own',pUserID)	// 绑定的用户id
 				query.set('attrPost',pPostID)	// 绑定的帖子id
+				query.set('attrPostStr',that.postId)	// 绑定的帖子id 字符串 用来删除
 				query.set("content", that.commentValue)
 				query.save().then(res => {
-					uni.hideLoading();
+					// uni.hideLoading();
 					uni.showToast({
 						title: '评论成功',
-						icon: 'success'
+						icon: 'success',
+						duration: 1500
 					})
 					that.commentValue = '';
-					that.updatePost('comments');
-					that.getComments();
+					setTimeout( () => {
+						that.updatePost('comments');
+						that.getComments();
+					}, 1000);
 				}).catch(err => {
 				  console.log(err)
 				})

@@ -167,6 +167,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 {
   components: {
     postCard: postCard },
@@ -188,17 +191,30 @@ __webpack_require__.r(__webpack_exports__);
 
   onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
               that = this;
-              this.postId = option.postId ? option.postId : '8604d6bb67';
-              uni.getStorage({
-                key: 'userInfo',
-                success: function success(res) {
-                  that.info.objectId = res.data.objectId;
-                  that.getPostFavoriteStatus();
-                } });
+              if (option.postId === "undefined") {
+                uni.showModal({
+                  title: '糟糕！',
+                  content: '帖子找不到了',
+                  showCancel: false,
+                  success: function success(res) {
+                    if (res.confirm) {
+                      uni.navigateBack();
+                    }
+                  } });
 
-              this.getPost();
-              this.getComments();
-              this.updatePost('view');case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              } else {
+                this.postId = option.postId ? option.postId : '8604d6bb67';
+                uni.getStorage({
+                  key: 'userInfo',
+                  success: function success(res) {
+                    that.info.objectId = res.data.objectId;
+                    that.getPostFavoriteStatus();
+                  } });
+
+                this.getPost();
+                this.getComments();
+                this.updatePost('view');
+              }case 2:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },
@@ -289,16 +305,20 @@ __webpack_require__.r(__webpack_exports__);
 
       query.set('own', pUserID); // 绑定的用户id
       query.set('attrPost', pPostID); // 绑定的帖子id
+      query.set('attrPostStr', that.postId); // 绑定的帖子id 字符串 用来删除
       query.set("content", that.commentValue);
       query.save().then(function (res) {
-        uni.hideLoading();
+        // uni.hideLoading();
         uni.showToast({
           title: '评论成功',
-          icon: 'success' });
+          icon: 'success',
+          duration: 1500 });
 
         that.commentValue = '';
-        that.updatePost('comments');
-        that.getComments();
+        setTimeout(function () {
+          that.updatePost('comments');
+          that.getComments();
+        }, 1000);
       }).catch(function (err) {
         console.log(err);
       });

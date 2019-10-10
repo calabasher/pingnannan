@@ -177,10 +177,17 @@ var _default2 =
   components: {},
 
   data: function data() {
-    return {};
-
+    return {
+      myObjectId: '' // 我的 id
+    };
   },
   mounted: function mounted() {
+    var that = this;
+    uni.getStorage({
+      key: 'userInfo',
+      success: function success(res) {
+        that.myObjectId = res.data.objectId;
+      } });
 
   },
   computed: {
@@ -197,13 +204,50 @@ var _default2 =
     },
     // 加关注
     addFollow: function addFollow(item) {
+      uni.showLoading({
+        title: '加载中' });
+
       var that = this;
-      var query = that.Bmob.Query('postList');
-      query.get(item.objectId).then(function (res) {
-        res.increment('view');
-        res.save();
+
+      // 先查询是否关注
+      var query = that.Bmob.Query('userList');
+      query.equalTo("userId", "==", that.myObjectId);
+
+      var userDB = that.Bmob.Pointer('_User');
+      var myId = userDB.set(that.myObjectId);
+      var otherId = userDB.set(item.author.objectId);
+
+      query.find().then(function (res) {
+        if (res.length === 0) {
+          // 添加关注  实际插入记录 
+          query.set('userIdStr', that.myObjectId); // 绑定的用户id
+          query.set('beFollowedUserIdStr', item.author.objectId); // 绑定的用户id string类型
+          query.set('userId', myId); // 绑定的用户id poster类型
+          query.set('beFollowedUserId', otherId); // 绑定的用户id string类型
+
+          query.save().then(function (res1) {
+            uni.showToast({
+              title: '成功关注' });
+
+            uni.hideLoading();
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', 'add', true);
+            }, 1000);
+          });
+        } else {
+          // 取消关注  实际删除记录
+          query.destroy(res[0].objectId).then(function (res2) {
+            uni.showToast({
+              title: '取消关注' });
+
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', false);
+              uni.hideLoading();
+            }, 1000);
+          });
+        }
       }).catch(function (err) {
-        console.log(err);
+
       });
     },
     // 删除帖子
@@ -227,6 +271,23 @@ var _default2 =
         current: this.postObj.images[index],
         urls: this.postObj.images });
 
+    },
+    // 更新用户表的关注数和粉丝数
+    updatePost: function updatePost(userId, param, isAdd) {
+      var that = this;
+      uni.showLoading({ title: '加载中' });
+      var query = that.Bmob.Query('_User');
+      query.get(userId).then(function (res) {
+        if (isAdd) {
+          res.increment(param); // 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+        } else {
+          res.increment(param, -1);
+        }
+        res.save();
+        uni.hideLoading();
+      }).catch(function (err) {
+        console.log(err);
+      });
     },
     // 前往用户主页
     toUserZone: function toUserZone() {

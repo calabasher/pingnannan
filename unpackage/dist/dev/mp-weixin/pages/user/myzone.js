@@ -219,6 +219,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
         totalPage: 1, // 总页数
         totalSize: 0 // 总条数数
       },
+      fansNum: 0, // 粉丝数
       postList: [], // 帖子列表
       favoriteList: [] // 收藏的帖子
     };
@@ -239,6 +240,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
     this.getUserInfo();
     this.getPostList(); // 获取帖子列表 -- 自己作品
     this.getFavoriteList(); // 获取帖子列表 -- 收藏喜欢
+    this.getFansNum(); // 获取用户粉丝量
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -275,19 +277,26 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   methods: {
     // 跳转
     navTo: function navTo(url) {
-      uni.navigateTo({
-        url: url + '?objectId=' + this.info.objectId });
-
-    },
-    // 详情、结果
-    navToDetails: function navToDetails(id) {
-      uni.navigateTo({
-        url: '/pages/post/postDetail?postId=' + id });
-
+      uni.navigateTo({ url: url });
     },
     // 切换tab
     onChangeTab: function onChangeTab(e) {
       this.tabIndex = e.detail.index;
+    },
+    // 获取粉丝数
+    getFansNum: function getFansNum() {
+      var that = this;
+      uni.showLoading({
+        title: '加载中' });
+
+      var query = that.Bmob.Query('userList');
+      query.equalTo("beFollowedUserId", "==", that.info.objectId);
+      query.get(that.info.objectId).then(function (res) {
+        that.fansNum = res.total;
+        uni.hideLoading();
+      }).catch(function (err) {
+        console.log(err);
+      });
     },
     // 获取用户信息
     getUserInfo: function getUserInfo() {
@@ -365,13 +374,16 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       uni.showLoading();
       var query = that.Bmob.Query('postList');
       var favorite = that.Bmob.Query('favorite');
+      var comment = that.Bmob.Query('comment');
       favorite.destroy(item.objectId).then(function (res) {
         uni.hideLoading();
-        that.postList.splice(index, 1);
       });
       query.destroy(item.objectId).then(function (res) {
         uni.hideLoading();
         that.postList.splice(index, 1);
+      });
+      comment.destroy(item.objectId).then(function (res) {
+        uni.hideLoading();
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

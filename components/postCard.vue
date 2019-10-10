@@ -11,10 +11,10 @@
       </view>
       <!-- 右边位置 -->
       <view class="flex-center">
-        <view v-if=" postType === 0 ">
-          <van-button icon="plus" @click.stop="addFollow(postObj)" type="default" size="small">+关注</van-button>
+        <view v-if=" myObjectId !== postObj.author.objectId " @click.stop="addFollow(postObj)">
+          <van-button icon="plus" type="default" size="small">+关注</van-button>
         </view>
-		<view class="" v-else-if=" postType === 1 " @click.stop="deletePost(postObj)">
+		<view class="" v-else @click.stop="deletePost(postObj)">
 		  <van-icon name="ellipsis" />
 		</view>
       </view>
@@ -71,10 +71,17 @@ export default {
   },
   data () {
     return {
+		myObjectId: '',	// 我的 id
     };
   },
   mounted () {
-
+	let that = this;
+	uni.getStorage({
+		key: 'userInfo',
+		success: function (res) {
+			that.myObjectId = res.data.objectId;
+		}
+	});
   },
   computed: {
     isLogin () {
@@ -90,14 +97,51 @@ export default {
     },
     // 加关注
     addFollow: function (item) {
+      uni.showLoading({
+      	title: '加载中'
+      });
       let that = this;
-	  const query = that.Bmob.Query('postList')
-	  query.get(item.objectId).then(res => {
-	      res.increment('view')
-	      res.save()
-	  }).catch(err => {
-	      console.log(err)
-	  })
+      
+      // 先查询是否关注
+      const query = that.Bmob.Query('userList');
+      query.equalTo("userId","==", that.myObjectId);
+      
+      const userDB = that.Bmob.Pointer('_User')
+      const myId = userDB.set(that.myObjectId)
+      const otherId = userDB.set(item.author.objectId)
+      
+      query.find().then(res => {
+      	if(res.length === 0){
+      		// 添加关注  实际插入记录 
+      		query.set('userIdStr',that.myObjectId)	// 绑定的用户id
+      		query.set('beFollowedUserIdStr',item.author.objectId)	// 绑定的用户id string类型
+			query.set('userId',myId)	// 绑定的用户id poster类型
+			query.set('beFollowedUserId',otherId)	// 绑定的用户id string类型
+      		
+      		query.save().then(res1 => {
+      			uni.showToast({
+      				title: '成功关注'
+      			})
+      			uni.hideLoading();
+				setTimeout( ()=> {
+					that.updatePost(that.myObjectId, 'follows', 'add', true)
+				}, 1000)
+      		})
+      	}else{
+      		// 取消关注  实际删除记录
+      		query.destroy(res[0].objectId).then(res2 => {
+				uni.showToast({
+					title: '取消关注'
+				})
+				setTimeout( ()=> {
+					that.updatePost(that.myObjectId, 'follows', false)
+					uni.hideLoading();
+				}, 1000)
+      		})
+      	}
+      }).catch(err => {
+        
+      })
     },
 	// 删除帖子
 	deletePost: function (item) {
@@ -121,6 +165,23 @@ export default {
     		urls: this.postObj.images
     	})
     },
+	// 更新用户表的关注数和粉丝数
+	updatePost(userId, param, isAdd) {
+		let that = this;
+		uni.showLoading({ title: '加载中' });
+		var query = that.Bmob.Query('_User');		
+		query.get(userId).then(res => {
+			if(isAdd){
+				res.increment(param)	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+			}else{
+				res.increment(param, -1)
+			}
+		    res.save()
+			uni.hideLoading();
+		}).catch(err => {
+		  console.log(err)
+		})
+	},
     // 前往用户主页
     toUserZone () {
       this.$router.push({ name: 'userzone', params: '' })

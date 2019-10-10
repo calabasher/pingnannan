@@ -22,12 +22,12 @@
 				<view class="font-16">{{info.praise}}</view>
 				<view class="font-12 dy-font-color">获赞</view>
 			</view>
-			<view class="tcenter" @click="navTo('/pages/user/myfans')">
+			<view class="tcenter" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
 				<view class="font-16">{{info.follows}}</view>
 				<view class="font-12 dy-font-color">关注</view>
 			</view>
-			<view class="tcenter" @click="navTo('/pages/user/myfans')">
-				<view class="font-16">{{info.fans}}</view>
+			<view class="tcenter" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
+				<view class="font-16">{{fansNum}}</view>
 				<view class="font-12 dy-font-color">粉丝</view>
 			</view>
 		</view>
@@ -40,7 +40,7 @@
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 					<text class="pdt20 dy-font-color">暂无作品哟，感觉去发帖吧</text>
 				</view>
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navToDetails(item.objectId)" v-else>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)" v-else>
 					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(item,index)"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
@@ -53,7 +53,7 @@
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 					<text class="pdt20 dy-font-color">暂无喜欢哟，去首页看看吧</text>
 				</view>
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navToDetails(item.postId.objectId)" v-else>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.postId.objectId)" v-else>
 					<postCard :postObj="item.postId"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSettingFav.pageIndex > pageSettingFav.totalPage ? '已经到底了' : '' }}</view>
@@ -95,6 +95,7 @@
 					totalPage: 1,	// 总页数
 					totalSize: 0,	// 总条数数
 				},
+				fansNum: 0,	// 粉丝数
 				postList: [],	// 帖子列表
 				favoriteList: [],	// 收藏的帖子
 			}
@@ -115,6 +116,7 @@
 			this.getUserInfo();
 			this.getPostList();		// 获取帖子列表 -- 自己作品
 			this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
+			this.getFansNum();	// 获取用户粉丝量
 		},
 		// 分享
 		onShareAppMessage() {
@@ -151,19 +153,26 @@
 		methods: {
 			// 跳转
 			navTo(url){
-				uni.navigateTo({
-					url: url + '?objectId=' + this.info.objectId
-				})
-			},
-			// 详情、结果
-			navToDetails(id){
-				uni.navigateTo({
-					url: '/pages/post/postDetail?postId=' + id
-				})
+				uni.navigateTo({ url: url })
 			},
 			// 切换tab
 			onChangeTab(e){
 				this.tabIndex = e.detail.index
+			},
+			// 获取粉丝数
+			getFansNum(){
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				const query = that.Bmob.Query('userList');
+				query.equalTo("beFollowedUserId", "==", that.info.objectId);
+				query.get(that.info.objectId).then(res => {
+					that.fansNum = res.total;
+					uni.hideLoading();
+				}).catch(err => {
+				  console.log(err)
+				})
 			},
 			// 获取用户信息
 			getUserInfo () {
@@ -241,13 +250,16 @@
 			  uni.showLoading();
 			  const query = that.Bmob.Query('postList')
 			  const favorite = that.Bmob.Query('favorite')
+			  const comment = that.Bmob.Query('comment')
 			  favorite.destroy(item.objectId).then(res => {
 			    uni.hideLoading();
-			  	that.postList.splice(index, 1)
 			  })
 			  query.destroy(item.objectId).then(res => {
 			    uni.hideLoading();
 				that.postList.splice(index, 1)
+			  })
+			  comment.destroy(item.objectId).then(res => {
+			    uni.hideLoading();
 			  })
 			},
 		}
