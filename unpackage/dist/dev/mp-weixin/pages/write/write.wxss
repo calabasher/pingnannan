@@ -63,4 +63,7 @@ page {
 .tui-cmt-btn{
   margin-top: 60rpx;
 }
+.uni-list-cell::after {
+	left: 0;
+}
 

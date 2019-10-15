@@ -13,32 +13,33 @@
 				</view>
 			</view>
 			<view class="font-20">
-				<van-icon name="setting-o" />
+				<van-icon name="setting-o" v-if="isMyzone" />
+				<van-button icon="plus" type="default" size="small" @click="addFollow()" v-else>关注</van-button>
 			</view>
 		</view>
 		<!-- 获赞 粉丝 关注 -->
 		<view class="flex-space-around pdt15 white-bg">
-			<view class="tcenter">
-				<view class="font-16">{{info.praise}}</view>
+			<view class="tcenter width-33" @click="showPraise">
+				<view class="font-16">{{praiseNum}}</view>
 				<view class="font-12 dy-font-color">获赞</view>
 			</view>
-			<view class="tcenter" @click="navTo('/pages/user/myfollows?objectId=' + info.objectId)">
+			<view class="tcenter width-33" @click="navTo('/pages/user/myfollows?objectId=' + info.objectId)">
 				<view class="font-16">{{info.follows}}</view>
 				<view class="font-12 dy-font-color">关注</view>
 			</view>
-			<view class="tcenter" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
+			<view class="tcenter width-33" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
 				<view class="font-16">{{fansNum}}</view>
 				<view class="font-12 dy-font-color">粉丝</view>
 			</view>
 		</view>
 		<view class="white-bg space"></view>
 		<van-tabs sticky swipeable class="mgt15 van-tabs-self" :active="tabIndex" @change="onChangeTab">
-		  <van-tab title="作品">
+		  <van-tab title="作品" class="van-tab">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
 				<view class="white-bg tcenter" v-if="postList.length === 0" >
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
-					<text class="pdt20 dy-font-color">暂无作品</text>
+					<view class="pdt20 pdb20 dy-font-color">暂无作品</view>
 				</view>
 				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)" v-else>
 					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(item,index)"></postCard>
@@ -51,7 +52,7 @@
 			<view class="wx-bg">
 				<view class="white-bg tcenter" v-if="favoriteList.length === 0" >
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
-					<text class="pdt20 dy-font-color">暂无喜欢</text>
+					<view class="pdt20 pdb20 dy-font-color">暂无喜欢</view>
 				</view>
 				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.postId.objectId)" v-else>
 					<postCard :postObj="item.postId"></postCard>
@@ -74,12 +75,17 @@
 		    	return {};
 		    }
 		  },
+		  isMyzone: {
+			  type: Boolean,
+			  default: true,
+		  }
 		},
 		components: {
 			postCard
 		},
 		data() {
 			return {
+				myObjectId: '',	// 我的id
 				tabIndex: 0,	// 高亮tab
 				// info: {
 				// 	objectId: '',	// 用户Id
@@ -104,6 +110,7 @@
 					totalSize: 0,	// 总条数数
 				},
 				fansNum: 0,	// 粉丝数
+				praiseNum: 0,	// 点赞数
 				postList: [],	// 帖子列表
 				favoriteList: [],	// 收藏的帖子
 			}
@@ -111,9 +118,17 @@
 		computed: {
 		},
 		mounted () {
+			let that = this;
+			uni.getStorage({
+				key: 'userInfo',
+				success: function (res) {
+					that.myObjectId = res.data.objectId;
+				}
+			});
 			this.getPostList();		// 获取帖子列表 -- 自己作品
 			this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
 			this.getFansNum();	// 获取用户粉丝量
+			this.getPraiseNum();
 		},
 		onReady(){
 			
@@ -125,10 +140,6 @@
 				path: '/pages/index/index'
 			}
 		},
-		// 下拉刷新
-		onPullDownRefresh() {
-			// this.onLoad();
-		},
 		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
 		onUnload() {
 		},
@@ -138,6 +149,9 @@
 		},
 		onShow(){
 			
+		},
+		// 下拉刷新
+		onPullDownRefresh() {
 		},
 		// 到底
 		onReachBottom(){
@@ -170,8 +184,23 @@
 				});
 				const query = that.Bmob.Query('userList');
 				query.equalTo("beFollowedUserId", "==", that.info.objectId);
-				query.get(that.info.objectId).then(res => {
-					that.fansNum = res.total;
+				query.count().then(res => {
+					that.fansNum = res.count;
+					uni.hideLoading();
+				}).catch(err => {
+				  console.log(err)
+				})
+			},
+			// 获取获赞数
+			getPraiseNum(){
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				const query = that.Bmob.Query('favorite');
+				query.equalTo("userId", "==", that.info.objectId);
+				query.count().then(res => {
+					that.praiseNum = res.count;
 					uni.hideLoading();
 				}).catch(err => {
 				  console.log(err)
@@ -250,6 +279,68 @@
 			    uni.hideLoading();
 			  })
 			},
+			// 加关注
+			addFollow: function () {
+			  uni.showLoading({
+			  	title: '加载中'
+			  });
+			  let that = this;
+			  
+			  // 先查询是否关注
+			  const query = that.Bmob.Query('userList');
+			  query.equalTo("userId","==", that.myObjectId);
+			  
+			  const userDB = that.Bmob.Pointer('_User')
+			  const myId = userDB.set(that.myObjectId)
+			  const otherId = userDB.set(that.info.objectId)
+			  
+			  query.find().then(res => {
+			  	if(res.length === 0){
+			  		// 添加关注  实际插入记录 
+			  		query.set('userIdStr',that.myObjectId)	// 绑定的用户id
+			  		query.set('beFollowedUserIdStr',that.info.objectId)	// 绑定的用户id string类型
+					query.set('userId',myId)	// 绑定的用户id poster类型
+					query.set('beFollowedUserId',otherId)	// 绑定的用户id string类型
+			  		
+			  		query.save().then(res1 => {
+			  			uni.showToast({
+			  				title: '成功关注'
+			  			})
+			  		})
+			  	}else{
+			  		// 取消关注  实际删除记录
+			  		query.destroy(res[0].objectId).then(res2 => {
+						uni.showToast({
+							title: '取消关注'
+						})
+			  		})
+			  	}
+			  }).catch(err => {
+			    
+			  })
+			},
+			// 重新加载
+			reload(){
+				this.pageSetting.pageIndex = 1;
+				this.pageSettingFav.pageIndex = 1;
+				this.postList = [];
+				this.favoriteList = [];
+				this.getPostList();		// 获取帖子列表 -- 自己作品
+				this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
+				this.getFansNum();	// 获取用户粉丝量
+				setTimeout(function () {
+					uni.stopPullDownRefresh();
+				}, 1000);
+			},
+			showPraise(){
+				let that = this;
+				uni.showToast({
+					title: '共获得 ' + that.praiseNum + ' 个赞',
+					image: '/static/logo/heart.png',
+					icon: 'none',
+					duration: 3000,
+				})
+			},
 		}
 	}
 </script>
@@ -262,8 +353,5 @@
 		background-color: #fff;
 		width: 18px;
 		height: 18px;
-	}
-	.van-tabs-self .van-tab {
-		padding-top: 5px;
 	}
 </style>

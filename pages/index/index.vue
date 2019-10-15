@@ -94,6 +94,15 @@
 				path: '/pages/index/index'
 			}
 		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			this.pageSetting.pageIndex = 1;
+			this.postList = [];
+			this.getPostList();
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
 		// 到底
 		onReachBottom(){
 			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {

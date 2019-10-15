@@ -358,4 +358,7 @@ page {
 .tui-cmt-btn{
   margin-top: 60upx;
 }
+.uni-list-cell::after {
+	left: 0;
+}
 </style>

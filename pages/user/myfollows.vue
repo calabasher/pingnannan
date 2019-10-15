@@ -2,9 +2,9 @@
 	<view class="wx-bg">
 		<view class="white-bg tcenter" v-if="userList.length === 0" >
 			<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
-			<text class="pdt20 dy-font-color">暂无关注</text>
+			<view class="pdt20 pdb20 dy-font-color">暂无关注</view>
 		</view>
-		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="navTo(item)">
+		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="navTo('/pages/user/otherzone?userId=' + item.beFollowedUserId.objectId)">
 			<view class="flex-align-center">
 				<view class="">
 					<image class="van-avatar" :src="item.beFollowedUserId.avatarUrl"></image>
@@ -67,6 +67,15 @@
 				path: '/pages/index/index'
 			}
 		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			this.pageSetting.pageIndex = 1;
+			this.userList = [];
+			this.getUserList();		// 获取用户列表 
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
+		},
 		// 到底
 		onReachBottom(){
 			if (this.pageSetting.pageIndex <= this.pageSetting.totalPage) {
@@ -76,10 +85,8 @@
 		},
 		methods: {
 			// 详情、结果
-			navTo(id){
-				uni.navigateTo({
-					url: '/pages/post/postDetail?postId=' + id
-				})
+			navTo(url){
+				uni.navigateTo({ url: url })
 			},
 			// 获取用户列表
 			getUserList() {
@@ -142,7 +149,7 @@
 			  		// 取消关注  实际删除记录
 			  		query.destroy(res[0].objectId).then(res2 => {
 						uni.showToast({
-							title: '取消关注'
+							title: '已取消关注'
 						})
 						setTimeout( ()=> {
 							that.updatePost(that.myObjectId, 'follows', false)

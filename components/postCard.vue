@@ -1,6 +1,6 @@
 <template>
   <!-- 列表单个 -->
-  <view class="font-14">
+  <view class="font-14 post-item">
     <view class="flex-space-between">
       <view class="flex-align-center" @click.stop="toZone(postObj)">
         <img class="van-avatar" :src="postObj.author.avatarUrl">
@@ -196,6 +196,9 @@ export default {
 </script>
 
 <style lang='scss'>
+  .post-item{
+	line-height: 1.8;
+  }
   .img-zone{
     display: flex;
     flex-wrap: wrap;
@@ -214,6 +217,7 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
-    height: 100%;
+    height: 120px;
+	overflow: hidden;
   }
 </style>

@@ -4,7 +4,7 @@
 		<view class="wx-bg">
 			<view class="tcenter white-bg" v-if="postList.length === 0" >
 				<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
-				<text class="pdt20 dy-font-color">暂无帖子，你可以浏览其他帖子或者发帖</text>
+				<view class="pdt20 pdb20 dy-font-color">暂无帖子，你可以浏览其他帖子或者发帖</view>
 			</view>
 			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-else v-for="item in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
 				<postCard :postObj="item"></postCard>
@@ -60,6 +60,15 @@
 				title: '微撩',
 				path: '/pages/index/index'
 			}
+		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			this.pageSetting.pageIndex = 1;
+			this.postList = [];
+			this.getPostList();		// 获取帖子列表 
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		// 到底
 		onReachBottom(){

@@ -16,7 +16,7 @@
 		<view class="white-bg">
 			<view class="tcenter" v-if="commentsList.length === 0" >
 				<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
-				<text class="pdt20 dy-font-color">暂无评论，快来发表你的评论吧</text>
+				<view class="pdt20 pdb20 dy-font-color">暂无评论，快来发表你的评论吧</view>
 			</view>
 			<view class="pd15 border-bottom" v-else v-for="(item,index) in commentsList" :key="item.objectId">
 				<view class=" flex-space-between">

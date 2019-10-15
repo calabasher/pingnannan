@@ -1,5 +1,5 @@
 <template>
-	<zone :info="info"></zone>
+	<zone :info="info" :isMyzone="false" ref="zone"></zone>
 </template>
 
 <script>
@@ -51,7 +51,10 @@
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
-			// this.onLoad();
+			this.$refs.zone.reload()	// 触发子组件的重载事件
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
 		onUnload() {
