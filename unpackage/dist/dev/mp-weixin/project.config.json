@@ -31,7 +31,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 4,
 			"list": [
 				{
 					"id": -1,
@@ -44,6 +44,27 @@
 					"id": -1,
 					"name": "pages/setting/index",
 					"pathName": "pages/setting/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/user/otherzone",
+					"pathName": "pages/user/otherzone",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/setting/accusation",
+					"pathName": "pages/setting/accusation",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/setting/accusation",
+					"pathName": "pages/setting/accusation",
 					"scene": null
 				}
 			]

@@ -6,7 +6,7 @@
         <img class="van-avatar" :src="postObj.author.avatarUrl">
         <view class="mgl10">
           <view>{{postObj.author.nickName}}</view>
-          <view class="dy-font-color font-12 mgt5">{{postObj.createdAt}}</view>
+          <view class="dy-font-color font-12">{{postObj.createdAt}}</view>
         </view>
       </view>
       <!-- 右边位置 -->

@@ -10,7 +10,8 @@
     "pages/user/myfans",
     "pages/user/myfollows",
     "pages/setting/index",
-    "pages/setting/profile"
+    "pages/setting/profile",
+    "pages/setting/accusation"
   ],
   "subPackages": [],
   "window": {

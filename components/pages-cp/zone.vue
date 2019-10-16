@@ -11,9 +11,12 @@
 					</view>
 				</view>
 			</view>
-			<view class="font-20">
-				<van-icon name="setting-o" v-if="isMyzone" @click="navTo('/pages/setting/index')" />
-				<van-button icon="plus" type="default" size="small" @click="addFollow()" v-else>关注</van-button>
+			<view class="font-20" v-if="isMyzone">
+				<van-icon name="setting-o" @click="navTo('/pages/setting/index')" />
+			</view>
+			<view class="flex-center" v-else>
+				<van-button icon="plus" type="default" size="small" @click="addFollow()">关注</van-button>
+				<view class="mgl5 font-20"><van-icon name="bulb-o" @click="navTo('/pages/setting/accusation?objectId=' + info.objectId)" /></view>
 			</view>
 		</view>
 		<view class="white-bg pdl15 pdr15 pdt10"><text>{{ info.profile ? info.profile : '暂无简介' }}</text></view>
