@@ -99,7 +99,7 @@
 				}
 			}
 		},{
-			"path": "pages/setting/index",
+			"path": "pages/setting/setting",
 			"style" : {
 				"navigationBarTitleText" : "设置",
 				"app-plus": {

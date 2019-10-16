@@ -12,7 +12,7 @@
 				</view>
 			</view>
 			<view class="font-20" v-if="isMyzone">
-				<van-icon name="setting-o" @click="navTo('/pages/setting/index')" />
+				<van-icon name="setting-o" @click="navTo('/pages/setting/setting')" />
 			</view>
 			<view class="flex-center" v-else>
 				<van-button icon="plus" type="default" size="small" @click="addFollow()">关注</van-button>

@@ -1,8 +1,8 @@
 <template>
-	<view class="">
+	<view>
 		<van-cell-group>
-		  <van-cell is-link title="个人简介" link-type="navigateTo" url="/pages/setting/profile" :value="userInfo.profile" />
-		  <van-cell is-link title="用户须知" link-type="navigateTo" url="/pages/dashboard/index" />
+		  <van-cell is-link title="个人简介" @click="navTo('/pages/setting/profile')" :value="userInfo.profile"></van-cell>
+		  <!-- <van-cell is-link title="用户须知" @click="navTo(url)" url="/pages/dashboard/index" /> -->
 		</van-cell-group>
 	</view>
 </template>
@@ -38,6 +38,9 @@
 		onHide(){
 		},
 		methods: {
+			navTo(url){
+				uni.navigateTo({ url: url })
+			},
 			// 获取用户信息
 			getUserInfo(){
 				let that = this;

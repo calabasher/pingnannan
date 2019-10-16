@@ -47,6 +47,7 @@
 				  provider: 'weixin',
 				  success: function (infoRes) {
 					  that.Bmob.User.auth().then(res => {
+						console.log('授权成功')
 						const query = that.Bmob.Query('_User');
 						query.get(res.objectId).then(res => {
 							res.set('nickName',infoRes.userInfo.nickName)

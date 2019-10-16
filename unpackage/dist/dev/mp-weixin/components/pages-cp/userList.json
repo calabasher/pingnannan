@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "post-card": "/components/postCard"
-  },
-  "component": true
-}

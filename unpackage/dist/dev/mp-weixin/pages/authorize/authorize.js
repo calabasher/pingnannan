@@ -171,6 +171,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
         provider: 'weixin',
         success: function success(infoRes) {
           that.Bmob.User.auth().then(function (res) {
+            console.log('授权成功');
             var query = that.Bmob.Query('_User');
             query.get(res.objectId).then(function (res) {
               res.set('nickName', infoRes.userInfo.nickName);
