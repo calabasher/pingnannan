@@ -98,6 +98,28 @@
 					"bounce": "none"
 				}
 			}
+		},{
+			"path": "pages/setting/index",
+			"style" : {
+				"navigationBarTitleText" : "设置",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"backgroundColor": "#F6F6F6",
+					"bounce": "none"
+				}
+			}
+		},{
+			"path": "pages/setting/profile",
+			"style" : {
+				"navigationBarTitleText" : "个人简介",
+				"app-plus": {
+					"titleNView": false,
+					"navigationBarTextStyle": "white",
+					"backgroundColor": "#F6F6F6",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

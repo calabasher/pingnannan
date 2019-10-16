@@ -137,7 +137,7 @@ __webpack_require__.r(__webpack_exports__);
         nickName: '未登录', // 用户昵称
         avatarUrl: '/static/logo/no-login.png', // 头像
         gender: 1, // 性别 1-男
-        autograph: '暂无签名', // 签名
+        profile: '暂无简介', // 简介
         follows: 0, // 关注数
         fans: 0, // 粉丝数
         praise: 0 // 赞数

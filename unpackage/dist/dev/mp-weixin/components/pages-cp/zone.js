@@ -102,7 +102,7 @@
       // 	nickName: '未登录',	// 用户昵称
       // 	avatarUrl: '/static/logo/no-login.png',	// 头像
       // 	gender: 1,	// 性别 1-男
-      // 	autograph: '暂无签名',	// 签名
+      // 	profile: '暂无简介',	// 简介
       // 	follows: 0,	// 关注数
       // 	fans: 0,	// 粉丝数
       // 	praise: 0,	// 赞数
@@ -359,6 +359,13 @@
         image: '/static/logo/heart.png',
         icon: 'none',
         duration: 3000 });
+
+    },
+    // 图片预览
+    preImg: function preImg(index) {
+      uni.previewImage({
+        current: this.info.avatarUrl,
+        urls: [this.info.avatarUrl] });
 
     } } };exports.default = _default2;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

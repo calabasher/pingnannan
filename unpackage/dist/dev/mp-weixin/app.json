@@ -8,7 +8,9 @@
     "pages/user/myzone",
     "pages/user/otherzone",
     "pages/user/myfans",
-    "pages/user/myfollows"
+    "pages/user/myfollows",
+    "pages/setting/index",
+    "pages/setting/profile"
   ],
   "subPackages": [],
   "window": {
@@ -99,6 +101,5 @@
     "van-collapse": "/wxcomponents/vant/collapse/index",
     "van-collapse-item": "/wxcomponents/vant/collapse-item/index",
     "van-picker": "/wxcomponents/vant/picker/index"
-  },
-  "sitemapLocation": "sitemap91.json"
+  }
 }

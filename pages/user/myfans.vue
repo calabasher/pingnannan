@@ -14,7 +14,6 @@
 						<view class="">{{item.userId.nickName}}</view>
 						<image :src="item.userId.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
 					</view>
-					<view class="">{{ item.userId.autograph ? item.userId.autograph : '暂无签名' }}</view>
 				</view>
 			</view>
 			<view class="" v-if="item.userId.objectId !== myObjectId" @click.stop="addFollow(item)">

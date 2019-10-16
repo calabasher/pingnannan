@@ -176,7 +176,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
               res.set('nickName', infoRes.userInfo.nickName);
               res.set('avatarUrl', infoRes.userInfo.avatarUrl);
               res.set('gender', infoRes.userInfo.gender);
-              res.set('autograph', '');
+              res.set('profile', '');
               res.set('praise', 0);
               res.set('follows', 0);
               res.set('fans', 0);

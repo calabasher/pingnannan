@@ -3,20 +3,20 @@
 		<!-- 顶部 用户信息 -->
 		<view class="white-bg flex-space-between pdl15 pdr15 pdt10">
 			<view class="flex-align-center">
-				<image :src="info.avatarUrl" class="van-avatar-large"></image>
+				<image :src="info.avatarUrl" class="van-avatar-large" @click="preImg"></image>
 				<view class="mgl10">
 					<view class="flex-align-center">
 						<text>{{info.nickName}}</text>
 						<image :src="info.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
 					</view>
-					<view class="">{{ info.autograph ? info.autograph : '暂无签名' }}</view>
 				</view>
 			</view>
 			<view class="font-20">
-				<van-icon name="setting-o" v-if="isMyzone" />
+				<van-icon name="setting-o" v-if="isMyzone" @click="navTo('/pages/setting/index')" />
 				<van-button icon="plus" type="default" size="small" @click="addFollow()" v-else>关注</van-button>
 			</view>
 		</view>
+		<view class="white-bg pdl15 pdr15 pdt10"><text>{{ info.profile ? info.profile : '暂无简介' }}</text></view>
 		<!-- 获赞 粉丝 关注 -->
 		<view class="flex-space-around pdt15 white-bg">
 			<view class="tcenter width-33" @click="showPraise">
@@ -92,7 +92,7 @@
 				// 	nickName: '未登录',	// 用户昵称
 				// 	avatarUrl: '/static/logo/no-login.png',	// 头像
 				// 	gender: 1,	// 性别 1-男
-				// 	autograph: '暂无签名',	// 签名
+				// 	profile: '暂无简介',	// 简介
 				// 	follows: 0,	// 关注数
 				// 	fans: 0,	// 粉丝数
 				// 	praise: 0,	// 赞数
@@ -349,6 +349,13 @@
 					image: '/static/logo/heart.png',
 					icon: 'none',
 					duration: 3000,
+				})
+			},
+			// 图片预览
+			preImg(index) {
+				uni.previewImage({
+					current: this.info.avatarUrl,
+					urls: [this.info.avatarUrl]
 				})
 			},
 		}
