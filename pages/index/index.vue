@@ -1,21 +1,23 @@
 <template>
 	<view class="font-14">
-		<view class="pdl15 pdr15 flex-space-between">
-			<view class="flex-align-center">
+		<view class="pdl10 pdr10 flex-space-between">
+			<view class="width-30 flex-align-center">
 				<picker @change="bindPickerChange" :value="pickIndex" :range="pickList" range-key="name">
 					<view class="flex-align-center">
 						<view class="uni-input">{{pickList[pickIndex].name}}</view><van-icon name="arrow-down" />
 					</view>
 				</picker>
 			</view>
-			<van-search
-			  :value="value"
-			  placeholder="请输入搜索关键词"
-			  use-action-slot
-			  @search="onSearch"
-			>
-			  <view slot="action" @search="onSearch">搜索</view>
-			</van-search>
+			<view class="width-70">
+				<van-search
+				  :value="value"
+				  placeholder="请输入搜索关键词"
+				  use-action-slot
+				  @search="onSearch"
+				>
+				  <view slot="action" @search="onSearch">搜索</view>
+				</van-search>
+			</view>
 		</view>
 		<swiper class="pdl15 pdr15 swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
 			<swiper-item v-for="(item, index) in bannerList" :key="index">
@@ -170,7 +172,7 @@
 				var query = that.Bmob.Query('postList');
 				query.limit(10);	// 每页条数
 				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
-				query.order("-updatedAt");
+				query.order("-createdAt");
 				query.include("author,belongsClass", "_User,postClass");
 				// 如果选择了地址，则关联地址
 				if(that.localId){

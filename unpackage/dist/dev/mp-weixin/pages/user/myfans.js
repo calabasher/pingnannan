@@ -145,6 +145,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var postCard = function postCard() {return __webpack_require__.e(/*! import() | components/postCard */ "components/postCard").then(__webpack_require__.bind(null, /*! @/components/postCard */ 89));};var _default =
 
 {
@@ -183,9 +187,18 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   // 分享
   onShareAppMessage: function onShareAppMessage() {
     return {
-      title: '事事通',
-      path: '/pages/index/index' };
+      title: '粉丝列表',
+      path: '/pages/user/myfans?objectId=' + this.userObjectId };
 
+  },
+  // 下拉刷新
+  onPullDownRefresh: function onPullDownRefresh() {
+    this.pageSetting.pageIndex = 1;
+    this.userList = [];
+    this.getUserList(); // 获取用户列表 
+    setTimeout(function () {
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
   // 到底
   onReachBottom: function onReachBottom() {
@@ -196,10 +209,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   },
   methods: {
     // 详情、结果
-    navTo: function navTo(id) {
-      uni.navigateTo({
-        url: '/pages/post/postDetail?postId=' + id });
-
+    navTo: function navTo(url) {
+      uni.navigateTo({ url: url });
     },
     // 获取用户列表
     getUserList: function getUserList() {
@@ -210,7 +221,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
       var query = that.Bmob.Query('userList');
       query.limit(10); // 每页条数
       query.skip(10 * (that.pageSetting.pageIndex - 1)); // 分页查询// 对score字段降序排列
-      query.equalTo("userIdStr", "==", that.myObjectId);
+      query.equalTo("beFollowedUserIdStr", "==", that.userObjectId);
+      query.include("userId", "_User");
       query.count().then(function (res) {
         if (res.count === 0) {
           that.userList = [];
@@ -223,6 +235,71 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
             uni.hideLoading();
           });
         }
+      });
+    },
+    // 加关注
+    addFollow: function addFollow(item) {
+      uni.showLoading({
+        title: '加载中' });
+
+      var that = this;
+
+      // 先查询是否关注
+      var query = that.Bmob.Query('userList');
+      query.equalTo("userId", "==", that.myObjectId);
+
+      var userDB = that.Bmob.Pointer('_User');
+      var myId = userDB.set(that.myObjectId);
+      var otherId = userDB.set(item.beFollowedUserId.objectId);
+
+      query.find().then(function (res) {
+        if (res.length === 0) {
+          // 添加关注  实际插入记录 
+          query.set('userIdStr', that.myObjectId); // 绑定的用户id
+          query.set('beFollowedUserIdStr', item.beFollowedUserId.objectId); // 绑定的用户id string类型
+          query.set('userId', myId); // 绑定的用户id poster类型
+          query.set('beFollowedUserId', otherId); // 绑定的用户id string类型
+
+          query.save().then(function (res1) {
+            uni.showToast({
+              title: '成功关注' });
+
+            uni.hideLoading();
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', 'add', true);
+            }, 1000);
+          });
+        } else {
+          // 取消关注  实际删除记录
+          query.destroy(res[0].objectId).then(function (res2) {
+            uni.showToast({
+              title: '已取消关注' });
+
+            setTimeout(function () {
+              that.updatePost(that.myObjectId, 'follows', false);
+              uni.hideLoading();
+            }, 1000);
+          });
+        }
+      }).catch(function (err) {
+
+      });
+    },
+    // 更新用户表的关注数
+    updatePost: function updatePost(userId, param, isAdd) {
+      var that = this;
+      uni.showLoading({ title: '加载中' });
+      var query = that.Bmob.Query('_User');
+      query.get(userId).then(function (res) {
+        if (isAdd) {
+          res.increment(param); // 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+        } else {
+          res.increment(param, -1);
+        }
+        res.save();
+        uni.hideLoading();
+      }).catch(function (err) {
+        console.log(err);
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

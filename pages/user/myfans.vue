@@ -1,20 +1,24 @@
 <template>
 	<view class="wx-bg">
-		<view class="white-bg mgb10 pd15 flex-space-between" v-for="item in userList" :key="item.objectId" @click="navTo(item)">
+		<view class="white-bg tcenter" v-if="userList.length === 0" >
+			<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
+			<view class="pdt20 pdb20 dy-font-color">暂无粉丝</view>
+		</view>
+		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="navTo('/pages/user/otherzone?userId=' + item.userId.objectId)">
 			<view class="flex-align-center">
 				<view class="">
-					<image class="van-avatar" :src="item.avatarUrl"></image>
+					<image class="van-avatar" :src="item.userId.avatarUrl"></image>
 				</view>
 				<view class="mgl10">
 					<view class="flex-align-center">
-						<view class="">{{item.nickName}}</view>
-						<image :src="item.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
+						<view class="">{{item.userId.nickName}}</view>
+						<image :src="item.userId.gender === 1 ? '/static/logo/nan.png' : '/static/logo/nv.png' " class="mgl5 van-avatar-small"></image>
 					</view>
-					<view class="">{{ item.autograph ? item.autograph : '暂无签名' }}</view>
+					<view class="">{{ item.userId.autograph ? item.userId.autograph : '暂无签名' }}</view>
 				</view>
 			</view>
-			<view class="">
-				<van-button icon="plus" @click.stop="addFollow(item)" type="default" size="small">+关注</van-button>
+			<view class="" v-if="item.userId.objectId !== myObjectId" @click.stop="addFollow(item)">
+				<van-button icon="plus" type="default" size="small">关注</van-button>
 			</view>
 		</view>
 	</view>
@@ -59,9 +63,18 @@
 		// 分享
 		onShareAppMessage() {
 			return {
-				title: '事事通',
-				path: '/pages/index/index'
+				title: '粉丝列表',
+				path: '/pages/user/myfans?objectId=' + this.userObjectId
 			}
+		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			this.pageSetting.pageIndex = 1;
+			this.userList = [];
+			this.getUserList();		// 获取用户列表 
+			setTimeout(function () {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		// 到底
 		onReachBottom(){
@@ -72,10 +85,8 @@
 		},
 		methods: {
 			// 详情、结果
-			navTo(id){
-				uni.navigateTo({
-					url: '/pages/post/postDetail?postId=' + id
-				})
+			navTo(url){
+				uni.navigateTo({ url: url })
 			},
 			// 获取用户列表
 			getUserList() {
@@ -86,7 +97,8 @@
 				var query = that.Bmob.Query('userList');
 				query.limit(10);	// 每页条数
 				query.skip(10 * (that.pageSetting.pageIndex - 1));	// 分页查询// 对score字段降序排列
-				query.equalTo("userIdStr", "==", that.myObjectId);
+				query.equalTo("beFollowedUserIdStr", "==", that.userObjectId);
+				query.include("userId", "_User");
 				query.count().then(res => {
 					if(res.count === 0){
 						that.userList = []
@@ -100,6 +112,71 @@
 						});
 					}
 				});
+			},
+			// 加关注
+			addFollow: function (item) {
+			  uni.showLoading({
+			  	title: '加载中'
+			  });
+			  let that = this;
+			  
+			  // 先查询是否关注
+			  const query = that.Bmob.Query('userList');
+			  query.equalTo("userId","==", that.myObjectId);
+			  
+			  const userDB = that.Bmob.Pointer('_User')
+			  const myId = userDB.set(that.myObjectId)
+			  const otherId = userDB.set(item.beFollowedUserId.objectId)
+			  
+			  query.find().then(res => {
+			  	if(res.length === 0){
+			  		// 添加关注  实际插入记录 
+			  		query.set('userIdStr',that.myObjectId)	// 绑定的用户id
+			  		query.set('beFollowedUserIdStr',item.beFollowedUserId.objectId)	// 绑定的用户id string类型
+					query.set('userId',myId)	// 绑定的用户id poster类型
+					query.set('beFollowedUserId',otherId)	// 绑定的用户id string类型
+			  		
+			  		query.save().then(res1 => {
+			  			uni.showToast({
+			  				title: '成功关注'
+			  			})
+			  			uni.hideLoading();
+						setTimeout( ()=> {
+							that.updatePost(that.myObjectId, 'follows', 'add', true)
+						}, 1000)
+			  		})
+			  	}else{
+			  		// 取消关注  实际删除记录
+			  		query.destroy(res[0].objectId).then(res2 => {
+						uni.showToast({
+							title: '已取消关注'
+						})
+						setTimeout( ()=> {
+							that.updatePost(that.myObjectId, 'follows', false)
+							uni.hideLoading();
+						}, 1000)
+			  		})
+			  	}
+			  }).catch(err => {
+			    
+			  })
+			},
+			// 更新用户表的关注数
+			updatePost(userId, param, isAdd) {
+				let that = this;
+				uni.showLoading({ title: '加载中' });
+				var query = that.Bmob.Query('_User');		
+				query.get(userId).then(res => {
+					if(isAdd){
+						res.increment(param)	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
+					}else{
+						res.increment(param, -1)
+					}
+				    res.save()
+					uni.hideLoading();
+				}).catch(err => {
+				  console.log(err)
+				})
 			},
 		}
 	}

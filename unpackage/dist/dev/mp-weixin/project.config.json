@@ -9,8 +9,10 @@
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
-	"appid": "touristappid",
-	"projectname": "Vantui%20Weapp%20For%20Uni-app",
+	"appid": "wx5f4624dd4e7adca2",
+	"projectname": "Vantui Weapp For Uni-app",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,

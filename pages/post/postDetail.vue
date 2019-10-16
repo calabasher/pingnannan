@@ -229,9 +229,10 @@
 				query.find().then(res => {
 					if(res.length === 0){
 						// 添加收藏  实际插入记录 
-						query.set('userId',that.info.objectId)	// 绑定的用户id
+						query.set('userId',that.info.objectId)	// 绑定的用户id -- 谁喜欢
 						query.set('postId',fid)	// 绑定的用户id poster类型
 						query.set('postIdStr',that.postId)	// 绑定的用户id string类型
+						// query.set('whoLikesUserId', that.postInfo.author.objectId)	// 帖子作者
 						
 						const authorInfo = that.Bmob.Pointer('_User')
 						const postAuthor = authorInfo.set(that.postAuthor)

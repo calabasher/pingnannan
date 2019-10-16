@@ -346,6 +346,9 @@ page {
 .width-80{
   width: 80%;
 }
+.width-70{
+  width: 70%;
+}
 .width-60{
   width: 60%;
 }
@@ -360,6 +363,9 @@ page {
 }
 .width-33{
   width: 33.3333%;
+}
+.width-30{
+  width: 30%;
 }
 .width-20{
   width: 20%;

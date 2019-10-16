@@ -132,9 +132,6 @@ export default {
       				title: '成功关注'
       			})
       			uni.hideLoading();
-				setTimeout( ()=> {
-					that.updatePost(that.myObjectId, 'follows', 'add', true)
-				}, 1000)
       		})
       	}else{
       		// 取消关注  实际删除记录
@@ -142,10 +139,6 @@ export default {
 				uni.showToast({
 					title: '取消关注'
 				})
-				setTimeout( ()=> {
-					that.updatePost(that.myObjectId, 'follows', false)
-					uni.hideLoading();
-				}, 1000)
       		})
       	}
       }).catch(err => {
@@ -174,23 +167,6 @@ export default {
     		urls: this.postObj.images
     	})
     },
-	// 更新用户表的关注数
-	updatePost(userId, param, isAdd) {
-		let that = this;
-		uni.showLoading({ title: '加载中' });
-		var query = that.Bmob.Query('_User');		
-		query.get(userId).then(res => {
-			if(isAdd){
-				res.increment(param)	// 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
-			}else{
-				res.increment(param, -1)
-			}
-		    res.save()
-			uni.hideLoading();
-		}).catch(err => {
-		  console.log(err)
-		})
-	},
   }
 };
 </script>

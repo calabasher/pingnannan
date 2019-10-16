@@ -239,9 +239,6 @@ var _default2 =
               title: '成功关注' });
 
             uni.hideLoading();
-            setTimeout(function () {
-              that.updatePost(that.myObjectId, 'follows', 'add', true);
-            }, 1000);
           });
         } else {
           // 取消关注  实际删除记录
@@ -249,10 +246,6 @@ var _default2 =
             uni.showToast({
               title: '取消关注' });
 
-            setTimeout(function () {
-              that.updatePost(that.myObjectId, 'follows', false);
-              uni.hideLoading();
-            }, 1000);
           });
         }
       }).catch(function (err) {
@@ -280,23 +273,6 @@ var _default2 =
         current: this.postObj.images[index],
         urls: this.postObj.images });
 
-    },
-    // 更新用户表的关注数
-    updatePost: function updatePost(userId, param, isAdd) {
-      var that = this;
-      uni.showLoading({ title: '加载中' });
-      var query = that.Bmob.Query('_User');
-      query.get(userId).then(function (res) {
-        if (isAdd) {
-          res.increment(param); // 原子计算 自加1 传入第二个参数,支持正负数，到increment方法来指定增加或减少多少，1是默认值。
-        } else {
-          res.increment(param, -1);
-        }
-        res.save();
-        uni.hideLoading();
-      }).catch(function (err) {
-        console.log(err);
-      });
     } } };exports.default = _default2;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

@@ -24,7 +24,7 @@
 				<view class="font-12 dy-font-color">获赞</view>
 			</view>
 			<view class="tcenter width-33" @click="navTo('/pages/user/myfollows?objectId=' + info.objectId)">
-				<view class="font-16">{{info.follows}}</view>
+				<view class="font-16">{{followsNum}}</view>
 				<view class="font-12 dy-font-color">关注</view>
 			</view>
 			<view class="tcenter width-33" @click="navTo('/pages/user/myfans?objectId=' + info.objectId)">
@@ -34,7 +34,7 @@
 		</view>
 		<view class="white-bg space"></view>
 		<van-tabs sticky swipeable class="mgt15 van-tabs-self" :active="tabIndex" @change="onChangeTab">
-		  <van-tab title="作品" class="van-tab">
+		  <van-tab :title="'作品 ' + pageSetting.totalSize">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
 				<view class="white-bg tcenter" v-if="postList.length === 0" >
@@ -47,7 +47,7 @@
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
 			</view>
 		  </van-tab>
-		  <van-tab title="喜欢">
+		  <van-tab :title="'喜欢 ' + pageSettingFav.totalSize">
 			<!-- 帖子列表 -->
 			<view class="wx-bg">
 				<view class="white-bg tcenter" v-if="favoriteList.length === 0" >
@@ -101,15 +101,16 @@
 					pageIndex: 1,	// 页码
 					pageSize: 10,	// 每页页数
 					totalPage: 1,	// 总页数
-					totalSize: 0,	// 总条数数
+					totalSize: 0,	// 总条数
 				},
 				pageSettingFav: {
 					pageIndex: 1,	// 页码
 					pageSize: 10,	// 每页页数
 					totalPage: 1,	// 总页数
-					totalSize: 0,	// 总条数数
+					totalSize: 0,	// 总条数
 				},
 				fansNum: 0,	// 粉丝数
+				followsNum: 0,	// 用户关注数
 				praiseNum: 0,	// 点赞数
 				postList: [],	// 帖子列表
 				favoriteList: [],	// 收藏的帖子
@@ -127,8 +128,9 @@
 			});
 			this.getPostList();		// 获取帖子列表 -- 自己作品
 			this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
-			this.getFansNum();	// 获取用户粉丝量
-			this.getPraiseNum();
+			this.getFFNum("beFollowedUserId");	// 获取用户粉丝量
+			this.getFFNum("userId");	// 获取用户关注量
+			this.getPraiseNum();	// 获取用户所获赞量
 		},
 		onReady(){
 			
@@ -177,15 +179,19 @@
 				this.tabIndex = e.detail.index;
 			},
 			// 获取粉丝数
-			getFansNum(){
+			getFFNum(name){
 				let that = this;
 				uni.showLoading({
 					title: '加载中'
 				});
 				const query = that.Bmob.Query('userList');
-				query.equalTo("beFollowedUserId", "==", that.info.objectId);
+				query.equalTo(name, "==", that.info.objectId);
 				query.count().then(res => {
-					that.fansNum = res.count;
+					if(name === 'beFollowedUserId'){
+						that.fansNum = res.count;
+					}else{
+						that.followsNum = res.count;
+					}
 					uni.hideLoading();
 				}).catch(err => {
 				  console.log(err)
@@ -198,7 +204,7 @@
 					title: '加载中'
 				});
 				const query = that.Bmob.Query('favorite');
-				query.equalTo("userId", "==", that.info.objectId);
+				query.equalTo("author", "==", that.info.objectId);	// 统计被收藏的作者
 				query.count().then(res => {
 					that.praiseNum = res.count;
 					uni.hideLoading();
@@ -222,6 +228,7 @@
 					if(res.count === 0){
 						that.postList = []
 					}else{
+						that.pageSetting.totalSize = res.count
 						that.pageSetting.totalPage = parseInt(res.count/that.pageSetting.pageSize) + 1
 						query.find().then(res => {
 							that.pageSetting.pageIndex += 1;
@@ -247,6 +254,7 @@
 					if(res.count === 0){
 						that.favoriteList = []
 					}else{
+						that.pageSettingFav.totalSize = res.count
 						that.pageSettingFav.totalPage = parseInt(res.count/that.pageSettingFav.pageSize) + 1
 						query.find().then(res => {
 							that.pageSettingFav.pageIndex += 1;
@@ -327,7 +335,9 @@
 				this.favoriteList = [];
 				this.getPostList();		// 获取帖子列表 -- 自己作品
 				this.getFavoriteList();		// 获取帖子列表 -- 收藏喜欢
-				this.getFansNum();	// 获取用户粉丝量
+				this.getFFNum("beFollowedUserId");	// 获取用户粉丝量
+				this.getFFNum("userId");	// 获取用户关注量
+				this.getPraiseNum();	// 获取用户所获赞量
 				setTimeout(function () {
 					uni.stopPullDownRefresh();
 				}, 1000);
