@@ -29,18 +29,33 @@
 		async onLoad() {
 			let that = this;
 			uni.getStorage({
-			    key: 'userInfo',
-			    success: function (res) {
+				key: 'userInfo',
+				success: function (res) {
 					that.info.objectId = res.data.objectId;
 					that.getUserInfo();
-			    }
+				}
 			});
 		},
 		onReady(){
 			
 		},
+		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
+		onUnload() {
+			this.info = {};
+		},
+		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
+		onHide(){
+			this.info = {};
+		},
 		onShow(){
-			
+			let that = this;
+			uni.getStorage({
+				key: 'userInfo',
+				success: function (res) {
+					that.info.objectId = res.data.objectId;
+					that.getUserInfo();
+				}
+			});
 		},
 		// 分享
 		onShareAppMessage() {
@@ -55,16 +70,6 @@
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
 			}, 1000);
-		},
-		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
-		onUnload() {
-		},
-		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-		onHide(){
-			
-		},
-		onShow(){
-			
 		},
 		// 到底
 		onReachBottom(){

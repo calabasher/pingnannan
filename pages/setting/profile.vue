@@ -50,27 +50,39 @@
 					});
 					return 
 				}
-				uni.showLoading({
-					title: '加载中'
-				});
-				const query = that.Bmob.Query('_User');
-				query.set('id', that.userInfo.objectId) //需要修改的objectId
-				query.set('profile', that.userInfo.profile)
-				query.save().then(res => {
-					query.get(that.userInfo.objectId).then(res1 => {
-						//更新登陆状态
-						uni.setStorage({
-						  key: 'userInfo',
-						  data: res1,
-						  success: function () {
-							console.log('保存成功')
-							uni.navigateBack()
-						  }
-						});
+				that.Bmob.checkMsg(that.userInfo.profile).then(res => {
+					uni.showLoading({
+						title: '加载中'
+					});
+					const query = that.Bmob.Query('_User');
+					query.set('id', that.userInfo.objectId) //需要修改的objectId
+					query.set('profile', that.userInfo.profile)
+					query.save().then(res => {
+						query.get(that.userInfo.objectId).then(res1 => {
+							//更新登陆状态
+							uni.setStorage({
+							  key: 'userInfo',
+							  data: res1,
+							  success: function () {
+								console.log('保存成功')
+								uni.navigateBack()
+							  }
+							});
+						})
+					}).catch(err => {
+						console.log(err)
 					})
 				}).catch(err => {
-					console.log(err)
+					let tips = '错误类型：' + err.code + '，' + err.error;
+					if(err.code === 10007){
+						tips = '输入内容含有敏感词，请文明用语'
+					}
+					uni.showToast({
+						title: tips,
+						icon: 'none'
+					})
 				})
+				
 			},
 		},
 	}

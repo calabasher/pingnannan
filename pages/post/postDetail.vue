@@ -167,36 +167,48 @@
 					title: '加载中'
 				});
 				let that = this;
-				var currentUser = that.Bmob.User.current(); // 当前用户
-				var objectId = currentUser.objectId; // 当前用户Id
 				
-				// Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
-				const pointerUser = that.Bmob.Pointer('_User')
-				const pUserID = pointerUser.set(objectId)
-				
-				const pointerPost = that.Bmob.Pointer('postList')
-				const pPostID = pointerPost.set(that.postId)
-				
-				var query = that.Bmob.Query('comment');
-				
-				query.set('own',pUserID)	// 绑定的用户id
-				query.set('attrPost',pPostID)	// 绑定的帖子id
-				query.set('attrPostStr',that.postId)	// 绑定的帖子id 字符串 用来删除
-				query.set("content", that.commentValue)
-				query.save().then(res => {
-					// uni.hideLoading();
-					uni.showToast({
-						title: '评论成功',
-						icon: 'success',
-						duration: 1500
+				that.Bmob.checkMsg(that.commentValue).then(res => {
+					var currentUser = that.Bmob.User.current(); // 当前用户
+					var objectId = currentUser.objectId; // 当前用户Id
+					
+					// Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+					const pointerUser = that.Bmob.Pointer('_User')
+					const pUserID = pointerUser.set(objectId)
+					
+					const pointerPost = that.Bmob.Pointer('postList')
+					const pPostID = pointerPost.set(that.postId)
+					
+					var query = that.Bmob.Query('comment');
+					
+					query.set('own',pUserID)	// 绑定的用户id
+					query.set('attrPost',pPostID)	// 绑定的帖子id
+					query.set('attrPostStr',that.postId)	// 绑定的帖子id 字符串 用来删除
+					query.set("content", that.commentValue)
+					query.save().then(res => {
+						// uni.hideLoading();
+						uni.showToast({
+							title: '评论成功',
+							icon: 'success',
+							duration: 1500
+						})
+						that.commentValue = '';
+						setTimeout( () => {
+							that.updatePost('comments');
+							that.getComments();
+						}, 1000);
+					}).catch(err => {
+					  console.log(err)
 					})
-					that.commentValue = '';
-					setTimeout( () => {
-						that.updatePost('comments');
-						that.getComments();
-					}, 1000);
 				}).catch(err => {
-				  console.log(err)
+					let tips = '错误类型：' + err.code + '，' + err.error;
+					if(err.code === 10007){
+						tips = '输入内容含有敏感词，请文明用语'
+					}
+					uni.showToast({
+						title: tips,
+						icon: 'none'
+					})
 				})
 			},
 			// 更新帖子表的评论数

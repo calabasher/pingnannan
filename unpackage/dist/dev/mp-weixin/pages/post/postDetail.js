@@ -291,36 +291,48 @@ __webpack_require__.r(__webpack_exports__);
         title: '加载中' });
 
       var that = this;
-      var currentUser = that.Bmob.User.current(); // 当前用户
-      var objectId = currentUser.objectId; // 当前用户Id
 
-      // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
-      var pointerUser = that.Bmob.Pointer('_User');
-      var pUserID = pointerUser.set(objectId);
+      that.Bmob.checkMsg(that.commentValue).then(function (res) {
+        var currentUser = that.Bmob.User.current(); // 当前用户
+        var objectId = currentUser.objectId; // 当前用户Id
 
-      var pointerPost = that.Bmob.Pointer('postList');
-      var pPostID = pointerPost.set(that.postId);
+        // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
+        var pointerUser = that.Bmob.Pointer('_User');
+        var pUserID = pointerUser.set(objectId);
 
-      var query = that.Bmob.Query('comment');
+        var pointerPost = that.Bmob.Pointer('postList');
+        var pPostID = pointerPost.set(that.postId);
 
-      query.set('own', pUserID); // 绑定的用户id
-      query.set('attrPost', pPostID); // 绑定的帖子id
-      query.set('attrPostStr', that.postId); // 绑定的帖子id 字符串 用来删除
-      query.set("content", that.commentValue);
-      query.save().then(function (res) {
-        // uni.hideLoading();
-        uni.showToast({
-          title: '评论成功',
-          icon: 'success',
-          duration: 1500 });
+        var query = that.Bmob.Query('comment');
 
-        that.commentValue = '';
-        setTimeout(function () {
-          that.updatePost('comments');
-          that.getComments();
-        }, 1000);
+        query.set('own', pUserID); // 绑定的用户id
+        query.set('attrPost', pPostID); // 绑定的帖子id
+        query.set('attrPostStr', that.postId); // 绑定的帖子id 字符串 用来删除
+        query.set("content", that.commentValue);
+        query.save().then(function (res) {
+          // uni.hideLoading();
+          uni.showToast({
+            title: '评论成功',
+            icon: 'success',
+            duration: 1500 });
+
+          that.commentValue = '';
+          setTimeout(function () {
+            that.updatePost('comments');
+            that.getComments();
+          }, 1000);
+        }).catch(function (err) {
+          console.log(err);
+        });
       }).catch(function (err) {
-        console.log(err);
+        var tips = '错误类型：' + err.code + '，' + err.error;
+        if (err.code === 10007) {
+          tips = '输入内容含有敏感词，请文明用语';
+        }
+        uni.showToast({
+          title: tips,
+          icon: 'none' });
+
       });
     },
     // 更新帖子表的评论数

@@ -260,6 +260,12 @@ __webpack_require__.r(__webpack_exports__);
 
   },
   onShow: function onShow() {
+    var that = this;
+    uni.getStorage({
+      key: 'userInfo',
+      success: function success(res) {
+        that.myObjectId = res.data.objectId;
+      } });
 
   },
   // 下拉刷新

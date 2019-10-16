@@ -4,7 +4,7 @@
 			<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 			<view class="pdt20 pdb20 dy-font-color">暂无粉丝</view>
 		</view>
-		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="navTo('/pages/user/otherzone?userId=' + item.userId.objectId)">
+		<view class="white-bg mgb10 pd15 flex-space-between" v-else v-for="(item, index) in userList" :key="item.objectId" @click="toZone(item)">
 			<view class="flex-align-center">
 				<view class="">
 					<image class="van-avatar" :src="item.userId.avatarUrl"></image>
@@ -86,6 +86,13 @@
 			// 详情、结果
 			navTo(url){
 				uni.navigateTo({ url: url })
+			},
+			toZone(item){
+				if(item.userId.objectId !== this.myObjectId){
+					this.navTo('/pages/user/otherzone?userId=' + item.userId.objectId)
+				}else{
+					uni.switchTab({ url: '/pages/user/myzone' })
+				}
 			},
 			// 获取用户列表
 			getUserList() {

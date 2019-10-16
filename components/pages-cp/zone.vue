@@ -153,7 +153,13 @@
 			
 		},
 		onShow(){
-			
+			let that = this;
+			uni.getStorage({
+				key: 'userInfo',
+				success: function (res) {
+					that.myObjectId = res.data.objectId;
+				}
+			});
 		},
 		// 下拉刷新
 		onPullDownRefresh() {

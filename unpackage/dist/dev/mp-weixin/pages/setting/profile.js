@@ -60,27 +60,39 @@ var _default =
 
         return;
       }
-      uni.showLoading({
-        title: '加载中' });
+      that.Bmob.checkMsg(that.userInfo.profile).then(function (res) {
+        uni.showLoading({
+          title: '加载中' });
 
-      var query = that.Bmob.Query('_User');
-      query.set('id', that.userInfo.objectId); //需要修改的objectId
-      query.set('profile', that.userInfo.profile);
-      query.save().then(function (res) {
-        query.get(that.userInfo.objectId).then(function (res1) {
-          //更新登陆状态
-          uni.setStorage({
-            key: 'userInfo',
-            data: res1,
-            success: function success() {
-              console.log('保存成功');
-              uni.navigateBack();
-            } });
+        var query = that.Bmob.Query('_User');
+        query.set('id', that.userInfo.objectId); //需要修改的objectId
+        query.set('profile', that.userInfo.profile);
+        query.save().then(function (res) {
+          query.get(that.userInfo.objectId).then(function (res1) {
+            //更新登陆状态
+            uni.setStorage({
+              key: 'userInfo',
+              data: res1,
+              success: function success() {
+                console.log('保存成功');
+                uni.navigateBack();
+              } });
 
+          });
+        }).catch(function (err) {
+          console.log(err);
         });
       }).catch(function (err) {
-        console.log(err);
+        var tips = '错误类型：' + err.code + '，' + err.error;
+        if (err.code === 10007) {
+          tips = '输入内容含有敏感词，请文明用语';
+        }
+        uni.showToast({
+          title: tips,
+          icon: 'none' });
+
       });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

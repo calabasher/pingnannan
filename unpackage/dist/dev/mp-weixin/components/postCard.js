@@ -199,6 +199,8 @@ var _default2 =
     toZone: function toZone() {
       if (this.myObjectId !== this.postObj.author.objectId) {
         this.navTo('/pages/user/otherzone?userId=' + this.postObj.author.objectId);
+      } else {
+        uni.switchTab({ url: '/pages/user/myzone' });
       }
     },
     // 跳转

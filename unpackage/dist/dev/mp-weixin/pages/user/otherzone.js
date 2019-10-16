@@ -120,7 +120,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 24));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}var zone = function zone() {return __webpack_require__.e(/*! import() | components/pages-cp/zone */ "components/pages-cp/zone").then(__webpack_require__.bind(null, /*! @/components/pages-cp/zone */ 118));};var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var zone = function zone() {return __webpack_require__.e(/*! import() | components/pages-cp/zone */ "components/pages-cp/zone").then(__webpack_require__.bind(null, /*! @/components/pages-cp/zone */ 118));};var _default =
 
 
 
@@ -132,6 +132,7 @@ __webpack_require__.r(__webpack_exports__);
 
   data: function data() {
     return {
+      urlUserId: '', // 用户id
       info: {
         objectId: '', // 用户Id
         nickName: '未登录', // 用户昵称
@@ -146,23 +147,37 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {},
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
-              if (option.userId && option.userId !== 'undefined') {
-                this.getUserInfo(option.userId);
-              } else {
-                uni.showModal({
-                  title: '糟糕！',
-                  content: '用户找不到了',
-                  showCancel: false,
-                  success: function success(res) {
-                    if (res.confirm) {
-                      uni.navigateBack();
-                    }
-                  } });
+  onLoad: function onLoad(option) {
+    if (option.userId && option.userId !== 'undefined') {
+      this.urlUserId = option.userId;
+      this.getUserInfo(option.userId);
+    } else {
+      uni.showModal({
+        title: '糟糕！',
+        content: '用户找不到了',
+        showCancel: false,
+        success: function success(res) {
+          if (res.confirm) {
+            uni.navigateBack();
+          }
+        } });
 
-              }case 1:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
-
+    }
+  },
   onReady: function onReady() {
+  },
+  onUnload: function onUnload() {
+    this.info = {};
+  },
+  // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
+  onHide: function onHide() {
+    this.info = {};
+  },
+  onShow: function onShow() {
+    if (this.urlUserId) {
+      console.log(this.urlUserId);
+      this.getUserInfo(this.urlUserId);
+    }
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -178,13 +193,6 @@ __webpack_require__.r(__webpack_exports__);
       uni.stopPullDownRefresh();
     }, 1000);
   },
-  // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
-  onUnload: function onUnload() {
-  },
-  // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-  onHide: function onHide() {
-
-  },
   methods: {
     // 获取用户信息
     getUserInfo: function getUserInfo(userId) {
@@ -195,6 +203,7 @@ __webpack_require__.r(__webpack_exports__);
       var query = that.Bmob.Query('_User');
       query.get(userId).then(function (res) {
         that.info = res;
+        uni.hideLoading();
         uni.setNavigationBarTitle({
           title: res.nickName });
 

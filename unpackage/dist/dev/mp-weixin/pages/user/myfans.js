@@ -211,6 +211,13 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
     navTo: function navTo(url) {
       uni.navigateTo({ url: url });
     },
+    toZone: function toZone(item) {
+      if (item.userId.objectId !== this.myObjectId) {
+        this.navTo('/pages/user/otherzone?userId=' + item.userId.objectId);
+      } else {
+        uni.switchTab({ url: '/pages/user/myzone' });
+      }
+    },
     // 获取用户列表
     getUserList: function getUserList() {
       var that = this;
