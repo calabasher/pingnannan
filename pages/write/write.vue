@@ -38,8 +38,11 @@
 				</picker>
 			</view>
 		</view>
+		<view class="mgt15 pdl15" @click="checked = !checked">
+			<van-checkbox v-model="checked">我已阅读并同意<text class="mgl5 orange-color" @click.stop="navTo('/pages/activity/rules')"> 发布须知 </text></van-checkbox>
+		</view>
 		<view class="tui-cmt-btn">
-			<van-button type="info" size="large" @click="publish" :disabled=" contents ? false : true ">发表</van-button>
+			<van-button type="info" size="large" @click="publish" :disabled=" contents && checked ? false : true ">发表</van-button>
 		</view>
 	</view>
 </template>
@@ -74,6 +77,7 @@
 				pickIndex: 0,
 				pickList: [{name: '不限'}],
 				postClassId: '',	// 帖子分类的id， 默认为空
+				checked: true,
 			}
 		},
 		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
@@ -99,6 +103,9 @@
 		onHide(){
 		},
 		methods: {
+			navTo(url){
+				uni.navigateTo({ url: url })
+			},
 			// 获取分类列表
 			getPostClassList(){
 				let that = this;

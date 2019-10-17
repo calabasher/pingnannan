@@ -8,29 +8,28 @@
 					</view>
 				</picker>
 			</view>
-			<view class="width-70">
-				<van-search
+			<view class="width-70 tright gold-color">
+				<!-- <van-search
 				  :value="value"
 				  placeholder="请输入搜索关键词"
 				  use-action-slot
 				  @search="onSearch"
 				>
 				  <view slot="action" @search="onSearch">搜索</view>
-				</van-search>
+				</van-search> -->
+				小镇大小事，尽在小镇事事通！
 			</view>
 		</view>
 		<swiper class="pdl15 pdr15 swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
-			<swiper-item v-for="(item, index) in bannerList" :key="index">
-				<image :src="item.url" class="banner-img img-common"></image>
+			<swiper-item v-for="(item, index) in bannerList" :key="index" @click="navTo('/pages/activity/detail?linkId=' + item.linkId)">
+				<image :src="item.url" class="width-100 banner-img img-common"></image>
 			</swiper-item>
 		</swiper>
 		<!-- 菜单分类 -->
 		<view class="pdl15 pdr15 flex-wrap pdt10 pdb5">
-		  <view class="classify-item" v-for="(item, index) in postClassList" :key="index" @click="navTo('/pages/post/postList?title=' + item.name + '&classId=' + item.objectId)">
-			<navigator url="navigate/navigate?title=navigate"  >
-			  <view><img :src="item.imgUrl"  class="van-avatar-large" /></view>
+		  <view class="pdt5 classify-item" v-for="(item, index) in postClassList" :key="index" @click="navTo('/pages/post/postList?title=' + item.name + '&classId=' + item.objectId)">
+			  <view><img :src="item.imgUrl" class="van-avatar-large" /></view>
 			  <view>{{item.name}}</view>
-			</navigator>
 		  </view>
 		</view>
 		<view class="wx-bg space-10"></view>
@@ -221,6 +220,6 @@
 	line-height: 30px;
   }
   .banner-img{
-	  width: 345px;
+	  border-radius: 5px;
   }
 </style>

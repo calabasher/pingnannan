@@ -11,7 +11,9 @@
     "pages/user/myfollows",
     "pages/setting/setting",
     "pages/setting/profile",
-    "pages/setting/accusation"
+    "pages/setting/accusation",
+    "pages/activity/rules",
+    "pages/activity/detail"
   ],
   "subPackages": [],
   "window": {

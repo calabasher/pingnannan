@@ -90,6 +90,11 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  if (!_vm._isMounted) {
+    _vm.e0 = function($event) {
+      _vm.checked = !_vm.checked
+    }
+  }
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -168,6 +173,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -197,8 +205,9 @@ var sizeType = [
       count: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       pickIndex: 0,
       pickList: [{ name: '不限' }],
-      postClassId: '' // 帖子分类的id， 默认为空
-    };
+      postClassId: '', // 帖子分类的id， 默认为空
+      checked: true };
+
   },
   // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
   onUnload: function onUnload() {
@@ -223,6 +232,9 @@ var sizeType = [
   onHide: function onHide() {
   },
   methods: {
+    navTo: function navTo(url) {
+      uni.navigateTo({ url: url });
+    },
     // 获取分类列表
     getPostClassList: function getPostClassList() {
       var that = this;

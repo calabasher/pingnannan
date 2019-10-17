@@ -461,6 +461,9 @@ page {
 .gold-color{
   color: #ffa631;
 }
+.orange-color{
+  color: orange;
+}
 .rose-color{
   color: #FF6766
 }

@@ -4,6 +4,6 @@
   line-height: 30px;
 }
 .banner-img {
-  width: 345px;
+  border-radius: 5px;
 }
 
