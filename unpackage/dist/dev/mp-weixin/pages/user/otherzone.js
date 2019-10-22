@@ -120,7 +120,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var zone = function zone() {return __webpack_require__.e(/*! import() | components/pages-cp/zone */ "components/pages-cp/zone").then(__webpack_require__.bind(null, /*! @/components/pages-cp/zone */ 118));};var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var zone = function zone() {return __webpack_require__.e(/*! import() | components/pages-cp/zone */ "components/pages-cp/zone").then(__webpack_require__.bind(null, /*! @/components/pages-cp/zone */ 132));};var _default =
 
 
 
@@ -175,15 +175,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   onShow: function onShow() {
     if (this.urlUserId) {
-      console.log(this.urlUserId);
       this.getUserInfo(this.urlUserId);
     }
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
     return {
-      title: '事事通',
-      path: '/pages/index/index' };
+      title: '@' + this.info.nickName,
+      path: '/pages/user/otherzone?userId=' + this.userId };
 
   },
   // 下拉刷新

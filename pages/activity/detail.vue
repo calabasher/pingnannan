@@ -1,6 +1,6 @@
 <template>
 	<view class="white-bg">
-	　　<image :src="info.imgUrl" class="width-100 banner-img img-common"></image>
+	　　<image :src="info.imgUrl" class="width-100 img-common banner-img" @click="preImg"></image>
 	</view>
 </template>
 
@@ -22,6 +22,13 @@
 			this.getInfo();
 		},
 		onReady(){
+		},
+		// 分享
+		onShareAppMessage() {
+			return {
+				title: '邀请您使用小镇事事通',
+				path: '/pages/activity/detail?linkId=' + this.linkId
+			}
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
@@ -46,12 +53,19 @@
 				  });
 				})
 			},
+			// 图片预览
+			preImg() {
+				uni.previewImage({
+					current: this.info.imgUrl,
+					urls: [this.info.imgUrl]
+				})
+			},
 		}
 	}
 </script>
 
 <style lang='scss'>
 	.banner-img{
-		  border-radius: 5px;
+		height: 680px;
 	}
 </style>

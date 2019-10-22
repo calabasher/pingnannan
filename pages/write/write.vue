@@ -102,6 +102,13 @@
 		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
 		onHide(){
 		},
+		// 分享
+		onShareAppMessage() {
+			return {
+				title: '邀请您使用小镇事事通',
+				path: '/pages/write/write'
+			}
+		},
 		methods: {
 			navTo(url){
 				uni.navigateTo({ url: url })
@@ -226,16 +233,34 @@
 			        count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
 			            this.count[this.countIndex],
 			        success: (res) => {
-			            this.imageList = this.imageList.concat(res.tempFilePaths);
-						var file;
-						for (let item of res.tempFilePaths) {
-						  console.log('itemn',item)
-						  file = that.Bmob.File('abc.jpg', item);
-						}
-						file.save().then(res => {
-						  console.log(res.length);
-						  console.log(res);
-						})
+			   //          this.imageList = this.imageList.concat(res.tempFilePaths);
+						// var file;
+						// for (let item of res.tempFilePaths) {
+						//   console.log('itemn',item)
+						//   file = that.Bmob.File('abc.jpg', item);
+						// }
+						// file.save().then(res => {
+						//   console.log(res.length);
+						//   console.log(res);
+						// })
+						var imageSrc = res.tempFilePaths[0]
+						uni.uploadFile({
+							url: 'http://imlmbm.xyz/weiliao/skill/file/upload',
+							filePath: imageSrc,
+							fileType: 'image',
+							name: 'uploadFile',	// 后台 参数名
+							success: (data) => {
+								let resp = JSON.parse(data.data)
+								// that.userInfo.portrait = that.requestUrl.url + '/' + resp.results;
+							},
+							fail: (err) => {
+								console.log('uploadImage fail', err);
+								uni.showModal({
+									content: err.errMsg,
+									showCancel: false
+								});
+							}
+						});
 			        },
 			        fail: (err) => {
 			            // #ifdef APP-PLUS

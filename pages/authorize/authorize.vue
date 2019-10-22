@@ -78,6 +78,10 @@
 						  })
 					  }).catch(err => {
 						console.log(err)
+						uni.showToast({
+							title: '授权失败，请退出重试',
+							icon: 'none'
+						})
 					  });
 				  }
 				});

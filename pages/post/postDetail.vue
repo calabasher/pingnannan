@@ -97,7 +97,7 @@
 		// 分享
 		onShareAppMessage() {
 			return {
-				title: '信息分享',
+				title: '邀请您使用小镇事事通',
 				path: '/pages/post/postDetail?postId=' + this.postId
 			}
 		},

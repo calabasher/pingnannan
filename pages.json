@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style" : {
-				"navigationBarTitleText" : "首页",
+				"navigationBarTitleText" : "小镇事事通",
 				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": false,

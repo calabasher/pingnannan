@@ -231,6 +231,13 @@ var sizeType = [
   // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
   onHide: function onHide() {
   },
+  // 分享
+  onShareAppMessage: function onShareAppMessage() {
+    return {
+      title: '邀请您使用小镇事事通',
+      path: '/pages/write/write' };
+
+  },
   methods: {
     navTo: function navTo(url) {
       uni.navigateTo({ url: url });
@@ -330,7 +337,7 @@ var sizeType = [
     countChange: function countChange(e) {
       this.countIndex = e.target.value;
     },
-    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var _this = this;var that, isContinue;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that, isContinue;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
                 that = this;if (!(
 
 
@@ -355,16 +362,34 @@ var sizeType = [
                   count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
                   this.count[this.countIndex],
                   success: function success(res) {
-                    _this.imageList = _this.imageList.concat(res.tempFilePaths);
-                    var file;var _iteratorNormalCompletion = true;var _didIteratorError = false;var _iteratorError = undefined;try {
-                      for (var _iterator = res.tempFilePaths[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {var item = _step.value;
-                        console.log('itemn', item);
-                        file = that.Bmob.File('abc.jpg', item);
-                      }} catch (err) {_didIteratorError = true;_iteratorError = err;} finally {try {if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}} finally {if (_didIteratorError) {throw _iteratorError;}}}
-                    file.save().then(function (res) {
-                      console.log(res.length);
-                      console.log(res);
-                    });
+                    //          this.imageList = this.imageList.concat(res.tempFilePaths);
+                    // var file;
+                    // for (let item of res.tempFilePaths) {
+                    //   console.log('itemn',item)
+                    //   file = that.Bmob.File('abc.jpg', item);
+                    // }
+                    // file.save().then(res => {
+                    //   console.log(res.length);
+                    //   console.log(res);
+                    // })
+                    var imageSrc = res.tempFilePaths[0];
+                    uni.uploadFile({
+                      url: 'http://imlmbm.xyz/weiliao/skill/file/upload',
+                      filePath: imageSrc,
+                      fileType: 'image',
+                      name: 'uploadFile', // 后台 参数名
+                      success: function success(data) {
+                        var resp = JSON.parse(data.data);
+                        // that.userInfo.portrait = that.requestUrl.url + '/' + resp.results;
+                      },
+                      fail: function fail(err) {
+                        console.log('uploadImage fail', err);
+                        uni.showModal({
+                          content: err.errMsg,
+                          showCancel: false });
+
+                      } });
+
                   },
                   fail: function fail(err) {
 
@@ -375,13 +400,13 @@ var sizeType = [
                   } });case 9:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
 
 
-    isFullImg: function isFullImg() {var _this2 = this;
+    isFullImg: function isFullImg() {var _this = this;
       return new Promise(function (res) {
         uni.showModal({
           content: "已经有9张图片了,是否清空现有图片？",
           success: function success(e) {
             if (e.confirm) {
-              _this2.imageList = [];
+              _this.imageList = [];
               res(true);
             } else {
               res(false);

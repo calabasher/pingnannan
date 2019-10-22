@@ -60,7 +60,7 @@
 		// 分享
 		onShareAppMessage() {
 			return {
-				title: '事事通',
+				title: '邀请您使用小镇事事通',
 				path: '/pages/index/index'
 			}
 		},

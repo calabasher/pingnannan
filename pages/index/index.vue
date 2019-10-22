@@ -22,7 +22,9 @@
 		</view>
 		<swiper class="pdl15 pdr15 swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
 			<swiper-item v-for="(item, index) in bannerList" :key="index" @click="navTo('/pages/activity/detail?linkId=' + item.linkId)">
-				<image :src="item.url" class="width-100 banner-img img-common"></image>
+				<view class="width-100 banner-img">
+					<image :src="item.url" class="width-100 height-100 img-common"></image>
+				</view>
 			</swiper-item>
 		</swiper>
 		<!-- 菜单分类 -->
@@ -91,7 +93,7 @@
 		// 分享
 		onShareAppMessage() {
 			return {
-				title: '微撩',
+				title: '邀请您使用小镇事事通',
 				path: '/pages/index/index'
 			}
 		},
@@ -141,6 +143,7 @@
 					title: '加载中'
 				});
 				var query = that.Bmob.Query('banner');
+				query.order("-createdAt");
 				query.limit(5);
 				// 查询所有数据
 				query.find().then(res => {
@@ -221,5 +224,6 @@
   }
   .banner-img{
 	  border-radius: 5px;
+	  height: 300upx;
   }
 </style>

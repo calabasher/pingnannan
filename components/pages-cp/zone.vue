@@ -19,7 +19,7 @@
 				<view class="mgl5 font-20"><van-icon name="bulb-o" @click="navTo('/pages/setting/accusation?objectId=' + info.objectId)" /></view>
 			</view>
 		</view>
-		<view class="white-bg pdl15 pdr15 pdt10"><text>{{ info.profile ? info.profile : '暂无简介' }}</text></view>
+		<view class="white-bg pdl15 pdr15 pdt10"><text>{{ info.profile }}</text></view>
 		<!-- 获赞 粉丝 关注 -->
 		<view class="flex-space-around pdt15 white-bg">
 			<view class="tcenter width-33" @click="showPraise">
@@ -120,6 +120,11 @@
 			}
 		},
 		computed: {
+		},
+		watch: {
+			info(newVal, oldVal){
+				this.reload();
+			}
 		},
 		mounted () {
 			let that = this;
@@ -361,7 +366,7 @@
 				})
 			},
 			// 图片预览
-			preImg(index) {
+			preImg() {
 				uni.previewImage({
 					current: this.info.avatarUrl,
 					urls: [this.info.avatarUrl]

@@ -9,7 +9,7 @@
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
-	"appid": "touristappid",
+	"appid": "wx5f4624dd4e7adca2",
 	"projectname": "Vantui Weapp For Uni-app",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
@@ -22,29 +22,18 @@
 			"current": -1,
 			"list": []
 		},
-		"plugin": {
-			"current": -1,
-			"list": []
-		},
 		"game": {
 			"current": -1,
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 0,
 			"list": [
 				{
-					"id": -1,
-					"name": "pages/write/write",
-					"pathName": "pages/write/write",
+					"name": "",
+					"path": "",
 					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "pages/activity/rules",
-					"pathName": "pages/activity/rules",
-					"scene": null
+					"id": 0
 				}
 			]
 		}

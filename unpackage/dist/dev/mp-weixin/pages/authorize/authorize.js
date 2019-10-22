@@ -202,6 +202,10 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
             });
           }).catch(function (err) {
             console.log(err);
+            uni.showToast({
+              title: '授权失败，请退出重试',
+              icon: 'none' });
+
           });
         } });
 

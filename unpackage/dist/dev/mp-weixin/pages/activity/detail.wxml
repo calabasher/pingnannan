@@ -1,1 +1,1 @@
-<view class="white-bg"><image class="width-100 banner-img img-common" src="{{info.imgUrl}}"></image></view>
+<view class="white-bg"><image class="width-100 img-common banner-img" src="{{info.imgUrl}}" data-event-opts="{{[['tap',[['preImg',['$event']]]]]}}" bindtap="__e"></image></view>

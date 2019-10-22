@@ -53,15 +53,14 @@
 		},
 		onShow(){
 			if(this.urlUserId){
-				console.log(this.urlUserId)
 				this.getUserInfo(this.urlUserId)
 			} 
 		},
 		// 分享
 		onShareAppMessage() {
 			return {
-				title: '事事通',
-				path: '/pages/index/index'
+				title: '@' + this.info.nickName,
+				path: '/pages/user/otherzone?userId=' + this.userId
 			}
 		},
 		// 下拉刷新

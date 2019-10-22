@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "首页",
+  "navigationBarTitleText": "小镇事事通",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "post-card": "/components/postCard"
