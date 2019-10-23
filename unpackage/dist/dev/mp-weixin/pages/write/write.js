@@ -176,6 +176,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -206,8 +213,12 @@ var sizeType = [
       pickIndex: 0,
       pickList: [{ name: '不限' }],
       postClassId: '', // 帖子分类的id， 默认为空
-      checked: true };
-
+      checked: true,
+      canvasShow: false, // 画布
+      canvasW: 0, // 画布 宽
+      canvasH: 0, // 画布 高
+      fileUrl: 'http://imlmbm.xyz/' // 文件地址
+    };
   },
   // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
   onUnload: function onUnload() {
@@ -328,16 +339,99 @@ var sizeType = [
 
       });
     },
-    sourceTypeChange: function sourceTypeChange(e) {
-      this.sourceTypeIndex = e.target.value;
-    },
-    sizeTypeChange: function sizeTypeChange(e) {
-      this.sizeTypeIndex = e.target.value;
-    },
-    countChange: function countChange(e) {
-      this.countIndex = e.target.value;
-    },
-    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that, isContinue;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+    // 获取选择图片的信息 一张或多张
+    getImageInfo: function () {var _getImageInfo = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(imageArr) {var that, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, val;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+                that = this;_iteratorNormalCompletion = true;_didIteratorError = false;_iteratorError = undefined;_context.prev = 4;
+                for (_iterator = imageArr[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {val = _step.value;
+                  // 循环绘制canvas, canvas中使用定时器
+                  uni.getImageInfo({ //获取图片信息
+                    src: val,
+                    success: function success(res) {
+                      //成功去进行压缩事件
+                      that.drawCanvas(res);
+                    }, fail: function fail(err) {
+                      console.log(err);
+                    } });
+
+                }_context.next = 12;break;case 8:_context.prev = 8;_context.t0 = _context["catch"](4);_didIteratorError = true;_iteratorError = _context.t0;case 12:_context.prev = 12;_context.prev = 13;if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}case 15:_context.prev = 15;if (!_didIteratorError) {_context.next = 18;break;}throw _iteratorError;case 18:return _context.finish(15);case 19:return _context.finish(12);case 20:case "end":return _context.stop();}}}, _callee, this, [[4, 8, 12, 20], [13,, 15, 19]]);}));function getImageInfo(_x) {return _getImageInfo.apply(this, arguments);}return getImageInfo;}(),
+
+    // 绘制图片到canvas上
+    drawCanvas: function () {var _drawCanvas = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(res) {var ctx, that, originWidth, originHeight, maxWidth, maxHeight, targetWidth, targetHeight;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
+                ctx = uni.createCanvasContext('myCanvas'); //创建画布
+                that = this;
+                // 图片原始尺寸
+                originWidth = res.width;
+                originHeight = res.height;
+                // 最大尺寸限制，可通过国设置宽高来实现图片压缩程度
+                maxWidth = 375,
+                maxHeight = 375;
+                // 目标尺寸
+                targetWidth = originWidth,
+                targetHeight = originHeight;
+                // 图片尺寸超过400x400的限制
+                if (originWidth > maxWidth || originHeight > maxHeight) {
+                  if (originWidth / originHeight > maxWidth / maxHeight) {
+                    // 更宽，按照宽度限定尺寸
+                    targetWidth = maxWidth;
+                    targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                  } else {
+                    targetHeight = maxHeight;
+                    targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                  }
+                }
+                // canvas对图片进行缩放
+                ctx.width = targetWidth;
+                ctx.height = targetHeight;
+                that.canvasH = targetHeight;
+                that.canvasW = targetWidth;
+                // 清除画布
+                ctx.clearRect(0, 0, targetWidth, targetHeight);
+                // 图片压缩
+                ctx.drawImage(res.path, 0, 0, targetWidth, targetHeight); //画布中展示图片大小
+                uni.showLoading({ title: "图片处理中" }); //运行压缩输出文字（显示loading）
+                ctx.draw(); //回调函数
+                return _context2.abrupt("return", new Promise(function (resolve) {
+                  resolve();
+                  var timer = setTimeout(function () {//定时事件，和展示图片与wx。showLoading关系密切
+                    uni.canvasToTempFilePath({ //把当前画布指定区域的内容导出生成指定大小图片，并返回文件路径
+                      canvasId: "myCanvas", //画布id
+                      quality: 0.5, //图片质量，取值范围在（0，1】
+                      success: function success(res1) {
+                        console.log('给后台传输这个地址:' + res1.tempFilePath); //给后台传输这个地址
+                        // that.imageList.push(res1.tempFilePath)
+                        uni.uploadFile({
+                          url: that.fileUrl + '/weiliao/skill/file/upload',
+                          filePath: res1.tempFilePath,
+                          fileType: 'image',
+                          name: 'uploadFile', // 后台 参数名
+                          success: function success(data) {
+                            var resp = JSON.parse(data.data);
+                            console.log(that.fileUrl + resp.results);
+                            that.imageList.push(that.fileUrl + resp.results);
+                            // 清除画布
+                            ctx.clearRect(0, 0, targetWidth, targetHeight);
+                          },
+                          fail: function fail(err) {
+                            console.log('uploadImage fail', err);
+                            uni.showModal({
+                              content: err.errMsg,
+                              showCancel: false });
+
+                          },
+                          complete: function complete() {
+                            uni.hideLoading(); //隐藏loading
+                            clearTimeout(timer); //关闭定时器
+                            timer = null; //把定时器制null
+                          } });
+
+                      }, fail: function fail(err) {
+                        console.log(err);
+                      } },
+                    this);
+                  }, 300);
+                }));case 16:case "end":return _context2.stop();}}}, _callee2, this);}));function drawCanvas(_x2) {return _drawCanvas.apply(this, arguments);}return drawCanvas;}(),
+
+    chooseImage: function () {var _chooseImage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee3() {var that, isContinue;return _regenerator.default.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:
                 that = this;if (!(
 
 
@@ -349,47 +443,21 @@ var sizeType = [
 
 
 
-                this.imageList.length === 9)) {_context.next = 8;break;}_context.next = 4;return (
-                  this.isFullImg());case 4:isContinue = _context.sent;
+                this.imageList.length === 9)) {_context3.next = 8;break;}_context3.next = 4;return (
+                  this.isFullImg());case 4:isContinue = _context3.sent;
                 console.log("是否继续?", isContinue);if (
-                isContinue) {_context.next = 8;break;}return _context.abrupt("return");case 8:
+                isContinue) {_context3.next = 8;break;}return _context3.abrupt("return");case 8:
 
 
 
                 uni.chooseImage({
                   sourceType: sourceType[this.sourceTypeIndex],
-                  sizeType: sizeType[this.sizeTypeIndex],
+                  sizeType: ['origin', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
                   count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
                   this.count[this.countIndex],
                   success: function success(res) {
-                    //          this.imageList = this.imageList.concat(res.tempFilePaths);
-                    // var file;
-                    // for (let item of res.tempFilePaths) {
-                    //   console.log('itemn',item)
-                    //   file = that.Bmob.File('abc.jpg', item);
-                    // }
-                    // file.save().then(res => {
-                    //   console.log(res.length);
-                    //   console.log(res);
-                    // })
-                    var imageSrc = res.tempFilePaths[0];
-                    uni.uploadFile({
-                      url: 'http://imlmbm.xyz/weiliao/skill/file/upload',
-                      filePath: imageSrc,
-                      fileType: 'image',
-                      name: 'uploadFile', // 后台 参数名
-                      success: function success(data) {
-                        var resp = JSON.parse(data.data);
-                        // that.userInfo.portrait = that.requestUrl.url + '/' + resp.results;
-                      },
-                      fail: function fail(err) {
-                        console.log('uploadImage fail', err);
-                        uni.showModal({
-                          content: err.errMsg,
-                          showCancel: false });
-
-                      } });
-
+                    var imageSrc = res.tempFilePaths;
+                    that.getImageInfo(res.tempFilePaths); //运行事件
                   },
                   fail: function fail(err) {
 
@@ -397,9 +465,12 @@ var sizeType = [
 
 
 
-                  } });case 9:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
+                  } });case 9:case "end":return _context3.stop();}}}, _callee3, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
 
 
+    deleteImg: function deleteImg(index) {
+      this.imageList.splice(1, index);
+    },
     isFullImg: function isFullImg() {var _this = this;
       return new Promise(function (res) {
         uni.showModal({
@@ -418,18 +489,17 @@ var sizeType = [
 
       });
     },
-    previewImage: function previewImage(e) {
-      var current = e.target.dataset.src;
+    previewImage: function previewImage(index) {
       uni.previewImage({
-        current: current,
+        current: this.imageList[index],
         urls: this.imageList });
 
     },
-    checkPermission: function () {var _checkPermission = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2(code) {var type, status;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
+    checkPermission: function () {var _checkPermission = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee4(code) {var type, status;return _regenerator.default.wrap(function _callee4$(_context4) {while (1) {switch (_context4.prev = _context4.next) {case 0:
                 type = code ? code - 1 : this.sourceTypeIndex;if (!
-                permision.isIOS) {_context2.next = 7;break;}_context2.next = 4;return permision.requestIOS(sourceType[type][0]);case 4:_context2.t0 = _context2.sent;_context2.next = 10;break;case 7:_context2.next = 9;return (
+                permision.isIOS) {_context4.next = 7;break;}_context4.next = 4;return permision.requestIOS(sourceType[type][0]);case 4:_context4.t0 = _context4.sent;_context4.next = 10;break;case 7:_context4.next = 9;return (
                   permision.requestAndroid(type === 0 ? 'android.permission.CAMERA' :
-                  'android.permission.READ_EXTERNAL_STORAGE'));case 9:_context2.t0 = _context2.sent;case 10:status = _context2.t0;
+                  'android.permission.READ_EXTERNAL_STORAGE'));case 9:_context4.t0 = _context4.sent;case 10:status = _context4.t0;
 
                 if (status === null || status === 1) {
                   status = 1;
@@ -443,17 +513,10 @@ var sizeType = [
                       }
                     } });
 
-                }return _context2.abrupt("return",
+                }return _context4.abrupt("return",
 
-                status);case 13:case "end":return _context2.stop();}}}, _callee2, this);}));function checkPermission(_x) {return _checkPermission.apply(this, arguments);}return checkPermission;}(),
+                status);case 13:case "end":return _context4.stop();}}}, _callee4, this);}));function checkPermission(_x3) {return _checkPermission.apply(this, arguments);}return checkPermission;}(),
 
-    // 选择分类提示
-    selectTips: function selectTips() {
-      uni.showToast({
-        title: '选择分类可以更好地被别人发现，当然，你也可以不选',
-        icon: 'none' });
-
-    },
     // 切换pick分类选择
     bindPickerChange: function bindPickerChange(e) {
       this.pickIndex = e.target.value;

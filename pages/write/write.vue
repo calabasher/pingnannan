@@ -16,8 +16,11 @@
 		            <view class="uni-uploader-body">
 		                <view class="uni-uploader__files">
 		                    <block v-for="(image,index) in imageList" :key="index">
-		                        <view class="uni-uploader__file">
-		                            <image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+		                        <view class="position-r uni-uploader__file">
+		                            <image class="uni-uploader__img" :src="image" :data-src="image" @click="previewImage(index)"></image>
+									<view class="delete-icon tright" @click.stop="deleteImg(index)">
+										<van-icon name="close" size="24" />
+									</view>
 		                        </view>
 		                    </block>
 		                    <view class="uni-uploader__input-box">
@@ -43,6 +46,10 @@
 		</view>
 		<view class="tui-cmt-btn">
 			<van-button type="info" size="large" @click="publish" :disabled=" contents && checked ? false : true ">发表</van-button>
+		</view>
+		<view class="">
+			<!-- <canvas style="width: 100px;height: 100px;" canvas-id="myCanvas"/> -->
+			<canvas :style=" { width: canvasW + 'px', height: canvasH + 'px', position: 'absolute', left: '100%' }" canvas-id="myCanvas"/>
 		</view>
 	</view>
 </template>
@@ -78,6 +85,10 @@
 				pickList: [{name: '不限'}],
 				postClassId: '',	// 帖子分类的id， 默认为空
 				checked: true,
+				canvasShow: false, // 画布
+				canvasW: 0,	// 画布 宽
+				canvasH: 0,	// 画布 高
+				fileUrl: 'http://imlmbm.xyz/',	// 文件地址
 			}
 		},
 		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
@@ -199,14 +210,97 @@
 					})
 				})
 			},
-			sourceTypeChange: function(e) {
-			    this.sourceTypeIndex = e.target.value
+			// 获取选择图片的信息 一张或多张
+			getImageInfo: async function(imageArr){
+				var that = this;
+				for(let val of imageArr) {
+					// 循环绘制canvas, canvas中使用定时器
+					uni.getImageInfo({//获取图片信息
+					  src: val,
+					  success:function(res){
+						  //成功去进行压缩事件
+						  that.drawCanvas(res);
+					  },fail: (err) => {
+						console.log(err)
+					  }
+					})
+				}
 			},
-			sizeTypeChange: function(e) {
-			    this.sizeTypeIndex = e.target.value
-			},
-			countChange: function(e) {
-			    this.countIndex = e.target.value;
+			// 绘制图片到canvas上
+			drawCanvas: async function (res) {
+				const ctx = uni.createCanvasContext('myCanvas'); //创建画布
+				var that = this;
+				// 图片原始尺寸
+				var originWidth = res.width;
+				var originHeight = res.height;
+				// 最大尺寸限制，可通过国设置宽高来实现图片压缩程度
+				var maxWidth = 375,
+					maxHeight = 375;
+				// 目标尺寸
+				var targetWidth = originWidth,
+					targetHeight = originHeight;
+				// 图片尺寸超过400x400的限制
+				if(originWidth > maxWidth || originHeight > maxHeight) {
+					if(originWidth / originHeight > maxWidth / maxHeight) {
+						// 更宽，按照宽度限定尺寸
+						targetWidth = maxWidth;
+						targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+					} else {
+						targetHeight = maxHeight;
+						targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+					}
+				}
+				// canvas对图片进行缩放
+				ctx.width = targetWidth;
+				ctx.height = targetHeight;
+				that.canvasH = targetHeight
+				that.canvasW = targetWidth
+				// 清除画布
+				ctx.clearRect(0, 0, targetWidth, targetHeight);
+				// 图片压缩
+				ctx.drawImage(res.path,0, 0, targetWidth, targetHeight); //画布中展示图片大小
+				uni.showLoading({title:"图片处理中"}) //运行压缩输出文字（显示loading）
+				ctx.draw();//回调函数
+				return new Promise( resolve=> {
+					 resolve()
+					let timer = setTimeout(function(){ //定时事件，和展示图片与wx。showLoading关系密切
+					  uni.canvasToTempFilePath({ //把当前画布指定区域的内容导出生成指定大小图片，并返回文件路径
+						canvasId: "myCanvas", //画布id
+						quality: 0.5, //图片质量，取值范围在（0，1】
+						success:function(res1){
+						  console.log('给后台传输这个地址:' + res1.tempFilePath)//给后台传输这个地址
+						  // that.imageList.push(res1.tempFilePath)
+						  uni.uploadFile({
+						  	url: that.fileUrl + '/weiliao/skill/file/upload',
+						  	filePath: res1.tempFilePath,
+						  	fileType: 'image',
+						  	name: 'uploadFile',	// 后台 参数名
+						  	success: (data) => {
+						  		let resp = JSON.parse(data.data)
+								console.log(that.fileUrl + resp.results)
+						  		that.imageList.push(that.fileUrl + resp.results);
+								// 清除画布
+								ctx.clearRect(0, 0, targetWidth, targetHeight);
+						  	},
+						  	fail: (err) => {
+						  		console.log('uploadImage fail', err);
+						  		uni.showModal({
+						  			content: err.errMsg,
+						  			showCancel: false
+						  		});
+						  	},
+							complete: () => {
+							  uni.hideLoading()//隐藏loading
+							  clearTimeout(timer);//关闭定时器
+							  timer = null;//把定时器制null
+							}
+						  });
+						},fail: (err) => {
+							 console.log(err)
+						}
+					  }, this)
+					}, 300)
+				})
 			},
 			chooseImage: async function() {
 				let that = this;
@@ -229,38 +323,12 @@
 			    }
 			    uni.chooseImage({
 			        sourceType: sourceType[this.sourceTypeIndex],
-			        sizeType: sizeType[this.sizeTypeIndex],
+					sizeType: ['origin','compressed'], //可以指定是原图还是压缩图，默认二者都有
 			        count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
 			            this.count[this.countIndex],
 			        success: (res) => {
-			   //          this.imageList = this.imageList.concat(res.tempFilePaths);
-						// var file;
-						// for (let item of res.tempFilePaths) {
-						//   console.log('itemn',item)
-						//   file = that.Bmob.File('abc.jpg', item);
-						// }
-						// file.save().then(res => {
-						//   console.log(res.length);
-						//   console.log(res);
-						// })
-						var imageSrc = res.tempFilePaths[0]
-						uni.uploadFile({
-							url: 'http://imlmbm.xyz/weiliao/skill/file/upload',
-							filePath: imageSrc,
-							fileType: 'image',
-							name: 'uploadFile',	// 后台 参数名
-							success: (data) => {
-								let resp = JSON.parse(data.data)
-								// that.userInfo.portrait = that.requestUrl.url + '/' + resp.results;
-							},
-							fail: (err) => {
-								console.log('uploadImage fail', err);
-								uni.showModal({
-									content: err.errMsg,
-									showCancel: false
-								});
-							}
-						});
+						var imageSrc = res.tempFilePaths
+						that.getImageInfo(res.tempFilePaths)//运行事件
 			        },
 			        fail: (err) => {
 			            // #ifdef APP-PLUS
@@ -270,6 +338,9 @@
 			            // #endif
 			        }
 			    })
+			},
+			deleteImg(index){
+				this.imageList.splice( 1, index)
 			},
 			isFullImg: function() {
 			    return new Promise((res) => {
@@ -289,10 +360,9 @@
 			        })
 			    })
 			},
-			previewImage: function(e) {
-			    var current = e.target.dataset.src
+			previewImage: function(index) {
 			    uni.previewImage({
-			        current: current,
+			        current: this.imageList[index],
 			        urls: this.imageList
 			    })
 			},
@@ -317,13 +387,6 @@
 			    }
 			
 			    return status;
-			},
-			// 选择分类提示
-			selectTips(){
-				uni.showToast({
-				    title: '选择分类可以更好地被别人发现，当然，你也可以不选',
-					icon: 'none'
-				});
 			},
 			// 切换pick分类选择
 			bindPickerChange: function(e) {
@@ -403,5 +466,12 @@ page {
 }
 .uni-list-cell::after {
 	left: 0;
+}
+.delete-icon{
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 20px;
+	ackground-color: rgba(0,0,0,.7);
 }
 </style>
