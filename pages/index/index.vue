@@ -88,7 +88,7 @@
 		onReady(){
 		},
 		onShow(){
-			this.getPostList();
+			// this.getPostList();
 		},
 		// 分享
 		onShareAppMessage() {

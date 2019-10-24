@@ -73,4 +73,8 @@ page {
 	height: 20px;
 	ackground-color: rgba(0,0,0,.7);
 }
+.uni-uploader__file {
+	width: 208rpx;
+}
+
 

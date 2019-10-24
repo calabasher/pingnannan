@@ -212,7 +212,7 @@ __webpack_require__.r(__webpack_exports__);
   onReady: function onReady() {
   },
   onShow: function onShow() {
-    this.getPostList();
+    // this.getPostList();
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
