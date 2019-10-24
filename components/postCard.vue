@@ -14,7 +14,7 @@
         <view v-if=" myObjectId !== postObj.author.objectId " @click.stop="addFollow(postObj)">
           <van-button icon="plus" type="default" size="small">关注</van-button>
         </view>
-		<view class="" v-else @click.stop="deletePost(postObj)" v-if="showPostOpt">
+		<view class="" @click.stop="deletePost(postObj)" v-if="showPostOpt && myObjectId === postObj.author.objectId">
 		  <van-icon name="ellipsis" />
 		</view>
       </view>
