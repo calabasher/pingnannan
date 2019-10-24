@@ -20,7 +20,7 @@
 			</view>
 			<view class="pd15 border-bottom" v-else v-for="(item,index) in commentsList" :key="item.objectId">
 				<view class=" flex-space-between">
-					<view class="flex-align-center">
+					<view class="flex-align-center" @click.stop="toZone(item)">
 						<image :src="item.own.avatarUrl" class="van-avatar-large"></image>
 						<view class="mgl10">
 							<view class="">{{item.own.nickName}}</view>
@@ -100,6 +100,13 @@
 			// }
 		},
 		methods: {
+			toZone(item){
+				if(this.info.objectId !== item.own.objectId){
+					this.navTo('/pages/user/otherzone?userId=' + item.own.objectId)
+				}else{
+					uni.switchTab({ url: '/pages/user/myzone' })
+				}
+			},
 			// 获取帖子状态
 			getPostFavoriteStatus(){
 				let that = this;

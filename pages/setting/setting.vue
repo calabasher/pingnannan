@@ -2,6 +2,11 @@
 	<view>
 		<van-cell-group>
 		  <van-cell is-link title="个人简介" @click="navTo('/pages/setting/profile')" :value="userInfo.profile"></van-cell>
+		  <view class="border-bottom">
+			    <button open-type='contact' class="font-14 tleft white-bg pdt5 pdb5 flex-space-between">
+					<text>联系客服</text><van-icon name="arrow" class="dy-font-color font-16" />
+			    </button>
+			</view>
 		  <!-- <van-cell is-link title="用户须知" @click="navTo(url)" url="/pages/dashboard/index" /> -->
 		</van-cell-group>
 	</view>

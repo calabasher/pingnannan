@@ -734,7 +734,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -6979,7 +6979,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -7000,14 +7000,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -7083,7 +7083,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -8404,7 +8404,7 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "小镇事事通", "enablePullDownRefresh": true }, "pages/post/postList": { "navigationBarTitleText": "", "enablePullDownRefresh": true }, "pages/post/postDetail": { "navigationBarTitleText": "帖子详情" }, "pages/write/write": { "navigationBarTitleText": "发布", "usingComponents": {} }, "pages/authorize/authorize": { "navigationBarTitleText": "微信授权", "usingComponents": {} }, "pages/user/myzone": { "navigationBarTitleText": "主页", "enablePullDownRefresh": true }, "pages/user/otherzone": { "navigationBarTitleText": "", "enablePullDownRefresh": true }, "pages/user/myfans": { "navigationBarTitleText": "粉丝列表", "enablePullDownRefresh": true }, "pages/user/myfollows": { "navigationBarTitleText": "关注列表", "enablePullDownRefresh": true }, "pages/setting/setting": { "navigationBarTitleText": "设置", "usingComponents": {} }, "pages/setting/profile": { "navigationBarTitleText": "个人简介", "usingComponents": {} }, "pages/setting/accusation": { "navigationBarTitleText": "举报投诉", "usingComponents": {} }, "pages/activity/rules": { "navigationBarTitleText": "发帖规则", "usingComponents": {} }, "pages/activity/detail": { "navigationBarTitleText": "", "usingComponents": {} } }, "globalStyle": { "navigationBarTitleText": "Vant For Uni-app", "navigationBarBackgroundColor": "#f8f8f8", "navigationBarTextStyle": "black", "backgroundTextStyle": "dark", "backgroundColor": "#f8f8f8" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "小镇事事通", "enablePullDownRefresh": true }, "pages/post/postList": { "navigationBarTitleText": "", "enablePullDownRefresh": true }, "pages/post/postDetail": { "navigationBarTitleText": "帖子详情" }, "pages/write/write": { "navigationBarTitleText": "发布" }, "pages/authorize/authorize": { "navigationBarTitleText": "微信授权" }, "pages/user/myzone": { "navigationBarTitleText": "主页", "enablePullDownRefresh": true }, "pages/user/otherzone": { "navigationBarTitleText": "", "enablePullDownRefresh": true }, "pages/user/myfans": { "navigationBarTitleText": "粉丝列表", "enablePullDownRefresh": true }, "pages/user/myfollows": { "navigationBarTitleText": "关注列表", "enablePullDownRefresh": true }, "pages/setting/setting": { "navigationBarTitleText": "设置" }, "pages/setting/profile": { "navigationBarTitleText": "个人简介" }, "pages/setting/accusation": { "navigationBarTitleText": "举报投诉" }, "pages/activity/rules": { "navigationBarTitleText": "发帖规则" }, "pages/activity/detail": { "navigationBarTitleText": "" } }, "globalStyle": { "navigationBarTitleText": "Vant For Uni-app", "navigationBarBackgroundColor": "#f8f8f8", "navigationBarTextStyle": "black", "backgroundTextStyle": "dark", "backgroundColor": "#f8f8f8" } };exports.default = _default;
 
 /***/ }),
 /* 8 */

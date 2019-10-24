@@ -224,6 +224,13 @@ __webpack_require__.r(__webpack_exports__);
     // }
   },
   methods: {
+    toZone: function toZone(item) {
+      if (this.info.objectId !== item.own.objectId) {
+        this.navTo('/pages/user/otherzone?userId=' + item.own.objectId);
+      } else {
+        uni.switchTab({ url: '/pages/user/myzone' });
+      }
+    },
     // 获取帖子状态
     getPostFavoriteStatus: function getPostFavoriteStatus() {
       var that = this;
