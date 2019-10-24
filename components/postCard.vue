@@ -14,13 +14,13 @@
         <view v-if=" myObjectId !== postObj.author.objectId " @click.stop="addFollow(postObj)">
           <van-button icon="plus" type="default" size="small">关注</van-button>
         </view>
-		<view class="" v-else @click.stop="deletePost(postObj)">
+		<view class="" v-else @click.stop="deletePost(postObj)" v-if="showPostOpt">
 		  <van-icon name="ellipsis" />
 		</view>
       </view>
     </view>
     <view class="pd5">
-       <text>{{postObj.contents}}</text>
+       <text class="contentsHtml">{{postObj.contents}}</text>
     </view>
     <!-- 图片区域 -->
     <view class="img-zone" v-if="images.length !== 0">
@@ -148,14 +148,36 @@ export default {
       })
     },
 	// 删除帖子
-	deletePost: function (item) {
+	deletePost: function (postObj) {
 		let that = this;
 		uni.showModal({
 		    title: '提示',
 		    content: '删除后，所有相关的信息都将被删除，是否删除？',
 		    success: function (res) {
 		        if (res.confirm) {
-		            that.$emit('on-delete-post')
+					// 删除帖子
+					const query = that.Bmob.Query('postList');
+					query.destroy(postObj.objectId).then(res => {
+						that.$emit('on-delete-post')
+					}).catch(err => {
+					  console.log(err)
+					})
+					// 删除帖子相关的收藏
+					const favorite = that.Bmob.Query('favorite');
+					favorite.equalTo("postId", "==", postObj.objectId);
+					favorite.find().then(todos => {
+					  todos.destroyAll().then(res => {
+					    console.log(res,'ok')
+					  })
+					})
+					// 删除帖子相关的评论
+					const comment = that.Bmob.Query('comment');
+					comment.equalTo("attrPost", "==", postObj.objectId);
+					comment.find().then(todos => {
+					  todos.destroyAll().then(res => {
+					    console.log(res,'ok')
+					  })
+					})
 		        } else if (res.cancel) {
 		            console.log('用户点击取消');
 		        }
@@ -197,5 +219,8 @@ export default {
     width: 100%;
     height: 120px;
 	overflow: hidden;
+  }
+  .contentsHtml{
+	word-wrap: break-word;
   }
 </style>

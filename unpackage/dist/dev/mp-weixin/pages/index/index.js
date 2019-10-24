@@ -207,7 +207,8 @@ __webpack_require__.r(__webpack_exports__);
 
               this.getLocalList();
               this.getBannerList();
-              this.getPostClassList();case 5:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              this.getPostClassList();
+              this.getPostList();case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },
@@ -226,6 +227,9 @@ __webpack_require__.r(__webpack_exports__);
     this.pageSetting.pageIndex = 1;
     this.postList = [];
     this.getPostList();
+    this.getLocalList();
+    this.getBannerList();
+    this.getPostClassList();
     setTimeout(function () {
       uni.stopPullDownRefresh();
     }, 1000);
@@ -318,6 +322,10 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       });
+    },
+    // 删除帖子
+    deletePost: function deletePost(index) {
+      this.postList.splice(index, 1);
     },
     // 切换pick地址选择
     bindPickerChange: function bindPickerChange(e) {

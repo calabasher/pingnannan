@@ -45,7 +45,7 @@
 					<view class="pdt20 pdb20 dy-font-color">暂无作品</view>
 				</view>
 				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)" v-else>
-					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(item,index)"></postCard>
+					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(index)"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
 			</view>
@@ -58,7 +58,7 @@
 					<view class="pdt20 pdb20 dy-font-color">暂无喜欢</view>
 				</view>
 				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.postId.objectId)" v-else>
-					<postCard :postObj="item.postId"></postCard>
+					<postCard :postObj="item.postId" @on-delete-post="deletePost(index)"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSettingFav.pageIndex > pageSettingFav.totalPage ? '已经到底了' : '' }}</view>
 			</view>
@@ -128,6 +128,8 @@
 		},
 		mounted () {
 			let that = this;
+			that.postList = [];	// 帖子列表
+			that.favoriteList = [];	// 收藏的帖子
 			uni.getStorage({
 				key: 'userInfo',
 				success: function (res) {
@@ -140,34 +142,12 @@
 			this.getFFNum("userId");	// 获取用户关注量
 			this.getPraiseNum();	// 获取用户所获赞量
 		},
-		onReady(){
-			
-		},
 		// 分享
 		onShareAppMessage() {
 			return {
 				title: '事事通',
 				path: '/pages/index/index'
 			}
-		},
-		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
-		onUnload() {
-		},
-		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-		onHide(){
-			
-		},
-		onShow(){
-			let that = this;
-			uni.getStorage({
-				key: 'userInfo',
-				success: function (res) {
-					that.myObjectId = res.data.objectId;
-				}
-			});
-		},
-		// 下拉刷新
-		onPullDownRefresh() {
 		},
 		// 到底
 		onReachBottom(){
@@ -284,22 +264,12 @@
 				});
 			},
 			// 删除帖子
-			deletePost: function (item, index) {
-			  let that = this;
-			  uni.showLoading();
-			  const query = that.Bmob.Query('postList')
-			  const favorite = that.Bmob.Query('favorite')
-			  const comment = that.Bmob.Query('comment')
-			  favorite.destroy(item.objectId).then(res => {
-			    uni.hideLoading();
-			  })
-			  query.destroy(item.objectId).then(res => {
-			    uni.hideLoading();
-				that.postList.splice(index, 1)
-			  })
-			  comment.destroy(item.objectId).then(res => {
-			    uni.hideLoading();
-			  })
+			deletePost(index) {
+			  if(this.tabIndex === 0 ){
+				  this.postList.splice( index, 1)
+			  }else{
+				  this.favoriteList.splice( index, 1)
+			  } 
 			},
 			// 加关注
 			addFollow: function () {
@@ -344,7 +314,9 @@
 			// 重新加载
 			reload(){
 				this.pageSetting.pageIndex = 1;
+				this.pageSetting.totalSize = 0;
 				this.pageSettingFav.pageIndex = 1;
+				this.pageSettingFav.totalSize = 0;
 				this.postList = [];
 				this.favoriteList = [];
 				this.getPostList();		// 获取帖子列表 -- 自己作品

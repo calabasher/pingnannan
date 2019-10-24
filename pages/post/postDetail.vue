@@ -1,7 +1,7 @@
 <template>
 	<view class="wx-bg">
 		<view class="white-bg pdl15 pdr15 pdt15 pdb5">
-			<postCard :postObj="postInfo" :showPostOpt="false"></postCard>
+			<postCard :postObj="postInfo" :showPostOpt="false" ></postCard>
 		</view>
 		<view class="flex-space-around font-24 white-bg mgb10">
 			<view class="font-24 width-50 tcenter" @click="addFavorite"><van-icon :name=" isFavorite ? 'like' : 'like-o' " :color=" isFavorite ? 'red' : '' " /></view>
@@ -68,16 +68,7 @@
 		async onLoad(option) {
 			let that = this;
 			if(option.postId === "undefined"){
-				uni.showModal({
-				    title: '糟糕！',
-				    content: '帖子找不到了',
-					showCancel: false,
-				    success: function (res) {
-				        if (res.confirm) {
-				            uni.navigateBack()
-				        } 
-				    }
-				});
+				that.noFound()
 			}else{
 				this.postId = option.postId ? option.postId : '8604d6bb67';
 				uni.getStorage({
@@ -139,7 +130,10 @@
 					that.postInfo = res;
 					that.postAuthor = res.author.objectId;
 				}).catch(err => {
-				  console.log(err)
+					if(err.code === 101){
+						that.noFound()
+					}
+					console.log(err)
 				})
 			},
 			// 获取评论列表
@@ -264,6 +258,18 @@
 				}).catch(err => {
 				  
 				})
+			},
+			noFound(){
+				uni.showModal({
+				    title: '糟糕！',
+				    content: '帖子找不到了',
+					showCancel: false,
+				    success: function (res) {
+				        if (res.confirm) {
+				            uni.navigateBack()
+				        } 
+				    }
+				});
 			}
 		}
 	}

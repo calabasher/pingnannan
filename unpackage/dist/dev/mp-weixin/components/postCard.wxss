@@ -29,4 +29,7 @@
   height: 120px;
   overflow: hidden;
 }
+.contentsHtml {
+  word-wrap: break-word;
+}
 

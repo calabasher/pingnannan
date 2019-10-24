@@ -235,6 +235,8 @@ __webpack_require__.r(__webpack_exports__);
 
   mounted: function mounted() {
     var that = this;
+    that.postList = []; // 帖子列表
+    that.favoriteList = []; // 收藏的帖子
     uni.getStorage({
       key: 'userInfo',
       success: function success(res) {
@@ -247,34 +249,12 @@ __webpack_require__.r(__webpack_exports__);
     this.getFFNum("userId"); // 获取用户关注量
     this.getPraiseNum(); // 获取用户所获赞量
   },
-  onReady: function onReady() {
-
-  },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
     return {
       title: '事事通',
       path: '/pages/index/index' };
 
-  },
-  // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
-  onUnload: function onUnload() {
-  },
-  // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-  onHide: function onHide() {
-
-  },
-  onShow: function onShow() {
-    var that = this;
-    uni.getStorage({
-      key: 'userInfo',
-      success: function success(res) {
-        that.myObjectId = res.data.objectId;
-      } });
-
-  },
-  // 下拉刷新
-  onPullDownRefresh: function onPullDownRefresh() {
   },
   // 到底
   onReachBottom: function onReachBottom() {
@@ -391,22 +371,12 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     // 删除帖子
-    deletePost: function deletePost(item, index) {
-      var that = this;
-      uni.showLoading();
-      var query = that.Bmob.Query('postList');
-      var favorite = that.Bmob.Query('favorite');
-      var comment = that.Bmob.Query('comment');
-      favorite.destroy(item.objectId).then(function (res) {
-        uni.hideLoading();
-      });
-      query.destroy(item.objectId).then(function (res) {
-        uni.hideLoading();
-        that.postList.splice(index, 1);
-      });
-      comment.destroy(item.objectId).then(function (res) {
-        uni.hideLoading();
-      });
+    deletePost: function deletePost(index) {
+      if (this.tabIndex === 0) {
+        this.postList.splice(index, 1);
+      } else {
+        this.favoriteList.splice(index, 1);
+      }
     },
     // 加关注
     addFollow: function addFollow() {
@@ -451,7 +421,9 @@ __webpack_require__.r(__webpack_exports__);
     // 重新加载
     reload: function reload() {
       this.pageSetting.pageIndex = 1;
+      this.pageSetting.totalSize = 0;
       this.pageSettingFav.pageIndex = 1;
+      this.pageSettingFav.totalSize = 0;
       this.postList = [];
       this.favoriteList = [];
       this.getPostList(); // 获取帖子列表 -- 自己作品

@@ -255,14 +255,36 @@ var _default2 =
       });
     },
     // 删除帖子
-    deletePost: function deletePost(item) {
+    deletePost: function deletePost(postObj) {
       var that = this;
       uni.showModal({
         title: '提示',
         content: '删除后，所有相关的信息都将被删除，是否删除？',
         success: function success(res) {
           if (res.confirm) {
-            that.$emit('on-delete-post');
+            // 删除帖子
+            var query = that.Bmob.Query('postList');
+            query.destroy(postObj.objectId).then(function (res) {
+              that.$emit('on-delete-post');
+            }).catch(function (err) {
+              console.log(err);
+            });
+            // 删除帖子相关的收藏
+            var favorite = that.Bmob.Query('favorite');
+            favorite.equalTo("postId", "==", postObj.objectId);
+            favorite.find().then(function (todos) {
+              todos.destroyAll().then(function (res) {
+                console.log(res, 'ok');
+              });
+            });
+            // 删除帖子相关的评论
+            var comment = that.Bmob.Query('comment');
+            comment.equalTo("attrPost", "==", postObj.objectId);
+            comment.find().then(function (todos) {
+              todos.destroyAll().then(function (res) {
+                console.log(res, 'ok');
+              });
+            });
           } else if (res.cancel) {
             console.log('用户点击取消');
           }

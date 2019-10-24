@@ -192,16 +192,7 @@ __webpack_require__.r(__webpack_exports__);
   onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
               that = this;
               if (option.postId === "undefined") {
-                uni.showModal({
-                  title: '糟糕！',
-                  content: '帖子找不到了',
-                  showCancel: false,
-                  success: function success(res) {
-                    if (res.confirm) {
-                      uni.navigateBack();
-                    }
-                  } });
-
+                that.noFound();
               } else {
                 this.postId = option.postId ? option.postId : '8604d6bb67';
                 uni.getStorage({
@@ -263,6 +254,9 @@ __webpack_require__.r(__webpack_exports__);
         that.postInfo = res;
         that.postAuthor = res.author.objectId;
       }).catch(function (err) {
+        if (err.code === 101) {
+          that.noFound();
+        }
         console.log(err);
       });
     },
@@ -388,6 +382,18 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function (err) {
 
       });
+    },
+    noFound: function noFound() {
+      uni.showModal({
+        title: '糟糕！',
+        content: '帖子找不到了',
+        showCancel: false,
+        success: function success(res) {
+          if (res.confirm) {
+            uni.navigateBack();
+          }
+        } });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

@@ -37,8 +37,8 @@
 		<view class="wx-bg space-10"></view>
 		<!-- 帖子列表 -->
 		<view class="wx-bg">
-			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
-				<postCard :postObj="item"></postCard>
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
+				<postCard :postObj="item" @on-delete-post="deletePost(index)"></postCard>
 			</view>
 		</view>
 		<!-- 底部空隙 -->
@@ -84,6 +84,7 @@
 			this.getLocalList();
 			this.getBannerList();
 			this.getPostClassList();
+			this.getPostList();
 		},
 		onReady(){
 		},
@@ -102,6 +103,9 @@
 			this.pageSetting.pageIndex = 1;
 			this.postList = [];
 			this.getPostList();
+			this.getLocalList();
+			this.getBannerList();
+			this.getPostClassList();
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
 			}, 1000);
@@ -194,6 +198,10 @@
 						});
 					}
 				});
+			},
+			// 删除帖子
+			deletePost(index){
+				this.postList.splice( index, 1)
 			},
 			// 切换pick地址选择
 			bindPickerChange: function(e) {
