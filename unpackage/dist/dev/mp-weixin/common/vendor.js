@@ -9495,7 +9495,11 @@ _vue.default.use(_vuex.default);
 var store = new _vuex.default.Store({
   state: {
     hasLogin: false,
-    userInfo: {} },
+    userInfo: {},
+    mpInfo: {
+      mpName: '小镇事事通', // 微信小程序名称
+      logo: '/static/logo/logo.png' // logo
+    } },
 
   mutations: {
     login: function login(state, provider) {

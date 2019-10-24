@@ -1,8 +1,8 @@
 <template>
 	<view class="pd15 mgt15">
 		<view class="flex-align-center">
-			<image src="/static/logo/logo.png" class="icon-img"></image>
-			<text class="font-14 mgl5">xxx</text>
+			<image :src="mpInfo.logo" class="icon-img"></image>
+			<text class="font-14 mgl5">{{mpInfo.mpName}}</text>
 			<text class="font-14 mgl5">申请获得</text>
 		</view>
 		<view class="font-24 mgt15">以下权限</view>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-	import { mapMutations } from 'vuex';
+	import { mapMutations, mapState } from 'vuex';
 	export default {
 		components: {
 		},
@@ -34,6 +34,9 @@
 		onLoad(){
 		},
 		onHide(){
+		},
+		computed: {
+			...mapState(['mpInfo']),
 		},
 		methods: {
 			...mapMutations(['login']),

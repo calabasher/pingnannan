@@ -7,6 +7,10 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		userInfo: {},
+		mpInfo: {
+			mpName: '小镇事事通', // 微信小程序名称
+			logo: '/static/logo/logo.png',	// logo
+		}
 	},
 	mutations: {
 		login(state, provider) {

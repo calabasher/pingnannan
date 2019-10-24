@@ -159,6 +159,9 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
   },
   onHide: function onHide() {
   },
+  computed: _objectSpread({},
+  (0, _vuex.mapState)(['mpInfo'])),
+
   methods: _objectSpread({},
   (0, _vuex.mapMutations)(['login']), {
     // 获取微信用户信息
