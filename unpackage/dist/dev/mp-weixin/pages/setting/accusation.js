@@ -137,6 +137,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 var _default =
 {
   components: {},
@@ -144,9 +146,11 @@ var _default =
   data: function data() {
     return {
       userInfo: {}, // 用户信息
+      postId: '', // 被举报用户的id
       beReportedUserId: '', // 被举报用户的id
       radio: '0',
       currentIndex: 0,
+      reportContent: '', // 举报内容
       list: [
       {
         name: '违法犯罪',
@@ -179,16 +183,17 @@ var _default =
   onReady: function onReady() {
   },
   onLoad: function onLoad(option) {
-    this.beReportedUserId = option.objectId ? option.objectId : '6158393fa3';
-  },
-  onShow: function onShow() {
     var that = this;
+    this.postId = option.postId ? option.postId : '6158393fa3';
+    this.beReportedUserId = option.beReportedUserId ? option.beReportedUserId : '6158393fa3';
     uni.getStorage({
       key: 'userInfo',
       success: function success(res) {
         that.userInfo = res.data;
       } });
 
+  },
+  onShow: function onShow() {
   },
   // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
   onHide: function onHide() {
@@ -204,25 +209,31 @@ var _default =
         title: '加载中' });
 
       var that = this;
-
       // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
       var User = that.Bmob.Pointer('_User');
       var reportId = User.set(that.userInfo.objectId);
       var beReportedUserId = User.set(that.beReportedUserId);
-      var query = that.Bmob.Query('accusation');
+      var post = that.Bmob.Pointer('postList');
+      var postId = post.set(that.postId);
 
+      var query = that.Bmob.Query('accusation');
+      query.set('postId', postId); // 帖子id
       query.set('reportId', reportId); // 举报者id
       query.set('beReportedUserId', beReportedUserId); // 被举报者
       query.set("contents", that.list[that.currentIndex].name);
+      query.set("reportContent", that.reportContent);
       query.save().then(function (res) {
-        uni.showToast({
+        uni.hideLoading();
+        uni.showModal({
           title: '提交成功',
-          icon: 'success',
-          duration: 1500 });
+          content: '我们将尽快核实处理，感谢您的反馈',
+          showCancel: false,
+          success: function success(res) {
+            if (res.confirm) {
+              uni.navigateBack();
+            }
+          } });
 
-        setTimeout(function () {
-          uni.navigateBack();
-        }, 1000);
       }).catch(function (err) {
         console.log(err);
       });

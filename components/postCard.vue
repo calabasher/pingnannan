@@ -11,11 +11,16 @@
       </view>
       <!-- 右边位置 -->
       <view class="flex-center">
-        <view v-if=" myObjectId !== postObj.author.objectId " @click.stop="addFollow(postObj)">
-          <van-button icon="plus" type="default" size="small">关注</van-button>
+        <view v-if=" myObjectId !== postObj.author.objectId " class="flex">
+          <van-button icon="plus" type="default" size="small" @click.stop="addFollow(postObj)">关注</van-button>
+		  <view class="mgl5 font-20">
+			  <van-icon name="ellipsis" color="dy-font-color" size="24px" 
+				@click.stop="navTo('/pages/setting/accusation?postId=' + postObj.objectId + '&beReportedUserId=' + postObj.author.objectId)" 
+			  />
+		  </view>
         </view>
 		<view class="" @click.stop="deletePost(postObj)" v-if="showPostOpt && myObjectId === postObj.author.objectId">
-		  <van-icon name="ellipsis" />
+		  <van-icon name="ellipsis" color="dy-font-color" size="24px"  />
 		</view>
       </view>
     </view>
@@ -30,7 +35,7 @@
     </view>
     <!-- 底部，评论，点赞，转发区域 -->
     <view class="flex-space-around" v-if="showPostOpt">
-      <!-- 喜欢收藏 -->
+      <!-- 查看人次 -->
       <view class="flex-center width-33 tcenter" style="vertical-align: middle;">
 		  <view><van-icon size="20px" name="eye-o" /></view>
           <view class="font-14 pdb5 mgl5">{{postObj.view}}</view>
