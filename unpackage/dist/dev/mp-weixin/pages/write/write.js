@@ -288,7 +288,8 @@ var sizeType = [
       }
       that.Bmob.checkMsg(that.contents).then(function (res) {
         uni.showLoading({
-          title: '加载中' });
+          title: '加载中',
+          mask: true });
 
         var currentUser = that.Bmob.User.current(); // 当前用户
         var objectId = currentUser.objectId; // 当前用户Id

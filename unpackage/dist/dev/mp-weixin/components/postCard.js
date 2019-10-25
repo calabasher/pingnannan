@@ -221,7 +221,8 @@ var _default2 =
     // 加关注
     addFollow: function addFollow(item) {
       uni.showLoading({
-        title: '加载中' });
+        title: '加载中',
+        mask: true });
 
       var that = this;
 

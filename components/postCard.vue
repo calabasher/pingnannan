@@ -114,7 +114,8 @@ export default {
     // 加关注
     addFollow: function (item) {
       uni.showLoading({
-      	title: '加载中'
+      	title: '加载中',
+		mask: true,
       });
       let that = this;
       

@@ -206,7 +206,8 @@ var _default =
     // 提交
     publish: function publish() {
       uni.showLoading({
-        title: '加载中' });
+        title: '加载中',
+        mask: true });
 
       var that = this;
       // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：

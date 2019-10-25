@@ -198,7 +198,7 @@ __webpack_require__.r(__webpack_exports__);
                 uni.getStorage({
                   key: 'userInfo',
                   success: function success(res) {
-                    that.info.objectId = res.data.objectId;
+                    that.info = res.data;
                     that.getPostFavoriteStatus();
                   } });
 
@@ -289,17 +289,15 @@ __webpack_require__.r(__webpack_exports__);
     // 发表评论
     sendComments: function sendComments() {
       uni.showLoading({
-        title: '加载中' });
+        title: '加载中',
+        mask: true });
 
       var that = this;
 
       that.Bmob.checkMsg(that.commentValue).then(function (res) {
-        var currentUser = that.Bmob.User.current(); // 当前用户
-        var objectId = currentUser.objectId; // 当前用户Id
-
         // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：
         var pointerUser = that.Bmob.Pointer('_User');
-        var pUserID = pointerUser.set(objectId);
+        var pUserID = pointerUser.set(that.info.objectId);
 
         var pointerPost = that.Bmob.Pointer('postList');
         var pPostID = pointerPost.set(that.postId);
@@ -310,6 +308,7 @@ __webpack_require__.r(__webpack_exports__);
         query.set('attrPost', pPostID); // 绑定的帖子id
         query.set('attrPostStr', that.postId); // 绑定的帖子id 字符串 用来删除
         query.set("content", that.commentValue);
+        query.set("publishUser", that.info.nickName); // 发表用户
         query.save().then(function (res) {
           // uni.hideLoading();
           uni.showToast({
