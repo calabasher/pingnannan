@@ -213,6 +213,7 @@ var sizeType = [
       pickIndex: 0,
       pickList: [{ name: '不限' }],
       postClassId: '', // 帖子分类的id， 默认为空
+      localId: '', // 地址分类的id， 默认为空
       checked: true,
       canvasShow: false, // 画布
       canvasW: 0, // 画布 宽
@@ -231,12 +232,13 @@ var sizeType = [
     this.countIndex = 8;
   },
   onLoad: function onLoad() {
+    var that = this;
     this.getPostClassList();
-    uni.getLocation({
-      type: 'wgs84',
+    //	获取地址
+    uni.getStorage({
+      key: 'localId',
       success: function success(res) {
-        console.log('当前位置的经度：' + res.longitude);
-        console.log('当前位置的纬度：' + res.latitude);
+        that.localId = res.data ? res.data : '';
       } });
 
   },
@@ -307,6 +309,12 @@ var sizeType = [
           var pointerPostClass = that.Bmob.Pointer('postClass');
           var pPostClassID = pointerPostClass.set(that.postClassId);
           query.set('belongsClass', pPostClassID); // 绑定的帖子分类id
+        }
+        // 关联地区表
+        if (that.localId) {
+          var pointerLocal = that.Bmob.Pointer('local');
+          var pLocalID = pointerLocal.set(that.localId);
+          query.set('belongsLocal', pLocalID); // 绑定的帖子分类id
         }
 
         query.save().then(function (res) {

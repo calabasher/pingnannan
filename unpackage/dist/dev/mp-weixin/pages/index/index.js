@@ -203,12 +203,12 @@ __webpack_require__.r(__webpack_exports__);
                 key: 'localId',
                 success: function success(res) {
                   that.localId = res.data ? res.data : '';
-                } });
+                  that.getLocalList();
+                  that.getBannerList();
+                  that.getPostClassList();
+                  that.getPostList();
+                } });case 2:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
-              this.getLocalList();
-              this.getBannerList();
-              this.getPostClassList();
-              this.getPostList();case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },

@@ -143,19 +143,39 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
 {
   components: {},
 
   data: function data() {
-    return {};
-
+    return {
+      localPop: false,
+      pickIndex: 0,
+      pickList: [{ name: '不限' }] };
 
   },
   // 监听页面卸载
   onUnload: function onUnload() {
   },
   onLoad: function onLoad() {
+    this.getLocalList();
   },
   onHide: function onHide() {
   },
@@ -191,13 +211,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
                 key: 'userInfo',
                 data: res,
                 success: function success() {
-                  uni.showLoading({
-                    title: '授权成功' });
-
-                  console.log('保存成功');
-                  uni.reLaunch({
-                    url: '/pages/index/index' });
-
+                  uni.hideLoading();
+                  that.localPop = true;
                 } });
 
             }).catch(function (err) {
@@ -210,6 +225,38 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
               icon: 'none' });
 
           });
+        } });
+
+    },
+    // 获取地址列表
+    getLocalList: function getLocalList() {
+      var that = this;
+      uni.showLoading({
+        title: '加载中' });
+
+      var query = that.Bmob.Query('local');
+      // 查询所有数据
+      query.find().then(function (res) {
+        uni.hideLoading();
+        that.pickList = that.pickList.concat(res);
+      });
+    },
+    changeLocal: function changeLocal(event) {
+      this.pickIndex = parseInt(event.currentTarget.dataset.name);
+    },
+    // 切换pick地址选择
+    saveLocal: function saveLocal() {
+      var that = this;
+      this.localId = this.pickList[parseInt(this.pickIndex)].objectId ? this.pickList[parseInt(this.pickIndex)].objectId : '';
+      //更新地址
+      uni.setStorage({
+        key: 'localId',
+        data: that.localId,
+        success: function success() {
+          console.log('更新地址成功');
+          uni.reLaunch({
+            url: '/pages/index/index' });
+
         } });
 
     } }) };exports.default = _default;

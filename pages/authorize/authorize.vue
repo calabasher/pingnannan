@@ -15,6 +15,23 @@
 		<view class="author-zone flex-center">
 			<van-button type="primary" open-type="getUserInfo" @getuserinfo="getWxUserInfo"><text class="author-btn">同意</text></van-button>
 		</view>
+		<van-popup :show="localPop">
+			<view class="tcenter pd15 font-16 border-bottom" :style="{ width: '300px' }">选择家乡</view>
+			<van-radio-group :value="pickIndex">
+			  <van-cell-group v-for="(item, index) in pickList" :key="index">
+			    <van-cell
+			      :title="item.name"
+			      value-class="value-class"
+			      clickable
+			      :data-name="index"
+				  @click="changeLocal"
+			    >
+			      <van-radio :name="index" />
+			    </van-cell>
+			  </van-cell-group>
+			</van-radio-group>
+			<van-button type="primary" size="large" @click="saveLocal">确定</van-button>
+		</van-popup>
 	</view>
 </template>
 
@@ -25,13 +42,16 @@
 		},
 		data() {
 			return {
-				
+				localPop: false,
+				pickIndex: 0,
+				pickList: [{name: '不限'}],
 			}
 		},
 		// 监听页面卸载
 		onUnload() {
 		},
 		onLoad(){
+			this.getLocalList();
 		},
 		onHide(){
 		},
@@ -67,13 +87,8 @@
 							  key: 'userInfo',
 							  data: res,
 							  success: function () {
-								  uni.showLoading({
-								  	title: '授权成功'
-								  });
-								  console.log('保存成功')
-								  uni.reLaunch({
-									  url: '/pages/index/index'
-								  });
+								  uni.hideLoading();
+								  that.localPop = true;
 							  }
 							});
 						  }).catch(err => {
@@ -88,7 +103,39 @@
 					  });
 				  }
 				});
-			}
+			},
+			// 获取地址列表
+			getLocalList() {
+				let that = this;
+				uni.showLoading({
+					title: '加载中'
+				});
+				var query = that.Bmob.Query('local');
+				// 查询所有数据
+				query.find().then(res => {
+				  uni.hideLoading();
+				  that.pickList = that.pickList.concat(res);
+				});
+			},
+			changeLocal (event) {
+				this.pickIndex = parseInt(event.currentTarget.dataset.name)
+			},
+			// 切换pick地址选择
+			saveLocal() {
+			 	let that = this;
+			 	this.localId = this.pickList[parseInt(this.pickIndex)].objectId ? this.pickList[parseInt(this.pickIndex)].objectId : ''
+			 	//更新地址
+			 	uni.setStorage({
+			 	  key: 'localId',
+			 	  data: that.localId,
+			 	  success: function () {
+			 		  console.log('更新地址成功')
+					  uni.reLaunch({
+						  url: '/pages/index/index'
+					  });
+			 	  }
+			 	});
+			 },
 		}
 	}
 </script>
