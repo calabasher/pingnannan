@@ -223,6 +223,7 @@ var _default =
       query.set('beReportedUserId', beReportedUserId); // 被举报者
       query.set("contents", that.list[that.currentIndex].name);
       query.set("reportContent", that.reportContent);
+      query.set("state", 1);
       query.save().then(function (res) {
         uni.hideLoading();
         uni.showModal({

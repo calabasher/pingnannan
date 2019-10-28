@@ -99,6 +99,7 @@
 				query.set('beReportedUserId',beReportedUserId)	// 被举报者
 				query.set("contents", that.list[that.currentIndex].name)
 				query.set("reportContent", that.reportContent)
+				query.set("state", 1)
 				query.save().then(res => {
 					uni.hideLoading()
 					uni.showModal({
