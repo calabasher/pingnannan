@@ -17,10 +17,10 @@ var Bmob = require('./utils/bmob.js')
 
 if(process.env.NODE_ENV === 'development'){  
     console.log('开发环境')  
-	Bmob.initialize("7a3ce349c3f63fde", "930426");
+	Bmob.initialize("dbf17fd96b967950", "930426");
 }else{  
     console.log('生产环境')  
-	Bmob.initialize("dbf17fd96b967950", "930426");
+	Bmob.initialize("7a3ce349c3f63fde", "930426");
 }
 // Bmob.initialize("你的Secret Key", "你的API 安全码");
 // Bmob.initialize("dbf17fd96b967950", "930426");

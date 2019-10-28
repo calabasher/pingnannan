@@ -7492,9 +7492,9 @@ module.exports = g;
 
 /***/ }),
 /* 4 */
-/*!*****************************************!*\
-  !*** E:/GLH/uni-app/pingnan/pages.json ***!
-  \*****************************************/
+/*!******************************************!*\
+  !*** E:/GLH/uni-app/xzsst-mp/pages.json ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8399,9 +8399,9 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 
 /***/ }),
 /* 7 */
-/*!**********************************************************!*\
-  !*** E:/GLH/uni-app/pingnan/pages.json?{"type":"style"} ***!
-  \**********************************************************/
+/*!***********************************************************!*\
+  !*** E:/GLH/uni-app/xzsst-mp/pages.json?{"type":"style"} ***!
+  \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8410,9 +8410,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 /***/ }),
 /* 8 */
-/*!*********************************************************!*\
-  !*** E:/GLH/uni-app/pingnan/pages.json?{"type":"stat"} ***!
-  \*********************************************************/
+/*!**********************************************************!*\
+  !*** E:/GLH/uni-app/xzsst-mp/pages.json?{"type":"stat"} ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9482,9 +9482,9 @@ function normalizeComponent (
 
 /***/ }),
 /* 16 */
-/*!*********************************************!*\
-  !*** E:/GLH/uni-app/pingnan/store/index.js ***!
-  \*********************************************/
+/*!**********************************************!*\
+  !*** E:/GLH/uni-app/xzsst-mp/store/index.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9530,9 +9530,9 @@ store;exports.default = _default;
 
 /***/ }),
 /* 17 */
-/*!********************************************!*\
-  !*** E:/GLH/uni-app/pingnan/utils/bmob.js ***!
-  \********************************************/
+/*!*********************************************!*\
+  !*** E:/GLH/uni-app/xzsst-mp/utils/bmob.js ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

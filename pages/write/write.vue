@@ -24,7 +24,7 @@
 		                        </view>
 		                    </block>
 		                    <view class="uni-uploader__input-box">
-		                        <view class="uni-uploader__input" @tap="chooseImage"></view>
+		                        <view class="uni-uploader__input" @click="chooseImage"></view>
 		                    </view>
 		                </view>
 		            </view>
@@ -73,6 +73,9 @@
 		},
 		data() {
 			return {
+				myId: '',	// 当前用户id
+				userState: 0,	// 用户状态 0-正常 1-禁言
+				publishNum: 0,	// 今日发帖量
 				contents: '',	// 文本内容
 				imageList: [],
 				sourceTypeIndex: 2,
@@ -112,9 +115,19 @@
 					that.localId = res.data ? res.data : ''; 
 			    }
 			});
+			// 获取用户
+			uni.getStorage({
+				key: 'userInfo',
+				success: function (res) {
+					that.myId = res.data.objectId;
+					that.getTodayPublishPostNum()
+					that.checkStatus();
+				}
+			});
 		},
 		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-		onHide(){
+		onShow(){
+			this.getTodayPublishPostNum()
 		},
 		// 分享
 		onShareAppMessage() {
@@ -126,6 +139,36 @@
 		methods: {
 			navTo(url){
 				uni.navigateTo({ url: url })
+			},
+			// 获取用户发言状态
+			checkStatus(){
+				let that = this;
+				// 查询大于某个日期的数据，示例代码如下
+				const query = that.Bmob.Query("_User");
+				query.get(that.myId).then(res => {
+				  that.userState = res.state
+				}).catch(err => {
+				  console.log(err)
+				})
+			},
+			// 获取今日发帖数量
+			getTodayPublishPostNum(){
+				let that = this;
+				// 查询大于某个日期的数据，示例代码如下
+				const query = that.Bmob.Query("postList");
+				// 如果要查询某个属性等于某个值，示例代码如下：
+				query.equalTo("author", "==", that.myId);
+				var date = new Date();
+				var yy = date .getFullYear(); //获取完整的年份(4位)
+				var mm = date .getMonth() + 1 < 10 ? '0' + date .getMonth() + 1  : date .getMonth() + 1  ; //获取当前月份(0-11,0代表1月)
+				var dd = date .getDate() < 10 ? '0' + date .getDate() : date .getDate() ; //获取当前日(1-31)
+				var time_start = yy + '-' + mm + '-' + dd + ' 00:00:00'
+				var time_end = yy + '-' + mm + '-' + dd + ' 23:59:59'
+				query.equalTo("createdAt", ">", time_start);
+				query.equalTo("createdAt", "<", time_end);
+				query.count().then(res => {
+				  that.publishNum = res.count;
+				});
 			},
 			// 获取分类列表
 			getPostClassList(){
@@ -143,17 +186,29 @@
 			// 用户发帖--内容和图片, 将该帖子关联该用户
 			publish(){
 				let that = this;
+				let flag = true;
+				let tips = '';
 				if(this.contents.length < 15){
-					uni.showToast({
-					    title: '内容长度不低于15个字符',
-					    icon: 'none'
-					});
-					return 
+					flag = false;
+					tips = '内容长度不低于15个字符';
 				}
 				if(this.contents.length > 150){
+					flag = false;
+					tips = '内容长度不得超过150个字符';
+				}
+				if(that.publishNum > 5){
+					flag = false;
+					tips = '为防止恶意刷屏，每人每天最多发帖5篇';
+				}
+				if(that.userState === 1){
+					flag = false;
+					tips = '由于违反相关法律法规，您已被禁言，如有疑问，可找客服申诉';
+				}
+				if(!flag){
 					uni.showToast({
-					    title: '内容长度不得超过150个字符',
-					    icon: 'none'
+					    title: tips,
+					    icon: 'none',
+						duration: 3000
 					});
 					return 
 				}
@@ -191,6 +246,7 @@
 					
 					query.save().then(res => {
 						uni.hideLoading();
+						that.getTodayPublishPostNum();
 						uni.showModal({
 							title: '发表成功',
 							content: '是否立即前往查看',
@@ -307,6 +363,24 @@
 			},
 			chooseImage: async function() {
 				let that = this;
+				let flag = true;
+				let tips = ''
+				if(that.publishNum > 5){
+					tips = '为防止恶意刷屏，每人每天最多发帖5篇';
+					flag = false;
+				}
+				if(that.userState === 1){
+					tips = '由于违反相关法律法规，您已被禁言，如有疑问，可找客服申诉';
+					flag = false;
+				}
+				if(!flag){
+					uni.showToast({
+						title: tips,
+						icon: 'none',
+						duration: 3000
+					}) 
+					return
+				}
 			    // #ifdef APP-PLUS
 			    // TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理
 			    if (this.sourceTypeIndex !== 2) {
