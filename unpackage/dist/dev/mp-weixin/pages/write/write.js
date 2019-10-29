@@ -221,7 +221,8 @@ var sizeType = [
       canvasShow: false, // 画布
       canvasW: 0, // 画布 宽
       canvasH: 0, // 画布 高
-      fileUrl: 'http://imlmbm.xyz/', // 文件地址
+      // fileUrl: 'https://bmob-cdn-27154.bmobcloud.com/',	// 文件地址
+      fileUrl: 'https://bmob-cdn-27154.bmobpay.com', // 文件地址
       imgTips: '' // 图片提示
     };
   },
@@ -450,7 +451,8 @@ var sizeType = [
                 success: function success(data) {
                   console.log('给后台传输这个地址:' + data.tempFilePath); //给后台传输这个地址
                   uni.uploadFile({
-                    url: that.fileUrl + '/weiliao/skill/file/upload',
+                    // url: that.fileUrl + '/weiliao/skill/file/upload',
+                    url: that.fileUrl,
                     filePath: data.tempFilePath,
                     fileType: 'image',
                     name: 'uploadFile', // 后台 参数名
@@ -529,37 +531,52 @@ var sizeType = [
 
 
                 uni.chooseImage({
-                  sourceType: sourceType[this.sourceTypeIndex],
-                  sizeType: ['origin', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-                  count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
-                  this.count[this.countIndex],
                   success: function success(res) {
-                    //图片大小，如果大于5M，提示用户
-                    var size = 0;
-                    that.imgTips = '';
-                    for (var i = 0; i < res.tempFiles.length; i++) {
-                      size += res.tempFiles[i].size;
-                    }
-                    if (size >= 5 * 1024 * 1024) {
-                      uni.showToast({
-                        title: '文件大，需要处理时间较长',
-                        icon: 'none' });
+                    var tempFilePaths = res.tempFilePaths;
+                    var file;var _iteratorNormalCompletion = true;var _didIteratorError = false;var _iteratorError = undefined;try {
+                      for (var _iterator = tempFilePaths[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {var item = _step.value;
+                        console.log('itemn', item);
+                        file = that.Bmob.File('abc.jpg', item);
+                      }} catch (err) {_didIteratorError = true;_iteratorError = err;} finally {try {if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}} finally {if (_didIteratorError) {throw _iteratorError;}}}
+                    file.save().then(function (res) {
+                      res.forEach(function (val) {
+                        that.imageList.push(val.url);
+                      });
+                    });
+                  } });
 
-                    }
-                    setTimeout(function () {
-                      that.drawCanvas(0, 0, res.tempFilePaths); //进行压缩
-                    }, 5);
+                //   uni.chooseImage({
+                //       sourceType: sourceType[this.sourceTypeIndex],
+                // sizeType: ['origin','compressed'], //可以指定是原图还是压缩图，默认二者都有
+                //       count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
+                //           this.count[this.countIndex],
+                //       success: (res) => {
+                // 	//图片大小，如果大于5M，提示用户
+                // 	let size = 0;
+                // 	that.imgTips = '';
+                // 	for (var i = 0; i < res.tempFiles.length; i++) {
+                // 		size += res.tempFiles[i].size
+                // 	}
+                // 	if (size >= 5 * 1024 * 1024) {
+                // 		uni.showToast({
+                // 			title: '文件大，需要处理时间较长',
+                // 			icon: 'none'
+                // 		}) 
+                // 	}
+                // 	setTimeout( ()=> { 
+                // 		that.drawCanvas(0, 0, res.tempFilePaths);  //进行压缩
+                // 	}, 5)
 
-                  },
-                  fail: function fail(err) {
+                //       },
+                //       fail: (err) => {
+                //
 
 
 
 
-
-                  } });case 16:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
-
-
+                //       }
+                //   })
+              case 16:case "end":return _context.stop();}}}, _callee, this);}));function chooseImage() {return _chooseImage.apply(this, arguments);}return chooseImage;}(),
     deleteImg: function deleteImg(index) {
       this.imageList.splice(index, 1);
     },

@@ -92,7 +92,8 @@
 				canvasShow: false, // 画布
 				canvasW: 0,	// 画布 宽
 				canvasH: 0,	// 画布 高
-				fileUrl: 'http://imlmbm.xyz/',	// 文件地址
+				// fileUrl: 'https://bmob-cdn-27154.bmobcloud.com/',	// 文件地址
+				fileUrl: 'https://bmob-cdn-27154.bmobpay.com',	// 文件地址
 				imgTips: '',	// 图片提示
 			}
 		},
@@ -321,7 +322,8 @@
 									success:function(data){
 										console.log('给后台传输这个地址:' + data.tempFilePath)//给后台传输这个地址
 										uni.uploadFile({
-											url: that.fileUrl + '/weiliao/skill/file/upload',
+											// url: that.fileUrl + '/weiliao/skill/file/upload',
+											url: that.fileUrl,
 											filePath: data.tempFilePath,
 											fileType: 'image',
 											name: 'uploadFile',	// 后台 参数名
@@ -399,37 +401,52 @@
 			            return;
 			        }
 			    }
-			    uni.chooseImage({
-			        sourceType: sourceType[this.sourceTypeIndex],
-					sizeType: ['origin','compressed'], //可以指定是原图还是压缩图，默认二者都有
-			        count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
-			            this.count[this.countIndex],
-			        success: (res) => {
-						//图片大小，如果大于5M，提示用户
-						let size = 0;
-						that.imgTips = '';
-						for (var i = 0; i < res.tempFiles.length; i++) {
-							size += res.tempFiles[i].size
-						}
-						if (size >= 5 * 1024 * 1024) {
-							uni.showToast({
-								title: '文件大，需要处理时间较长',
-								icon: 'none'
-							}) 
-						}
-						setTimeout( ()=> { 
-							that.drawCanvas(0, 0, res.tempFilePaths);  //进行压缩
-						}, 5)
+				uni.chooseImage({
+				  success: function (res) {
+					var tempFilePaths = res.tempFilePaths
+					var file;
+					for (let item of tempFilePaths) {
+					  console.log('itemn',item)
+					  file = that.Bmob.File('abc.jpg', item);
+					}
+					file.save().then(res => {
+						res.forEach( (val)=> {
+							that.imageList.push(val.url)
+						})
+					})
+				  }
+				})
+			  //   uni.chooseImage({
+			  //       sourceType: sourceType[this.sourceTypeIndex],
+					// sizeType: ['origin','compressed'], //可以指定是原图还是压缩图，默认二者都有
+			  //       count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length :
+			  //           this.count[this.countIndex],
+			  //       success: (res) => {
+					// 	//图片大小，如果大于5M，提示用户
+					// 	let size = 0;
+					// 	that.imgTips = '';
+					// 	for (var i = 0; i < res.tempFiles.length; i++) {
+					// 		size += res.tempFiles[i].size
+					// 	}
+					// 	if (size >= 5 * 1024 * 1024) {
+					// 		uni.showToast({
+					// 			title: '文件大，需要处理时间较长',
+					// 			icon: 'none'
+					// 		}) 
+					// 	}
+					// 	setTimeout( ()=> { 
+					// 		that.drawCanvas(0, 0, res.tempFilePaths);  //进行压缩
+					// 	}, 5)
 						
-			        },
-			        fail: (err) => {
-			            // #ifdef APP-PLUS
-			            if (err['code'] && err.code !== 0 && this.sourceTypeIndex === 2) {
-			                this.checkPermission(err.code);
-			            }
-			            // #endif
-			        }
-			    })
+			  //       },
+			  //       fail: (err) => {
+			  //           // #ifdef APP-PLUS
+			  //           if (err['code'] && err.code !== 0 && this.sourceTypeIndex === 2) {
+			  //               this.checkPermission(err.code);
+			  //           }
+			  //           // #endif
+			  //       }
+			  //   })
 			},
 			deleteImg(index){
 				this.imageList.splice( index, 1)
