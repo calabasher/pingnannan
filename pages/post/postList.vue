@@ -6,7 +6,7 @@
 				<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 				<view class="pdt20 pdb20 dy-font-color">暂无帖子，你可以浏览其他帖子或者发帖</view>
 			</view>
-			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-else v-for="item in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-else v-for="item in postList" :key="item.objectId">
 				<postCard :postObj="item"></postCard>
 			</view>
 		</view>

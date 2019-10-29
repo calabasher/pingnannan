@@ -212,6 +212,9 @@ var _default2 =
     navTo: function navTo(url) {
       uni.navigateTo({ url: url });
     },
+    handleSelf: function handleSelf() {
+      if (this.showPostOpt) this.navTo('/pages/post/postDetail?postId=' + this.postObj.objectId);
+    },
     // 点击分享
     sharePost: function sharePost(item) {
       var sharePopShow = true;

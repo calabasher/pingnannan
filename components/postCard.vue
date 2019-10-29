@@ -1,6 +1,6 @@
 <template>
   <!-- 列表单个 -->
-  <view class="font-14 post-item">
+  <view class="font-14 post-item" @click="handleSelf">
     <view class="flex-space-between">
       <view class="flex-align-center" @click.stop="toZone(postObj)">
         <img class="van-avatar" :src="postObj.author.avatarUrl">
@@ -12,7 +12,7 @@
       <!-- 右边位置 -->
       <view class="flex-center">
         <view v-if=" myObjectId !== postObj.author.objectId " class="flex">
-          <van-button icon="plus" type="default" size="small" @click.stop="addFollow(postObj)">关注</van-button>
+		  <view class="" @click.stop="addFollow(postObj)"><van-button icon="plus" type="default" size="small">关注</van-button></view>
 		  <view class="mgl5 font-20">
 			  <van-icon name="ellipsis" color="dy-font-color" size="24px" 
 				@click.stop="navTo('/pages/setting/accusation?postId=' + postObj.objectId + '&beReportedUserId=' + postObj.author.objectId)" 
@@ -104,6 +104,9 @@ export default {
 	// 跳转
 	navTo(url){
 		uni.navigateTo({ url: url })
+	},
+	handleSelf(){
+		if(this.showPostOpt) this.navTo('/pages/post/postDetail?postId=' + this.postObj.objectId)
 	},
     // 点击分享
     sharePost (item) {

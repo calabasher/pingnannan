@@ -37,7 +37,7 @@
 		<view class="wx-bg space-10"></view>
 		<!-- 帖子列表 -->
 		<view class="wx-bg">
-			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)">
+			<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId">
 				<postCard :postObj="item" @on-delete-post="deletePost(index)"></postCard>
 			</view>
 		</view>

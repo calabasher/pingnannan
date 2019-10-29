@@ -184,7 +184,8 @@ __webpack_require__.r(__webpack_exports__);
       postInfo: {}, // 帖子信息
       postAuthor: '', // 发帖用户id
       commentsList: [], // 评论列表
-      isFavorite: false // 是否收藏
+      isFavorite: false, // 是否收藏
+      userState: 0 // 用户状态 0-正常 1-禁言
     };
   },
   computed: {},
@@ -200,6 +201,7 @@ __webpack_require__.r(__webpack_exports__);
                   success: function success(res) {
                     that.info = res.data;
                     that.getPostFavoriteStatus();
+                    that.checkStatus();
                   } });
 
                 this.getPost();
@@ -208,6 +210,9 @@ __webpack_require__.r(__webpack_exports__);
               }case 2:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
+  },
+  onShow: function onShow() {
+    this.checkStatus();
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -230,6 +235,17 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         uni.switchTab({ url: '/pages/user/myzone' });
       }
+    },
+    // 获取用户发言状态
+    checkStatus: function checkStatus() {
+      var that = this;
+      // 查询大于某个日期的数据，示例代码如下
+      var query = that.Bmob.Query("_User");
+      query.get(that.info.objectId).then(function (res) {
+        that.userState = res.state;
+      }).catch(function (err) {
+        console.log(err);
+      });
     },
     // 获取帖子状态
     getPostFavoriteStatus: function getPostFavoriteStatus() {
@@ -288,11 +304,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     // 发表评论
     sendComments: function sendComments() {
+      var that = this;
+      if (that.userState === 1) {
+        uni.showToast({
+          title: '由于违反相关法律法规，您已被禁言，如有疑问，可找客服申诉',
+          icon: 'none',
+          duration: 3000 });
+
+        return;
+      }
       uni.showLoading({
         title: '加载中',
         mask: true });
-
-      var that = this;
 
       that.Bmob.checkMsg(that.commentValue).then(function (res) {
         // Pointer 类型在数据库是一个json数据类型，只需调用Pointer方法创建一个Pointer对象存入到字段中，如下：

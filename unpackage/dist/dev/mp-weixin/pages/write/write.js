@@ -257,6 +257,7 @@ var sizeType = [
   // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
   onShow: function onShow() {
     this.getTodayPublishPostNum();
+    this.checkStatus();
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {

@@ -43,7 +43,7 @@
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 					<view class="pdt20 pdb20 dy-font-color">暂无作品</view>
 				</view>
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.objectId)" v-else>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="(item, index) in postList" :key="item.objectId" v-else>
 					<postCard :postObj="item" :postType="1" @on-delete-post="deletePost(index)"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSetting.pageIndex > pageSetting.totalPage ? '已经到底了' : '' }}</view>
@@ -56,7 +56,7 @@
 					<view class="pdt20"><image src="/static/logo/no-data.png" class="pdt20 no-data"></image></view>
 					<view class="pdt20 pdb20 dy-font-color">暂无喜欢</view>
 				</view>
-				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" @click="navTo('/pages/post/postDetail?postId=' + item.postId.objectId)" v-else>
+				<view class="mgb10 white-bg pdl15 pdr15 pdt15 pdb5" v-for="item in favoriteList" :key="item.objectId" v-else>
 					<postCard :postObj="item.postId" @on-delete-post="deletePost(index)"></postCard>
 				</view>
 				<view class="white-bg bottom-space flex-center dy-font-color border-top">{{ pageSettingFav.pageIndex > pageSettingFav.totalPage ? '已经到底了' : '' }}</view>

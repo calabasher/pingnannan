@@ -10,7 +10,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
 	"appid": "wx5f4624dd4e7adca2",
-	"projectname": "Vantui%20Weapp%20For%20Uni-app",
+	"projectname": "Vantui Weapp For Uni-app",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {
@@ -22,10 +22,6 @@
 			"current": -1,
 			"list": []
 		},
-		"plugin": {
-			"current": -1,
-			"list": []
-		},
 		"game": {
 			"current": -1,
 			"list": []
@@ -34,10 +30,10 @@
 			"current": 0,
 			"list": [
 				{
-					"id": -1,
-					"name": "pages/write/write",
-					"pathName": "pages/write/write",
-					"scene": null
+					"name": "",
+					"path": "",
+					"query": "",
+					"id": 0
 				}
 			]
 		}
