@@ -107,6 +107,13 @@
 			this.countIndex = 8;
 		},
 		onLoad(){
+			let userInfo = uni.getStorageSync('userInfo') || '';
+			if(!userInfo.objectId){
+				uni.reLaunch({
+					url: '/pages/authorize/authorize'
+				});
+				return
+			}
 			let that = this;
 			this.getPostClassList();
 			//	获取地址

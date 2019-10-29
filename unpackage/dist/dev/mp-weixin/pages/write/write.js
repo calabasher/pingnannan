@@ -236,6 +236,13 @@ var sizeType = [
     this.countIndex = 8;
   },
   onLoad: function onLoad() {
+    var userInfo = uni.getStorageSync('userInfo') || '';
+    if (!userInfo.objectId) {
+      uni.reLaunch({
+        url: '/pages/authorize/authorize' });
+
+      return;
+    }
     var that = this;
     this.getPostClassList();
     //	获取地址

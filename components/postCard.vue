@@ -13,10 +13,8 @@
       <view class="flex-center">
         <view v-if=" myObjectId !== postObj.author.objectId " class="flex">
 		  <view class="" @click.stop="addFollow(postObj)"><van-button icon="plus" type="default" size="small">关注</van-button></view>
-		  <view class="mgl5 font-20">
-			  <van-icon name="ellipsis" color="dy-font-color" size="24px" 
-				@click.stop="navTo('/pages/setting/accusation?postId=' + postObj.objectId + '&beReportedUserId=' + postObj.author.objectId)" 
-			  />
+		  <view class="mgl5 font-20" @click.stop="navTo('/pages/setting/accusation?postId=' + postObj.objectId + '&beReportedUserId=' + postObj.author.objectId)">
+			  <van-icon name="ellipsis" color="dy-font-color" size="24px" />
 		  </view>
         </view>
 		<view class="" @click.stop="deletePost(postObj)" v-if="showPostOpt && myObjectId === postObj.author.objectId">
@@ -103,6 +101,13 @@ export default {
 	},
 	// 跳转
 	navTo(url){
+		let userInfo = uni.getStorageSync('userInfo') || '';
+		if(!userInfo.objectId){
+			uni.navigateTo({
+			    url: '/pages/authorize/authorize'
+			});
+			return
+		}
 		uni.navigateTo({ url: url })
 	},
 	handleSelf(){
@@ -116,6 +121,13 @@ export default {
     },
     // 加关注
     addFollow: function (item) {
+	  let userInfo = uni.getStorageSync('userInfo') || '';
+	  if(!userInfo.objectId){
+		uni.navigateTo({
+			url: '/pages/authorize/authorize'
+		});
+		return
+	  }
       uni.showLoading({
       	title: '加载中',
 		mask: true,

@@ -79,12 +79,12 @@
 			    key: 'localId',
 			    success: function (res) {
 					that.localId = res.data ? res.data : ''; 
-					that.getLocalList();
-					that.getBannerList();
-					that.getPostClassList();
-					that.getPostList();
 			    }
 			});
+			that.getLocalList();
+			that.getBannerList();
+			that.getPostClassList();
+			that.getPostList();
 		},
 		onReady(){
 		},

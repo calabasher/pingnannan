@@ -148,14 +148,21 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   computed: _objectSpread({},
   (0, _vuex.mapState)(['hasLogin', 'userInfo'])),
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var userInfo, that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              userInfo = uni.getStorageSync('userInfo') || '';if (
+              userInfo.objectId) {_context.next = 4;break;}
+              uni.reLaunch({
+                url: '/pages/authorize/authorize' });return _context.abrupt("return");case 4:
+
+
+
               that = this;
               uni.getStorage({
                 key: 'userInfo',
                 success: function success(res) {
                   that.info.objectId = res.data.objectId;
                   that.getUserInfo();
-                } });case 2:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
+                } });case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
 
   onReady: function onReady() {

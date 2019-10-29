@@ -158,8 +158,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 var _default2 =
 {
   // 父子通信
@@ -210,6 +208,13 @@ var _default2 =
     },
     // 跳转
     navTo: function navTo(url) {
+      var userInfo = uni.getStorageSync('userInfo') || '';
+      if (!userInfo.objectId) {
+        uni.navigateTo({
+          url: '/pages/authorize/authorize' });
+
+        return;
+      }
       uni.navigateTo({ url: url });
     },
     handleSelf: function handleSelf() {
@@ -223,6 +228,13 @@ var _default2 =
     },
     // 加关注
     addFollow: function addFollow(item) {
+      var userInfo = uni.getStorageSync('userInfo') || '';
+      if (!userInfo.objectId) {
+        uni.navigateTo({
+          url: '/pages/authorize/authorize' });
+
+        return;
+      }
       uni.showLoading({
         title: '加载中',
         mask: true });

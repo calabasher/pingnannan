@@ -67,6 +67,13 @@
 		computed: {
 		},
 		async onLoad(option) {
+			let userInfo = uni.getStorageSync('userInfo') || '';
+			if(!userInfo.objectId){
+				uni.navigateTo({
+				    url: '/pages/authorize/authorize'
+				});
+				return
+			}
 			let that = this;
 			if(option.postId === "undefined"){
 				that.noFound()

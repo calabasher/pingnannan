@@ -20,9 +20,9 @@
 					}
 				});
 			}else{
-				uni.reLaunch({
-				    url: '/pages/authorize/authorize'
-				});
+				// uni.reLaunch({
+				//     url: '/pages/authorize/authorize'
+				// });
 				// uni.login({
 				//   provider: 'weixin',
 				//   success: function (loginRes) {

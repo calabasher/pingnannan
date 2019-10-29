@@ -27,6 +27,13 @@
 			...mapState(['hasLogin','userInfo'])
 		},
 		async onLoad() {
+			let userInfo = uni.getStorageSync('userInfo') || '';
+			if(!userInfo.objectId){
+				uni.reLaunch({
+					url: '/pages/authorize/authorize'
+				});
+				return
+			}
 			let that = this;
 			uni.getStorage({
 				key: 'userInfo',

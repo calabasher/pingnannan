@@ -12,7 +12,14 @@
 }
 .author-zone{
 	position: fixed;
-	bottom: 80px;
+	bottom: 110px;
+	margin: auto;
+	left: 0; 
+	right: 0
+}
+.author-cancel-zone{
+	position: fixed;
+	bottom: 50px;
 	margin: auto;
 	left: 0; 
 	right: 0

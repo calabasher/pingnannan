@@ -190,7 +190,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {},
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {var that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(option) {var userInfo, that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              userInfo = uni.getStorageSync('userInfo') || '';if (
+              userInfo.objectId) {_context.next = 4;break;}
+              uni.navigateTo({
+                url: '/pages/authorize/authorize' });return _context.abrupt("return");case 4:
+
+
+
               that = this;
               if (option.postId === "undefined") {
                 that.noFound();
@@ -207,7 +214,7 @@ __webpack_require__.r(__webpack_exports__);
                 this.getPost();
                 this.getComments();
                 this.updatePost('view');
-              }case 2:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              }case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },

@@ -15,6 +15,9 @@
 		<view class="author-zone flex-center">
 			<van-button type="primary" open-type="getUserInfo" @getuserinfo="getWxUserInfo"><text class="author-btn">同意</text></van-button>
 		</view>
+		<view class="author-cancel-zone flex-center">
+			<van-button type="default" @click="cancelLogin"><text class="author-btn">拒绝</text></van-button>
+		</view>
 		<van-popup :show="localPop">
 			<view class="tcenter pd15 font-16 border-bottom" :style="{ width: '300px' }">选择家乡</view>
 			<van-radio-group :value="pickIndex">
@@ -104,6 +107,9 @@
 				  }
 				});
 			},
+			cancelLogin(){
+				uni.reLaunch({ url: '/pages/index/index' });
+			},
 			// 获取地址列表
 			getLocalList() {
 				let that = this;
@@ -154,7 +160,14 @@
 	}
 	.author-zone{
 		position: fixed;
-		bottom: 80px;
+		bottom: 110px;
+		margin: auto;
+		left: 0; 
+		right: 0
+	}
+	.author-cancel-zone{
+		position: fixed;
+		bottom: 50px;
 		margin: auto;
 		left: 0; 
 		right: 0
