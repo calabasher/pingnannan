@@ -138,6 +138,8 @@
 				// 查询所有数据
 				query.find().then(res => {
 				  uni.hideLoading();
+				  that.pickList = [];
+				  that.pickList = [{name: '不限'}];
 				  that.pickList = that.pickList.concat(res);
 				  that.pickList.forEach( (v, i) => {
 					  if(v.objectId === that.localId){

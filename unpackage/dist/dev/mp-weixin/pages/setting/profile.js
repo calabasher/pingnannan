@@ -62,7 +62,8 @@ var _default =
       }
       that.Bmob.checkMsg(that.userInfo.profile).then(function (res) {
         uni.showLoading({
-          title: '加载中' });
+          title: '加载中',
+          mask: true });
 
         var query = that.Bmob.Query('_User');
         query.set('id', that.userInfo.objectId); //需要修改的objectId

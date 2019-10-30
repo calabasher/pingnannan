@@ -171,7 +171,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
     return {
       localPop: false,
       pickIndex: 0,
-      pickList: [{ name: '不限' }] };
+      pickList: [] };
 
   },
   // 监听页面卸载
@@ -190,9 +190,6 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
     // 获取微信用户信息
     getWxUserInfo: function getWxUserInfo() {
       var that = this;
-      uni.showLoading({
-        title: '授权登录中' });
-
       uni.getUserInfo({
         provider: 'weixin',
         success: function success(infoRes) {
@@ -214,7 +211,6 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
                 key: 'userInfo',
                 data: res,
                 success: function success() {
-                  uni.hideLoading();
                   that.localPop = true;
                 } });
 
@@ -222,6 +218,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
               console.log(err);
             });
           }).catch(function (err) {
+            uni.hideLoading();
             console.log(err);
             uni.showToast({
               title: '授权失败，请退出重试',
@@ -244,6 +241,8 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _objectSpread(target) {
       // 查询所有数据
       query.find().then(function (res) {
         uni.hideLoading();
+        that.pickList = [];
+        that.pickList = [{ name: '不限' }];
         that.pickList = that.pickList.concat(res);
       });
     },

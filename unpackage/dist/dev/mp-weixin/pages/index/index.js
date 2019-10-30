@@ -262,6 +262,8 @@ __webpack_require__.r(__webpack_exports__);
       // 查询所有数据
       query.find().then(function (res) {
         uni.hideLoading();
+        that.pickList = [];
+        that.pickList = [{ name: '不限' }];
         that.pickList = that.pickList.concat(res);
         that.pickList.forEach(function (v, i) {
           if (v.objectId === that.localId) {

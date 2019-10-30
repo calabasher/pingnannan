@@ -47,7 +47,7 @@
 			return {
 				localPop: false,
 				pickIndex: 0,
-				pickList: [{name: '不限'}],
+				pickList: [],
 			}
 		},
 		// 监听页面卸载
@@ -66,9 +66,6 @@
 			// 获取微信用户信息
 			getWxUserInfo(){
 				let that = this;
-				uni.showLoading({
-					title: '授权登录中'
-				});
 				uni.getUserInfo({
 				  provider: 'weixin',
 				  success: function (infoRes) {
@@ -90,7 +87,6 @@
 							  key: 'userInfo',
 							  data: res,
 							  success: function () {
-								  uni.hideLoading();
 								  that.localPop = true;
 							  }
 							});
@@ -98,6 +94,7 @@
 						    console.log(err)
 						  })
 					  }).catch(err => {
+						uni.hideLoading();
 						console.log(err)
 						uni.showToast({
 							title: '授权失败，请退出重试',
@@ -120,6 +117,8 @@
 				// 查询所有数据
 				query.find().then(res => {
 				  uni.hideLoading();
+				  that.pickList = [];
+				  that.pickList = [{name: '不限'}];
 				  that.pickList = that.pickList.concat(res);
 				});
 			},
