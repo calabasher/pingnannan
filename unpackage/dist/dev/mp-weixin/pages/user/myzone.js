@@ -133,56 +133,62 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
 
   data: function data() {
     return {
-      info: {
-        objectId: '', // 用户Id
-        nickName: '未登录', // 用户昵称
-        avatarUrl: '/static/logo/no-login.png', // 头像
-        gender: 1, // 性别 1-男
-        profile: '暂无简介', // 简介
-        follows: 0, // 关注数
-        fans: 0, // 粉丝数
-        praise: 0 // 赞数
-      } };
+      info: {} };
 
   },
   computed: _objectSpread({},
   (0, _vuex.mapState)(['hasLogin', 'userInfo'])),
 
-  onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var userInfo, that;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
-              userInfo = uni.getStorageSync('userInfo') || '';if (
-              userInfo.objectId) {_context.next = 4;break;}
-              uni.reLaunch({
-                url: '/pages/authorize/authorize' });return _context.abrupt("return");case 4:
+  onLoad: function onLoad() {
+    console.log('onload');
+    var that = this;
+    var userInfo = uni.getStorageSync('userInfo') || '';
+    if (!userInfo.objectId) {
+      uni.reLaunch({
+        url: '/pages/authorize/authorize' });
 
+      return;
+    }
+    uni.setStorage({
+      key: 'reloadZone',
+      data: false,
+      success: function success(res) {
+        console.log('更新刷新主页状态: 不更新');
+      } });
 
+    uni.getStorage({
+      key: 'userInfo',
+      success: function success(res) {
+        that.init();
+      } });
 
-              that = this;
-              uni.getStorage({
-                key: 'userInfo',
-                success: function success(res) {
-                  that.info.objectId = res.data.objectId;
-                  that.getUserInfo();
-                } });case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
+  },
+  onShow: function onShow() {
+    console.log('onShow');
+    var that = this;
+    uni.getStorage({
+      key: 'reloadZone',
+      success: function success(res) {
+        if (res.data) {
+          that.$refs.zone.reload(); // 触发子组件的重载事件
+        }
+      } });
 
-
+  },
   onReady: function onReady() {
 
   },
   // 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
   onUnload: function onUnload() {
-    this.info = {};
+    // this.info = {};
   },
   // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
   onHide: function onHide() {
-    this.info = {};
-  },
-  onShow: function onShow() {
-    var that = this;
-    uni.getStorage({
-      key: 'userInfo',
+    uni.setStorage({
+      key: 'reloadZone',
+      data: false,
       success: function success(res) {
-        that.info.objectId = res.data.objectId;
-        that.getUserInfo();
+        console.log('更新刷新主页状态: 不更新');
       } });
 
   },
@@ -195,6 +201,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   },
   // 下拉刷新
   onPullDownRefresh: function onPullDownRefresh() {
+    this.getUserInfo();
     this.$refs.zone.reload(); // 触发子组件的重载事件
     setTimeout(function () {
       uni.stopPullDownRefresh();
@@ -204,18 +211,22 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function _interopRequireDefault(
   onReachBottom: function onReachBottom() {
   },
   methods: {
+    init: function () {var _init = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
+                  this.getUserInfo());case 2:case "end":return _context.stop();}}}, _callee, this);}));function init() {return _init.apply(this, arguments);}return init;}(),
+
     // 获取用户信息
     getUserInfo: function getUserInfo() {
       var that = this;
       uni.showLoading({
         title: '加载中' });
 
-      var query = that.Bmob.Query('_User');
-      query.get(that.userInfo.objectId).then(function (res) {
-        that.info = res;
-        uni.hideLoading();
-      }).catch(function (err) {
-        console.log(err);
+      return new Promise(function (resolve, reject) {
+        var query = that.Bmob.Query('_User');
+        query.get(that.userInfo.objectId).then(function (res) {
+          that.info = res;
+          uni.hideLoading();
+        });
+        resolve('suc');
       });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

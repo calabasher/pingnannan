@@ -1,5 +1,5 @@
 <template>
-	<zone :info="info" ref="zone"></zone>
+	<zone :pInfo="info" ref="zone"></zone>
 </template>
 
 <script>
@@ -11,22 +11,15 @@
 		},
 		data() {
 			return {
-				info: {
-					objectId: '',	// 用户Id
-					nickName: '未登录',	// 用户昵称
-					avatarUrl: '/static/logo/no-login.png',	// 头像
-					gender: 1,	// 性别 1-男
-					profile: '暂无简介',	// 简介
-					follows: 0,	// 关注数
-					fans: 0,	// 粉丝数
-					praise: 0,	// 赞数
-				},
+				info: {},
 			}
 		},
 		computed: {
 			...mapState(['hasLogin','userInfo'])
 		},
-		async onLoad() {
+		onLoad() {
+			console.log('onload')
+			let that = this;
 			let userInfo = uni.getStorageSync('userInfo') || '';
 			if(!userInfo.objectId){
 				uni.reLaunch({
@@ -34,13 +27,30 @@
 				});
 				return
 			}
-			let that = this;
+			uni.setStorage({
+			  key: 'reloadZone',
+			  data: false,
+			  success: function (res) {
+				console.log('更新刷新主页状态: 不更新')
+			  }
+			});
 			uni.getStorage({
 				key: 'userInfo',
 				success: function (res) {
-					that.info.objectId = res.data.objectId;
-					that.getUserInfo();
+					that.init();
 				}
+			});
+		},
+		onShow(){
+			console.log('onShow')
+			let that = this;
+			uni.getStorage({
+			  key: 'reloadZone',
+			  success: function (res) {
+				if(res.data){
+					that.$refs.zone.reload()	// 触发子组件的重载事件
+				}
+			  }
 			});
 		},
 		onReady(){
@@ -48,20 +58,16 @@
 		},
 		// 监听页面卸载， 监听页面的卸载， 当前处于A页面，点击返回按钮时，则将是A页面卸载、
 		onUnload() {
-			this.info = {};
+			// this.info = {};
 		},
 		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
 		onHide(){
-			this.info = {};
-		},
-		onShow(){
-			let that = this;
-			uni.getStorage({
-				key: 'userInfo',
-				success: function (res) {
-					that.info.objectId = res.data.objectId;
-					that.getUserInfo();
-				}
+			uni.setStorage({
+			  key: 'reloadZone',
+			  data: false,
+			  success: function (res) {
+				console.log('更新刷新主页状态: 不更新')
+			  }
 			});
 		},
 		// 分享
@@ -73,6 +79,7 @@
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
+			this.getUserInfo();
 			this.$refs.zone.reload()	// 触发子组件的重载事件
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
@@ -82,18 +89,22 @@
 		onReachBottom(){
 		},
 		methods: {
+			async init () {
+				await this.getUserInfo();
+			},
 			// 获取用户信息
 			getUserInfo () {
 				let that = this;
 				uni.showLoading({
 					title: '加载中'
 				});
-				const query = that.Bmob.Query('_User');
-				query.get(that.userInfo.objectId).then(res => {
-					that.info = res;
-					uni.hideLoading();
-				}).catch(err => {
-				  console.log(err)
+				return new Promise((resolve, reject) => {
+					const query = that.Bmob.Query('_User');
+					query.get(that.userInfo.objectId).then(res => {
+						that.info = res;
+						uni.hideLoading();
+					})
+					resolve('suc');
 				})
 			},
 		}

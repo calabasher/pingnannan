@@ -213,6 +213,13 @@ __webpack_require__.r(__webpack_exports__);
   onReady: function onReady() {
   },
   onShow: function onShow() {
+    uni.setStorage({
+      key: 'reloadZone',
+      data: true,
+      success: function success() {
+        console.log('更新刷新主页状态: 更新');
+      } });
+
     // this.getPostList();
   },
   // 分享

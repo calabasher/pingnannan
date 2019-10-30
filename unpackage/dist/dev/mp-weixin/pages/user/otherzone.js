@@ -133,16 +133,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       urlUserId: '', // 用户id
-      info: {
-        objectId: '', // 用户Id
-        nickName: '未登录', // 用户昵称
-        avatarUrl: '/static/logo/no-login.png', // 头像
-        gender: 1, // 性别 1-男
-        profile: '暂无简介', // 简介
-        follows: 0, // 关注数
-        fans: 0, // 粉丝数
-        praise: 0 // 赞数
-      } };
+      info: {} };
 
   },
   computed: {},
@@ -150,33 +141,19 @@ __webpack_require__.r(__webpack_exports__);
   onLoad: function onLoad(option) {
     if (option.userId && option.userId !== 'undefined') {
       this.urlUserId = option.userId;
-      this.getUserInfo(option.userId);
     } else {
-      uni.showModal({
-        title: '糟糕！',
-        content: '用户找不到了',
-        showCancel: false,
-        success: function success(res) {
-          if (res.confirm) {
-            uni.navigateBack();
-          }
-        } });
-
+      this.noFound();
     }
   },
   onReady: function onReady() {
   },
   onUnload: function onUnload() {
-    this.info = {};
+  },
+  onShow: function onShow() {
+    this.getUserInfo(this.urlUserId);
   },
   // 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
   onHide: function onHide() {
-    this.info = {};
-  },
-  onShow: function onShow() {
-    if (this.urlUserId) {
-      this.getUserInfo(this.urlUserId);
-    }
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -187,6 +164,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   // 下拉刷新
   onPullDownRefresh: function onPullDownRefresh() {
+    this.getUserInfo(this.urlUserId);
     this.$refs.zone.reload(); // 触发子组件的重载事件
     setTimeout(function () {
       uni.stopPullDownRefresh();
@@ -206,7 +184,21 @@ __webpack_require__.r(__webpack_exports__);
         uni.setNavigationBarTitle({
           title: res.nickName });
 
+      }).catch(function (err) {
+        that.noFound();
       });
+    },
+    noFound: function noFound() {
+      uni.showModal({
+        title: '糟糕！',
+        content: '用户不见',
+        showCancel: false,
+        success: function success(res) {
+          if (res.confirm) {
+            uni.navigateBack();
+          }
+        } });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

@@ -1,5 +1,5 @@
 <template>
-	<zone :info="info" :isMyzone="false" ref="zone"></zone>
+	<zone :pInfo="info" :isMyzone="false" ref="zone"></zone>
 </template>
 
 <script>
@@ -11,16 +11,7 @@
 		data() {
 			return {
 				urlUserId: '',	// 用户id
-				info: {
-					objectId: '',	// 用户Id
-					nickName: '未登录',	// 用户昵称
-					avatarUrl: '/static/logo/no-login.png',	// 头像
-					gender: 1,	// 性别 1-男
-					profile: '暂无简介',	// 简介
-					follows: 0,	// 关注数
-					fans: 0,	// 粉丝数
-					praise: 0,	// 赞数
-				},
+				info: {},
 			}
 		},
 		computed: {
@@ -28,33 +19,19 @@
 		onLoad(option) {
 			if(option.userId && option.userId !== 'undefined'){
 				this.urlUserId = option.userId
-				this.getUserInfo(option.userId)
 			}else{
-				uni.showModal({
-				    title: '糟糕！',
-				    content: '用户找不到了',
-					showCancel: false,
-				    success: function (res) {
-				        if (res.confirm) {
-				            uni.navigateBack()
-				        } 
-				    }
-				});
+				this.noFound()
 			}
 		},
 		onReady(){
 		},
 		onUnload() {
-			this.info = {};
+		},
+		onShow(){
+			this.getUserInfo(this.urlUserId);
 		},
 		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
 		onHide(){
-			this.info = {};
-		},
-		onShow(){
-			if(this.urlUserId){
-				this.getUserInfo(this.urlUserId)
-			} 
 		},
 		// 分享
 		onShareAppMessage() {
@@ -65,6 +42,7 @@
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
+			this.getUserInfo(this.urlUserId);
 			this.$refs.zone.reload()	// 触发子组件的重载事件
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
@@ -84,7 +62,21 @@
 					uni.setNavigationBarTitle({
 					    title: res.nickName
 					});
+				}).catch(err => {
+					that.noFound()
 				})
+			},
+			noFound(){
+				uni.showModal({
+				    title: '糟糕！',
+				    content: '用户不见',
+					showCancel: false,
+				    success: function (res) {
+				        if (res.confirm) {
+				            uni.navigateBack()
+				        } 
+				    }
+				});
 			}
 		}
 	}

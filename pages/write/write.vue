@@ -135,6 +135,13 @@
 		},
 		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
 		onShow(){
+			uni.setStorage({
+			  key: 'reloadZone',
+			  data: true,
+			  success: function () {
+				console.log('更新刷新主页状态: 更新')
+			  }
+			});
 			this.getTodayPublishPostNum()
 			this.checkStatus();
 		},

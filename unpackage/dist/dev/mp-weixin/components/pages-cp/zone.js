@@ -178,7 +178,7 @@ __webpack_require__.r(__webpack_exports__);
 {
   // 父子通信
   props: {
-    info: {
+    pInfo: {
       type: Object,
       default: function _default() {
         return {};
@@ -194,18 +194,9 @@ __webpack_require__.r(__webpack_exports__);
 
   data: function data() {
     return {
+      info: {},
       myObjectId: '', // 我的id
       tabIndex: 0, // 高亮tab
-      // info: {
-      // 	objectId: '',	// 用户Id
-      // 	nickName: '未登录',	// 用户昵称
-      // 	avatarUrl: '/static/logo/no-login.png',	// 头像
-      // 	gender: 1,	// 性别 1-男
-      // 	profile: '暂无简介',	// 简介
-      // 	follows: 0,	// 关注数
-      // 	fans: 0,	// 粉丝数
-      // 	praise: 0,	// 赞数
-      // },
       pageSetting: {
         pageIndex: 1, // 页码
         pageSize: 10, // 每页页数
@@ -228,25 +219,22 @@ __webpack_require__.r(__webpack_exports__);
   computed: {},
 
   watch: {
-    info: function info(newVal, oldVal) {
-      this.reload();
-    } },
+    pInfo: {
+      deep: true,
+      handler: function handler(newValue, oldValue) {
+        this.info = newValue;
+        this.reload();
+      } } },
+
 
   mounted: function mounted() {
     var that = this;
-    that.postList = []; // 帖子列表
-    that.favoriteList = []; // 收藏的帖子
     uni.getStorage({
       key: 'userInfo',
       success: function success(res) {
         that.myObjectId = res.data.objectId;
       } });
 
-    this.getPostList(); // 获取帖子列表 -- 自己作品
-    this.getFavoriteList(); // 获取帖子列表 -- 收藏喜欢
-    this.getFFNum("beFollowedUserId"); // 获取用户粉丝量
-    this.getFFNum("userId"); // 获取用户关注量
-    this.getPraiseNum(); // 获取用户所获赞量
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -277,6 +265,17 @@ __webpack_require__.r(__webpack_exports__);
     // 切换tab
     onChangeTab: function onChangeTab(e) {
       this.tabIndex = e.detail.index;
+      if (this.tabIndex === 0) {
+        this.pageSetting.pageIndex = 1;
+        this.pageSetting.totalSize = 0;
+        this.postList = [];
+        this.getPostList(); // 获取帖子列表 -- 自己作品
+      } else {
+        this.pageSettingFav.pageIndex = 1;
+        this.pageSettingFav.totalSize = 0;
+        this.favoriteList = [];
+        this.getFavoriteList(); // 获取帖子列表 -- 收藏喜欢
+      }
     },
     // 获取粉丝数
     getFFNum: function getFFNum(name) {
@@ -327,6 +326,7 @@ __webpack_require__.r(__webpack_exports__);
       query.count().then(function (res) {
         if (res.count === 0) {
           that.postList = [];
+          uni.hideLoading();
         } else {
           that.pageSetting.totalSize = res.count;
           that.pageSetting.totalPage = parseInt(res.count / that.pageSetting.pageSize) + 1;
@@ -353,6 +353,7 @@ __webpack_require__.r(__webpack_exports__);
       query.count().then(function (res) {
         if (res.count === 0) {
           that.favoriteList = [];
+          uni.hideLoading();
         } else {
           that.pageSettingFav.totalSize = res.count;
           that.pageSettingFav.totalPage = parseInt(res.count / that.pageSettingFav.pageSize) + 1;

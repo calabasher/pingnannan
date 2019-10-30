@@ -89,6 +89,13 @@
 		onReady(){
 		},
 		onShow(){
+			uni.setStorage({
+			  key: 'reloadZone',
+			  data: true,
+			  success: function () {
+				console.log('更新刷新主页状态: 更新')
+			  }
+			});
 			// this.getPostList();
 		},
 		// 分享
