@@ -205,10 +205,7 @@ __webpack_require__.r(__webpack_exports__);
                   that.localId = res.data ? res.data : '';
                 } });
 
-              that.getLocalList();
-              that.getBannerList();
-              that.getPostClassList();
-              that.getPostList();case 6:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
+              this.init();case 3:case "end":return _context.stop();}}}, _callee, this);}));function onLoad() {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
   onReady: function onReady() {
   },
@@ -220,7 +217,6 @@ __webpack_require__.r(__webpack_exports__);
         console.log('更新刷新主页状态: 更新');
       } });
 
-    // this.getPostList();
   },
   // 分享
   onShareAppMessage: function onShareAppMessage() {
@@ -231,12 +227,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   // 下拉刷新
   onPullDownRefresh: function onPullDownRefresh() {
-    this.pageSetting.pageIndex = 1;
-    this.postList = [];
-    this.getPostList();
-    this.getLocalList();
-    this.getBannerList();
-    this.getPostClassList();
+    this.init();
     setTimeout(function () {
       uni.stopPullDownRefresh();
     }, 1000);
@@ -249,6 +240,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    init: function init() {
+      this.pageSetting.pageIndex = 1;
+      this.postList = [];
+      this.getPostList();
+      this.getLocalList();
+      this.getBannerList();
+      this.getPostClassList();
+    },
     // 详情、结果
     navTo: function navTo(url) {
       uni.navigateTo({ url: url });
@@ -293,6 +292,7 @@ __webpack_require__.r(__webpack_exports__);
         title: '加载中' });
 
       var query = that.Bmob.Query('postClass');
+      query.order("order");
       query.limit(5);
       // 查询所有数据
       query.find().then(function (res) {

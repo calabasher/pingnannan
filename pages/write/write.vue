@@ -107,6 +107,7 @@
 			this.countIndex = 8;
 		},
 		onLoad(){
+			let that = this;
 			let userInfo = uni.getStorageSync('userInfo') || '';
 			if(!userInfo.objectId){
 				uni.reLaunch({
@@ -114,7 +115,6 @@
 				});
 				return
 			}
-			let that = this;
 			this.getPostClassList();
 			//	获取地址
 			uni.getStorage({
@@ -122,6 +122,17 @@
 			    success: function (res) {
 					that.localId = res.data ? res.data : ''; 
 			    }
+			});
+		},
+		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
+		onShow(){
+			let that = this;
+			uni.setStorage({
+			  key: 'reloadZone',
+			  data: true,
+			  success: function () {
+				console.log('更新刷新主页状态: 更新')
+			  }
 			});
 			// 获取用户
 			uni.getStorage({
@@ -132,18 +143,6 @@
 					that.checkStatus();
 				}
 			});
-		},
-		// 监听页面的隐藏,当从当前A页跳转到其他页面，那么A页面处于隐藏状态。
-		onShow(){
-			uni.setStorage({
-			  key: 'reloadZone',
-			  data: true,
-			  success: function () {
-				console.log('更新刷新主页状态: 更新')
-			  }
-			});
-			this.getTodayPublishPostNum()
-			this.checkStatus();
 		},
 		// 分享
 		onShareAppMessage() {
@@ -263,23 +262,13 @@
 					query.save().then(res => {
 						uni.hideLoading();
 						that.getTodayPublishPostNum();
-						uni.showModal({
+						uni.showToast({
 							title: '发表成功',
-							content: '是否立即前往查看',
-							confirmText: '前往查看',
-							cancelText: '继续发帖',
-							success: function (res) {
-								if (res.confirm) {
-									uni.reLaunch({
-									    url: '/pages/index/index'
-									});
-								} else if (res.cancel) {
-									that.contents = '';	// 文本内容
-									that.imageList = [];
-									that.pickIndex = 0;
-								}
-							}
+							mask: true,
 						});
+						setTimeout( ()=>{
+							uni.reLaunch({ url: '/pages/index/index' });
+						}, 1500)
 					})
 				}).catch(err => {
 					let tips = '错误类型：' + err.code + '，' + err.error;

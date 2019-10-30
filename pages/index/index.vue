@@ -81,10 +81,7 @@
 					that.localId = res.data ? res.data : ''; 
 			    }
 			});
-			that.getLocalList();
-			that.getBannerList();
-			that.getPostClassList();
-			that.getPostList();
+			this.init();
 		},
 		onReady(){
 		},
@@ -96,7 +93,6 @@
 				console.log('更新刷新主页状态: 更新')
 			  }
 			});
-			// this.getPostList();
 		},
 		// 分享
 		onShareAppMessage() {
@@ -107,12 +103,7 @@
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
-			this.pageSetting.pageIndex = 1;
-			this.postList = [];
-			this.getPostList();
-			this.getLocalList();
-			this.getBannerList();
-			this.getPostClassList();
+			this.init()
 			setTimeout(function () {
 				uni.stopPullDownRefresh();
 			}, 1000);
@@ -125,6 +116,14 @@
 			}
 		},
 		methods: {
+			init(){
+				this.pageSetting.pageIndex = 1;
+				this.postList = [];
+				this.getPostList();
+				this.getLocalList();
+				this.getBannerList();
+				this.getPostClassList();
+			},
 			// 详情、结果
 			navTo(url){
 				uni.navigateTo({ url: url })
@@ -169,6 +168,7 @@
 					title: '加载中'
 				});
 				var query = that.Bmob.Query('postClass');
+				query.order("order");
 				query.limit(5);
 				// 查询所有数据
 				query.find().then(res => {
