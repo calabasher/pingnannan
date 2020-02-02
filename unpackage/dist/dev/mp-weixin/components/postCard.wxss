@@ -4,21 +4,17 @@
 .img-zone {
   display: -webkit-box;
   display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
           flex-wrap: wrap;
 }
 .img-cell {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   width: 33.33%;
   padding: 0 5px 5px 0;
 }
 .img-cell:nth-child(3n) {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   width: 33.33%;
   padding: 0 0 5px 0;
 }

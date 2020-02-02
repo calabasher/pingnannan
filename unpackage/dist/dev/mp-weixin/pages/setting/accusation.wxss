@@ -2,7 +2,6 @@
 .value-class {
   -webkit-box-flex: 0 !important;
   -webkit-flex: none !important;
-      -ms-flex: none !important;
           flex: none !important;
 }
 

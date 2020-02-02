@@ -8,9 +8,9 @@
 		"es6": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.7.0",
+	"libVersion": "2.9.2",
 	"appid": "wx5f4624dd4e7adca2",
-	"projectname": "Vantui Weapp For Uni-app",
+	"projectname": "Vantui%20Weapp%20For%20Uni-app",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {
